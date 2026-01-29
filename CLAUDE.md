@@ -271,3 +271,70 @@ fun init(ctx: &mut TxContext) { ... }
 #[test_only]
 public fun create_for_testing(...) { ... }
 ```
+
+## Claudefiles Repository Convention
+
+### Overview
+
+All shared Claude Code configuration lives in `~/workspace/claudefiles/`, a git repo symlinked into `~/.claude/`. This keeps skills, commands, global instructions, and settings version-controlled and portable across machines.
+
+### Repository Path
+
+```
+~/workspace/claudefiles/
+```
+
+### What Lives in the Repo (Shared)
+
+| Item | Repo path | Symlink |
+|---|---|---|
+| Global instructions | `CLAUDE.md` | `~/.claude/CLAUDE.md` |
+| Skills | `skills/` | `~/.claude/skills/` |
+| Commands | `commands/` | `~/.claude/commands/` |
+| Local settings | `settings.local.json` | `~/.claude/settings.local.json` |
+
+### What Stays Local (Not Symlinked)
+
+These are machine-specific, session-specific, or runtime data and must **not** be added to the repo:
+
+- `cache/` — runtime cache
+- `downloads/` — downloaded files
+- `hooks/` — machine-specific hook scripts
+- `plans/` — session-specific plan files
+- `projects/` — per-project local overrides
+- `settings.json` — machine-specific settings
+- Other runtime directories and files
+
+### The Rule
+
+**Always create new skills, commands, and shared config inside `~/workspace/claudefiles/`.** Never write directly to `~/.claude/` for shared items — the symlinks ensure files written to `~/.claude/skills/`, `~/.claude/commands/`, etc. already land in the repo.
+
+### Symlink Architecture
+
+Only 4 symlinks are needed (the shared set is the minority):
+
+```
+~/.claude/CLAUDE.md          → ~/workspace/claudefiles/CLAUDE.md
+~/.claude/commands/          → ~/workspace/claudefiles/commands/
+~/.claude/skills/            → ~/workspace/claudefiles/skills/
+~/.claude/settings.local.json → ~/workspace/claudefiles/settings.local.json
+```
+
+Everything else in `~/.claude/` is a real directory or file (17+ items). This is more efficient than the inverse approach (symlinking `~/.claude` itself to the repo and then symlinking each local item back out).
+
+### Adding a New Shared Item
+
+If a new top-level item needs to be shared (rare):
+
+```bash
+# 1. Move the item into the repo
+mv ~/.claude/new-item ~/workspace/claudefiles/new-item
+
+# 2. Create the symlink
+ln -s ~/workspace/claudefiles/new-item ~/.claude/new-item
+
+# 3. Commit
+cd ~/workspace/claudefiles
+git add new-item
+git commit -m "Add new-item to shared config"
+```
