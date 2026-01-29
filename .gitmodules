@@ -1,0 +1,3 @@
+[submodule "skills/move-code-quality"]
+	path = skills/move-code-quality
+	url = https://github.com/1NickPappas/move-code-quality-skill
