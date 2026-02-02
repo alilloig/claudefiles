@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <filter id="pk-glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <radialGradient id="pk-print" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#4DA2FF;stop-opacity:0.05"/>
+      <stop offset="50%" style="stop-color:#4DA2FF;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#4DA2FF;stop-opacity:0.05"/>
+    </radialGradient>
+  </defs>
+  <g filter="url(#pk-glow)">
+    <!-- Fingerprint circles (concentric arcs) -->
+    <circle cx="100" cy="82" r="42" fill="url(#pk-print)"/>
+    <!-- Fingerprint ridges -->
+    <path d="M78 65 Q78 55 88 50 Q100 44 112 50 Q122 55 122 65"
+          fill="none" stroke="#4DA2FF" stroke-width="1.5" opacity="0.6" stroke-linecap="round"/>
+    <path d="M74 75 Q74 58 90 50 Q100 46 110 50 Q126 58 126 75"
+          fill="none" stroke="#4DA2FF" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
+    <path d="M80 90 Q78 70 90 60 Q100 53 110 60 Q122 70 120 90"
+          fill="none" stroke="#4DA2FF" stroke-width="1.5" opacity="0.7" stroke-linecap="round"/>
+    <path d="M86 95 Q84 78 92 68 Q100 60 108 68 Q116 78 114 95"
+          fill="none" stroke="#FFFFFF" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
+    <path d="M92 95 Q91 82 96 76 Q100 72 104 76 Q109 82 108 95"
+          fill="none" stroke="#FFFFFF" stroke-width="1.5" opacity="0.7" stroke-linecap="round"/>
+    <!-- Central core -->
+    <ellipse cx="100" cy="85" rx="3" ry="5" fill="#4DA2FF" opacity="0.6"/>
+    <!-- Key shape below -->
+    <line x1="100" y1="110" x2="100" y2="155" stroke="#4DA2FF" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    <line x1="100" y1="135" x2="115" y2="135" stroke="#4DA2FF" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    <line x1="100" y1="145" x2="112" y2="145" stroke="#4DA2FF" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    <!-- Key ring at top connecting to fingerprint -->
+    <circle cx="100" cy="108" r="6" fill="none" stroke="#FFFFFF" stroke-width="1.5" opacity="0.6"/>
+    <circle cx="100" cy="108" r="2" fill="#4DA2FF" opacity="0.4"/>
+    <!-- Key tip -->
+    <rect x="96" y="153" width="8" height="4" rx="1" fill="#FFFFFF" opacity="0.5"/>
+    <!-- Subtle scan line -->
+    <line x1="65" y1="82" x2="135" y2="82" stroke="#4DA2FF" stroke-width="0.5" opacity="0.2"
+          stroke-dasharray="3 3"/>
+  </g>
+</svg>

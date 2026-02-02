@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <filter id="naut-glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <linearGradient id="naut-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4DA2FF;stop-opacity:0.7"/>
+      <stop offset="100%" style="stop-color:#4DA2FF;stop-opacity:0.2"/>
+    </linearGradient>
+  </defs>
+  <g filter="url(#naut-glow)">
+    <!-- Outer enclave hexagon -->
+    <polygon points="100,25 162,62 162,138 100,175 38,138 38,62"
+             fill="url(#naut-grad)" stroke="#4DA2FF" stroke-width="2"/>
+    <!-- Inner enclave hexagon -->
+    <polygon points="100,50 140,72 140,128 100,150 60,128 60,72"
+             fill="none" stroke="#4DA2FF" stroke-width="1.5" opacity="0.5"/>
+    <!-- Secure core hexagon -->
+    <polygon points="100,70 122,85 122,115 100,130 78,115 78,85"
+             fill="#4DA2FF" opacity="0.25" stroke="#FFFFFF" stroke-width="1" opacity="0.5"/>
+    <!-- TEE lock symbol in center -->
+    <rect x="90" y="96" width="20" height="16" rx="2" fill="#4DA2FF" opacity="0.6"/>
+    <rect x="91" y="97" width="18" height="14" rx="1.5" fill="none" stroke="#FFFFFF" stroke-width="1" opacity="0.6"/>
+    <path d="M95 97 L95 90 Q95 84 100 84 Q105 84 105 90 L105 97"
+          fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+    <circle cx="100" cy="104" r="2" fill="#FFFFFF" opacity="0.8"/>
+    <!-- Connection lines from vertices to inner hex -->
+    <line x1="100" y1="25" x2="100" y2="50" stroke="#4DA2FF" stroke-width="0.8" opacity="0.3"/>
+    <line x1="162" y1="62" x2="140" y2="72" stroke="#4DA2FF" stroke-width="0.8" opacity="0.3"/>
+    <line x1="162" y1="138" x2="140" y2="128" stroke="#4DA2FF" stroke-width="0.8" opacity="0.3"/>
+    <line x1="100" y1="175" x2="100" y2="150" stroke="#4DA2FF" stroke-width="0.8" opacity="0.3"/>
+    <line x1="38" y1="138" x2="60" y2="128" stroke="#4DA2FF" stroke-width="0.8" opacity="0.3"/>
+    <line x1="38" y1="62" x2="60" y2="72" stroke="#4DA2FF" stroke-width="0.8" opacity="0.3"/>
+    <!-- Vertex dots -->
+    <circle cx="100" cy="25" r="3" fill="#4DA2FF" opacity="0.5"/>
+    <circle cx="162" cy="62" r="3" fill="#4DA2FF" opacity="0.5"/>
+    <circle cx="162" cy="138" r="3" fill="#4DA2FF" opacity="0.5"/>
+    <circle cx="100" cy="175" r="3" fill="#4DA2FF" opacity="0.5"/>
+    <circle cx="38" cy="138" r="3" fill="#4DA2FF" opacity="0.5"/>
+    <circle cx="38" cy="62" r="3" fill="#4DA2FF" opacity="0.5"/>
+  </g>
+</svg>

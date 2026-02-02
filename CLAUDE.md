@@ -236,6 +236,22 @@ sui move test --coverage
 sui client publish --gas-budget 100000000
 ```
 
+### Vite Dev Server Configuration
+
+When developing Sui dApps with Vite, always configure the dev server to bind to `0.0.0.0` so the app is accessible over the network (VPN, remote access, mobile testing):
+
+```typescript
+// vite.config.mts
+export default defineConfig({
+  server: {
+    host: "0.0.0.0",
+  },
+  // ...
+});
+```
+
+This is required when accessing the dev server from a different machine or via VPN (e.g., Tailscale). Without it, Vite only binds to `localhost` and rejects external connections. Remember to access via `http://` (not `https://`) — Vite's dev server does not use TLS.
+
 ### Module Documentation Template
 
 ```move
