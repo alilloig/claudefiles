@@ -288,6 +288,10 @@ fun init(ctx: &mut TxContext) { ... }
 public fun create_for_testing(...) { ... }
 ```
 
+## Plan Mode Behavior
+
+When in plan mode, actively use the AskUserQuestion tool to clarify requirements, validate assumptions, and present implementation choices before finalizing the plan. Do not write a complete plan without first gathering input through structured questions. Prefer interactive refinement over monologue-style planning.
+
 ## Claudefiles Repository Convention
 
 ### Overview
