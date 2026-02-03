@@ -4,3 +4,6 @@
 [submodule "skills/claudeception"]
 	path = skills/claudeception
 	url = https://github.com/blader/Claudeception.git
+[submodule "sui-pilot"]
+	path = sui-pilot
+	url = git@github.com:alilloig/sui-pilot.git

@@ -2,6 +2,16 @@
 
 ## Sui Move Development
 
+### Authoritative Documentation (REQUIRED)
+
+**BEFORE any Sui/Move work**, consult the sui-pilot documentation copilot:
+
+1. **Read the index**: `~/workspace/claudefiles/sui-pilot/AGENTS.md`
+2. **Search the docs**: Use Grep/Read on `~/workspace/claudefiles/sui-pilot/.sui-docs/` to find relevant topics
+3. **Verify patterns**: Cross-reference code patterns against the official docs before writing code
+
+**Why**: Sui Move evolves rapidly and training data goes stale. sui-pilot contains 180 MDX files (concepts, guides, references, standards) extracted from official Sui documentation. Always prefer these docs over memory.
+
 ### Code Quality Workflow (MANDATORY)
 
 **BEFORE writing any Move code**, review and apply these Move 2024 Edition best practices:
@@ -312,6 +322,7 @@ All shared Claude Code configuration lives in `~/workspace/claudefiles/`, a git 
 | Skills | `skills/` | `~/.claude/skills/` |
 | Commands | `commands/` | `~/.claude/commands/` |
 | Local settings | `settings.local.json` | `~/.claude/settings.local.json` |
+| Sui documentation | `sui-pilot/` (submodule) | *(none — referenced by absolute path)* |
 
 ### What Stays Local (Not Symlinked)
 
@@ -357,4 +368,26 @@ ln -s ~/workspace/claudefiles/new-item ~/.claude/new-item
 cd ~/workspace/claudefiles
 git add new-item
 git commit -m "Add new-item to shared config"
+```
+
+### Git Submodules
+
+External tools and documentation are integrated as git submodules:
+
+| Submodule | Path | Purpose |
+|---|---|---|
+| move-code-quality | `skills/move-code-quality/` | Move code quality checker skill |
+| claudeception | `skills/claudeception/` | Continuous learning / skill extraction |
+| sui-pilot | `sui-pilot/` | Sui/Move documentation copilot (180 MDX files) |
+
+```bash
+# Clone with submodules
+git clone --recurse-submodules <repo-url>
+
+# Initialize submodules in existing clone
+git submodule update --init --recursive
+
+# Update a submodule to latest
+cd sui-pilot && git pull origin main && cd ..
+git add sui-pilot && git commit -m "Update sui-pilot submodule"
 ```
