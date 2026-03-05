@@ -220,5 +220,6 @@ const badMock = {
 
 ## Related Skills
 
+- `sui-vector-u8-base64-parsing` - Similar JSON serialization gotcha for `vector<u8>` (base64, not hex/array)
 - `/move-code-quality` - Sui Move code best practices
 - `/sui-marp-slide` - Creating Sui documentation slides

@@ -63,6 +63,7 @@ All shared Claude Code configuration lives in `~/workspace/claudefiles/`, a git 
 | Skills | `skills/` | `~/.claude/skills/` |
 | Commands | `commands/` | `~/.claude/commands/` |
 | Local settings | `settings.local.json` | `~/.claude/settings.local.json` |
+| Agent catalog & recipes | `AGENTS.md` | *(none -- referenced by absolute path)* |
 | Sui/Walrus/Seal documentation | `sui-pilot/` (submodule) | *(none -- referenced by absolute path)* |
 
 ### What Stays Local (Not Symlinked)
@@ -132,3 +133,31 @@ git submodule update --init --recursive
 cd sui-pilot && git pull origin main && cd ..
 git add sui-pilot && git commit -m "Update sui-pilot submodule"
 ```
+
+## Agent Teams
+
+### Reference
+
+Agent role definitions and team recipes are documented in `~/workspace/claudefiles/AGENTS.md`. **Always consult this file when creating teams.**
+
+### When Creating Teams
+
+1. **Read `AGENTS.md`** to find the matching team recipe and agent roles
+2. **Use role prompts as the base** -- copy the system prompt template from the role definition into the agent's `prompt` parameter
+3. **Append task-specific instructions** after the role prompt -- the role prompt defines expertise and constraints; the task prompt defines what to do
+4. **Apply the matching recipe** for team composition -- use the role names, models, and colors from the catalog
+5. **Set `planModeRequired`** based on the role default, overriding when the task warrants it
+
+### Prompt Structure
+
+When spawning an agent, the `prompt` parameter should follow this pattern:
+
+```
+[Role prompt from AGENTS.md]
+
+---
+
+[Task-specific instructions: what files to change, what to build, acceptance criteria]
+```
+
+The role prompt is reusable across tasks. The task instructions change every time.
