@@ -7,10 +7,12 @@ description: |
   place, (3) creating a plain-English entry point for a complex multi-service
   system. Covers architecture, prerequisites, boot sequence, config reference,
   common tasks, and key files — all sourced from code, not assumptions.
+  Monorepo-aware: when run inside a sub-package, scopes the guide to that
+  package and derives the filename from its manifest.
 allowed-tools: Read, Write, Glob, Grep, Bash
 author: Claude Code
-version: 2.0.0
-date: 2026-03-05
+version: 2.1.0
+date: 2026-03-06
 ---
 
 # For Dummies Guide Generator
@@ -38,11 +40,24 @@ The reference zone answers: *"What was that flag/command/variable called?"*
 
 ## Step 1: Discover the Project
 
+### Step 0 — Detect monorepo / sub-package context
+
+Before reading any files, determine whether the working directory is a **sub-package inside a larger repository**:
+
+1. Check the current directory for a package manifest (`Move.toml`, `package.json`, `Cargo.toml`, `pyproject.toml`).
+2. Check whether there is a **parent directory** that is the git root (has `.git/`) and is different from the current directory.
+3. If both are true, you are in a **sub-package context**:
+   - **Scope the guide** to this sub-package only, not the entire repo.
+   - **Derive the project name** from the sub-package manifest (`name` field in `Move.toml`, `package.json`, `Cargo.toml`, etc.), NOT the repo directory name.
+   - **Place the output file** in the sub-package directory, not the repo root.
+   - Still read the repo-root `README.md` for context, but focus content on the sub-package.
+4. If you are at the repo root, proceed normally — derive the project name from the repo directory or root manifest.
+
 Read files in this exact priority order. Stop reading a category once you have enough context; read more if sections remain unclear.
 
 ### Priority 1 — Always read these first
 
-- `README.md` — overview, quick start, prerequisites
+- `README.md` — overview, quick start, prerequisites (check both sub-package and repo root)
 - `CLAUDE.md` — architecture decisions, key commands, file structure
 
 If the project has multiple READMEs (monorepo), read the root one first, then any sub-directory READMEs that CLAUDE.md or README.md reference.
@@ -292,7 +307,12 @@ If any check fails, re-read the source and correct.
 
 ## Output
 
-Write to `{PROJECT}_FOR_DUMMIES.md` at the project root (same directory as `README.md`). The filename uses the project name in UPPER_SNAKE_CASE (e.g., `TONKA_FOR_DUMMIES.md`, `DEEPBOOK_FOR_DUMMIES.md`). Derive the project name from the repo directory name or `package.json` name field.
+Write to `{PROJECT}_FOR_DUMMIES.md`. The filename uses the project name in UPPER_SNAKE_CASE (e.g., `TONKA_FOR_DUMMIES.md`, `DEEPBOOK_FOR_DUMMIES.md`).
+
+**Where to place the file and how to derive the name:**
+
+- **Sub-package context** (working directory is inside a larger repo): Place the file in the sub-package directory. Derive the project name from the sub-package manifest's `name` field (e.g., `name = "conditional_tokens"` in `Move.toml` produces `CONDITIONAL_TOKENS_FOR_DUMMIES.md`).
+- **Repo root context**: Place the file at the repo root (same directory as `README.md`). Derive the project name from the repo directory name or root manifest `name` field.
 
 If a `*_FOR_DUMMIES.md` already exists, read it first, then overwrite it completely. Do not merge — rewrite from scratch based on current code state.
 
