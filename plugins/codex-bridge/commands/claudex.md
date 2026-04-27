@@ -21,7 +21,7 @@ Execute these rounds in sequence. The goal is to produce a high-quality planning
 
 ### Round 1 — Codex Drafts v0 (Gate G0)
 
-This first call mirrors the standalone `claudex` shell function in `~/.zshrc` — Codex is the first agent to touch the user input and produces a Claude-Code-tailored planning prompt as the seed for the rest of the protocol.
+Codex is the first agent to touch the user input and produces a Claude-Code-tailored planning prompt as the seed for the rest of the protocol.
 
 Call `mcp__codex__codex` with:
 
@@ -39,7 +39,7 @@ Call `mcp__codex__codex` with:
 
 No tool call. Internally review Codex's v0 and produce v1 by:
 
-1. Keeping the structural sections that already work (scope, investigation requirements, analysis expectations, planning quality bar)
+1. Keeping any well-structured sections from v0 that already serve the request
 2. Tightening vague language and removing redundancy
 3. Adding anything Codex omitted that the user's request clearly needs (domain-specific files, prior conventions visible in the working directory)
 4. Preserving the "investigate before coding, ask before assuming" discipline of v0
@@ -53,7 +53,7 @@ Call `mcp__codex__codex-reply` with the threadId from G0:
 ```json
 {
   "threadId": "<threadId from G0>",
-  "prompt": "Here is v1 — my revision of the v0 you just drafted.\n\n## Planning Prompt v1\n\n<paste v1 here>\n\n## Original User Request\n\n<paste $ARGUMENTS here>\n\n## Your Task\n\n1. Critique v1 against your v0. What did the revision improve, what did it lose, what is still missing or vague?\n2. Consider: Does it encourage thorough exploration? Will it produce an actionable plan? Does it handle edge cases?\n3. Generate an improved version (v2) that addresses your critique.\n4. Be specific about what you changed and why."
+  "prompt": "Here is v1 — my revision of the v0 you just drafted.\n\n## Planning Prompt v1\n\n<paste v1 here>\n\n## Your Task\n\n1. Critique v1 against your v0. What did the revision improve, what did it lose, what is still missing or vague?\n2. Consider: Does it encourage thorough exploration? Will it produce an actionable plan? Does it handle edge cases?\n3. Generate an improved version (v2) that addresses your critique.\n4. Be specific about what you changed and why."
 }
 ```
 
@@ -116,9 +116,9 @@ Once the prompt is finalized (via CONVERGED or max iterations):
 ### Codex Unavailable
 If `mcp__codex__codex` fails on G0:
 1. Retry once after a brief pause
-2. If still failing, skip G0 and have Claude draft v1 directly using the same meta-instruction inline (the prompt body from Round 1, applied to `$ARGUMENTS`)
+2. If still failing, skip G0 and have Claude draft the seed planning prompt directly using the same meta-instruction inline (the prompt body from Round 1, applied to `$ARGUMENTS`)
 3. Note to user: "Codex unavailable — proceeding with Claude-only refinement"
-4. The remaining G1a/G1b rounds are also skipped (no thread T to reply on); Claude proceeds straight to `EnterPlanMode` with v1 as the planning task
+4. The remaining G1a/G1b rounds are also skipped (no thread T to reply on); Claude proceeds straight to `EnterPlanMode` with the seed prompt as the planning task
 
 ### Empty or Malformed Response
 If Codex returns empty or unparseable response:

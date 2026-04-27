@@ -57,7 +57,7 @@ The `claudex` skill uses iterative Claude↔Codex refinement to generate compreh
 ## Multi-Round Refinement Protocol
 
 ### Round 1 — Codex Drafts v0 (Gate G0)
-Mirrors the `claudex` shell function in `~/.zshrc` — Codex is the first agent to touch the user input.
+Codex is the first agent to touch the user input.
 
 Call `mcp__codex__codex` with:
 - sandbox: "read-only"
@@ -126,7 +126,7 @@ Claude: [Does NOT trigger claudex — uses codex-bridge instead]
 
 ## Error Handling
 
-- **Codex unavailable**: Retry once, then fall back to Claude drafting v1 directly using the same meta-instruction inline (skip G0; quality degrades but the protocol still produces a refined prompt for plan mode)
+- **Codex unavailable**: Retry once, then fall back to Claude drafting the seed planning prompt directly using the same meta-instruction inline (skip G0; quality degrades but the protocol still produces a refined prompt for plan mode)
 - **Empty response**: Use best available version, continue protocol
 - **Max iterations**: Stop after 4 Codex calls regardless of convergence
 
@@ -135,13 +135,13 @@ Claude: [Does NOT trigger claudex — uses codex-bridge instead]
 | Aspect | /claudex | /codex |
 |--------|----------|--------|
 | Purpose | Refine prompts for Claude's planning | Execute tasks via Codex |
-| Flow | Codex refines → Claude plans | Claude delegates → Codex executes |
+| Flow | Codex drafts → Claude/Codex iterate → Claude plans | Claude delegates → Codex executes |
 | Result | Claude enters plan mode | Codex response returned |
 | Use when | Complex tasks needing investigation | Quick Codex consultation |
 
 ## Notes
 
-1. **Cost**: Each `/claudex` invocation makes 3-4 Codex API calls (Codex now drafts the seed in addition to refining it)
+1. **Cost**: Each `/claudex` invocation makes 3-4 Codex API calls
 2. **Latency**: Multi-round refinement takes ~30-60 seconds
 3. **Quality**: Produces significantly better planning prompts than single-shot
 4. **Fallback**: Works with Claude-only if Codex unavailable (reduced quality)
