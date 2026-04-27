@@ -326,6 +326,16 @@
         "lastUpdated": "2026-04-24T21:56:58.516Z",
         "gitCommitSha": "914445ac5f06a164800ea90ba4db41a0486321ae"
       }
+    ],
+    "sui-pilot@alilloig": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/alilloig/sui-pilot/0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-04-24T17:11:02.916Z",
+        "lastUpdated": "2026-04-24T17:11:02.916Z",
+        "gitCommitSha": "2d82a9ae17860b77ba2f23b9b5c5ab25db3a72a0"
+      }
     ]
   }
 }

@@ -51,6 +51,7 @@
     "typescript-lsp@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
     "telegram@claude-plugins-official": true,
+    "remember@claude-plugins-official": false,
     "hookify@claude-plugins-official": true,
     "gopls-lsp@claude-plugins-official": true,
     "mcp-server-dev@claude-plugins-official": true,
@@ -63,7 +64,9 @@
     "codex-bridge@local": true,
     "forge-bench@local": true,
     "sui-wallet@local": true,
-    "remember@claude-plugins-official": true
+    "legalzoom@claude-plugins-official": true,
+    "ralph-loop@claude-plugins-official": true,
+    "sui-pilot@alilloig": true
   },
   "extraKnownMarketplaces": {
     "impeccable": {
@@ -78,11 +81,17 @@
         "path": "/Users/alilloig/workspace/dotfiles/.claude/plugins/local"
       },
       "autoUpdate": true
+    },
+    "alilloig": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/alilloig/workspace/dotfiles/.claude/sui-pilot"
+      }
     }
   },
-  "effortLevel": "high",
   "autoUpdatesChannel": "latest",
   "skipDangerousModePermissionPrompt": true,
+  "theme": "dark-ansi",
   "editorMode": "vim",
   "preferredNotifChannel": "iterm2",
   "teammateMode": "tmux",
