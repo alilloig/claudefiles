@@ -15,34 +15,13 @@
 
 ## Sui Move Development
 
-### Authoritative Documentation (REQUIRED)
+The sui-pilot doc-first workflow and full pipe-delimited doc index (Sui, Move, Walrus, Seal, TS SDK) is auto-loaded into every session via the `@`-import below. Always prefer those bundled docs over training memory.
 
-**BEFORE any Sui/Move/Walrus/Seal work**, consult the sui-pilot documentation copilot:
-
-1. **Read the index**: `~/.claude/sui-pilot/AGENTS.md`
-2. **Search the docs**: Use Grep/Read on the appropriate doc directory based on the topic:
-   - **Sui/Move**: `~/.claude/sui-pilot/.sui-docs/` (blockchain, Move language, objects, transactions, SDKs)
-   - **Walrus**: `~/.claude/sui-pilot/.walrus-docs/` (decentralized storage, blobs, Walrus Sites, TypeScript SDK)
-   - **Seal**: `~/.claude/sui-pilot/.seal-docs/` (secrets management, encryption, key servers, access control)
-3. **Verify patterns**: Cross-reference code patterns against the official docs before writing code
-
-**Why**: Sui Move evolves rapidly and training data goes stale. sui-pilot contains doc files across three ecosystems (Sui, Walrus, Seal) extracted from official documentation. Always prefer these docs over memory.
+@~/.claude/sui-pilot/agents/sui-pilot-agent.md
 
 ### Code Quality Workflow (MANDATORY)
 
-**AFTER completing Move implementation**, run the code quality checker:
-
-```
-/move-code-quality
-```
-
-**Iterate until no issues remain**:
-- Address all critical issues immediately
-- Apply recommended improvements
-- Re-run `/move-code-quality` after each fix cycle
-- Only consider implementation complete when the tool reports no issues
-
-This ensures all Move code follows the Move Book Code Quality Checklist standards.
+After completing Move implementation, run `/move-code-quality` and iterate until the tool reports no issues. Treat the imported agent's "After Implementation" steps as the baseline; this rule strengthens it — do not skip the quality pass for non-trivial changes.
 
 ### Move.toml Configuration
 
@@ -55,4 +34,3 @@ edition = "2024"
 ## Plan Mode Behavior
 
 When in plan mode, actively use the AskUserQuestion tool to clarify requirements, validate assumptions, and present implementation choices before finalizing the plan. Do not write a complete plan without first gathering input through structured questions. Prefer interactive refinement over monologue-style planning.
-
