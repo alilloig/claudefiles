@@ -128,6 +128,8 @@ Claude: [Does NOT trigger claudex — uses codex-bridge instead]
 
 - **Codex unavailable**: Retry once, then fall back to Claude drafting the seed planning prompt directly using the same meta-instruction inline (skip G0; quality degrades but the protocol still produces a refined prompt for plan mode)
 - **Empty response**: Use best available version, continue protocol
+- **Fenced v0**: If Codex wraps v0 in markdown fences despite the "Output only..." instruction, strip the outer fences and continue
+- **Thread lost mid-protocol** (context compaction, MCP restart, etc.): Restart from G0 with a fresh `mcp__codex__codex` call — do not attempt to resume the lost thread
 - **Max iterations**: Stop after 4 Codex calls regardless of convergence
 
 ## Comparison with /codex

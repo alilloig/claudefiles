@@ -35,6 +35,8 @@ Call `mcp__codex__codex` with:
 
 **Store the returned `threadId`** — every subsequent Codex call in this skill must reuse it via `mcp__codex__codex-reply`. The body of Codex's response is **v0**, the seed planning prompt.
 
+`$ARGUMENTS` is interpolated into the JSON `prompt` value as a string; the MCP harness JSON-escapes embedded quotes and newlines before substitution.
+
 ### Round 2 — Claude critiques v0 → v1
 
 No tool call. Internally review Codex's v0 and produce v1 by:
@@ -125,6 +127,13 @@ If Codex returns empty or unparseable response:
 1. Log the issue
 2. Proceed with the best prompt version available
 3. Continue the protocol
+
+If Codex wraps v0 in markdown fences despite the trailing "Output only..." instruction, strip the outer fences before using v0; do not abort the protocol.
+
+### Thread Lost Mid-Protocol
+If the `threadId` from G0 is no longer valid between rounds (context compaction, MCP server restart, or any other cause):
+1. Restart from G0 with a fresh `mcp__codex__codex` call
+2. Do not attempt to resume the lost thread — Codex's server-side state is gone
 
 ## Output Format
 
