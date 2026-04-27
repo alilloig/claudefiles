@@ -18,8 +18,8 @@ allowed-tools:
   - mcp__codex__codex-reply
   - EnterPlanMode
 author: alilloig
-version: 1.0.0
-date: 2026-04-14
+version: 1.1.0
+date: 2026-04-27
 ---
 
 # claudex — Multi-Round Planning Prompt Refinement
@@ -56,33 +56,36 @@ The `claudex` skill uses iterative Claude↔Codex refinement to generate compreh
 
 ## Multi-Round Refinement Protocol
 
-### Round 1 — Claude's v1
-Generate initial planning prompt from user input covering:
-- Task scope and goals
-- Investigation requirements (files, patterns, dependencies)
-- Analysis expectations (causes, systems, constraints, risks)
-- Planning quality bar (what the plan must include)
+### Round 1 — Codex Drafts v0 (Gate G0)
+Mirrors the `claudex` shell function in `~/.zshrc` — Codex is the first agent to touch the user input.
 
-### Round 2 — Codex Critique (Gate G1a)
 Call `mcp__codex__codex` with:
 - sandbox: "read-only"
 - cwd: current working directory
-- prompt: Ask Codex to critique v1 and generate improved v2
+- prompt: the meta-instruction telling Codex to produce a Claude-Code-ready planning prompt from the user's request (see `commands/claudex.md` for the full text)
 
-Store the returned `threadId`.
+Store the returned `threadId` — every subsequent Codex call in this skill reuses it via `mcp__codex__codex-reply`. The body of Codex's response is **v0**, the seed planning prompt.
 
-### Round 3 — Claude's v3 (Synthesis)
+### Round 2 — Claude critiques v0 → v1
+No tool call. Tighten v0, fill gaps Codex missed, keep its investigate-before-coding discipline.
+
+### Round 3 — Codex Critique (Gate G1a)
+Call `mcp__codex__codex-reply` with:
+- threadId: from G0
+- prompt: Ask Codex to critique v1 against its own v0 and generate improved v2
+
+### Round 4 — Claude's v3 (Synthesis)
 Review Codex's v2 and critique. Generate v3 by:
 - Keeping strongest elements from both versions
 - Resolving contradictions
 - Incorporating new valuable ideas
 
-### Round 4 — Codex Convergence (Gate G1b)
+### Round 5 — Codex Convergence (Gate G1b)
 Call `mcp__codex__codex-reply` with:
-- threadId: from G1a
+- threadId: from G0
 - prompt: Ask if v3 is converged or needs more work
 
-If response starts with "CONVERGED", proceed. Otherwise, optionally do one more round.
+If response starts with "CONVERGED", proceed. Otherwise, optionally do one more round (Gate G1c, max 4 Codex calls total).
 
 ### After Convergence
 1. Call `EnterPlanMode` tool
@@ -96,10 +99,11 @@ If response starts with "CONVERGED", proceed. Otherwise, optionally do one more 
 User: /claudex Add real-time notifications to the dashboard
 
 Claude: [Executes multi-round refinement]
-→ v1: Initial planning prompt
-→ Codex critique: "Missing WebSocket vs SSE consideration..."
-→ v3: Synthesized prompt with transport layer analysis
-→ CONVERGED
+→ Codex drafts v0 (thread T opened): structured planning prompt for the dashboard notifications task
+→ Claude critiques v0 → v1: tightens scope to the existing dashboard runtime
+→ Codex critique on v1 (thread T): "Missing WebSocket vs SSE consideration..."
+→ Claude synthesizes v3: transport layer analysis added
+→ Codex convergence check on thread T → CONVERGED
 → Enters plan mode with refined prompt
 ```
 
@@ -122,9 +126,9 @@ Claude: [Does NOT trigger claudex — uses codex-bridge instead]
 
 ## Error Handling
 
-- **Codex unavailable**: Retry once, then proceed with Claude-only v1
+- **Codex unavailable**: Retry once, then fall back to Claude drafting v1 directly using the same meta-instruction inline (skip G0; quality degrades but the protocol still produces a refined prompt for plan mode)
 - **Empty response**: Use best available version, continue protocol
-- **Max iterations**: Stop after 3 Codex calls regardless of convergence
+- **Max iterations**: Stop after 4 Codex calls regardless of convergence
 
 ## Comparison with /codex
 
@@ -137,7 +141,7 @@ Claude: [Does NOT trigger claudex — uses codex-bridge instead]
 
 ## Notes
 
-1. **Cost**: Each `/claudex` invocation makes 2-4 Codex API calls
+1. **Cost**: Each `/claudex` invocation makes 3-4 Codex API calls (Codex now drafts the seed in addition to refining it)
 2. **Latency**: Multi-round refinement takes ~30-60 seconds
 3. **Quality**: Produces significantly better planning prompts than single-shot
 4. **Fallback**: Works with Claude-only if Codex unavailable (reduced quality)

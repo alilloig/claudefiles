@@ -19,32 +19,9 @@ Use iterative Claude↔Codex refinement to generate a comprehensive planning pro
 
 Execute these rounds in sequence. The goal is to produce a high-quality planning prompt that will guide Claude Code through codebase investigation, analysis, and detailed implementation planning.
 
-### Round 1 — Claude's v1
+### Round 1 — Codex Drafts v0 (Gate G0)
 
-Generate the best initial planning prompt from the user's input. The planning prompt should instruct a Claude Code session (yourself, after entering plan mode) to:
-
-1. **Treat the request as a scoped engineering task** requiring repository investigation before proposing changes
-2. **Explore the codebase efficiently** to find relevant files, entry points, dependencies, configuration, and existing patterns
-3. **Analyze the problem in context**, including:
-   - Likely causes or approaches
-   - Affected systems or flows
-   - Constraints from existing architecture
-   - Edge cases and risks
-4. **Produce a detailed implementation plan** before writing code, including:
-   - Short problem summary
-   - Relevant findings from the codebase
-   - Assumptions and unknowns
-   - Questions that must be clarified (via AskUserQuestion)
-   - Ordered implementation steps
-   - Impacted files or modules
-   - Testing and validation steps
-   - Potential regressions or rollout concerns
-5. **Use AskUserQuestion** when required information is missing, ambiguous, or materially affects the implementation plan
-6. **Prefer resolving questions from the codebase first** — only use AskUserQuestion when the answer cannot be determined reliably from the repository
-
-Structure the v1 prompt clearly with sections for scope, investigation requirements, analysis expectations, and planning quality bar.
-
-### Round 2 — Codex Critique (Gate G1a)
+This first call mirrors the standalone `claudex` shell function in `~/.zshrc` — Codex is the first agent to touch the user input and produces a Claude-Code-tailored planning prompt as the seed for the rest of the protocol.
 
 Call `mcp__codex__codex` with:
 
@@ -52,17 +29,39 @@ Call `mcp__codex__codex` with:
 {
   "sandbox": "read-only",
   "cwd": "<current working directory>",
-  "prompt": "You are reviewing a planning prompt that will be used to guide Claude Code through codebase investigation and implementation planning.\n\n## Planning Prompt v1\n\n<paste v1 here>\n\n## Original User Request\n\n<paste $ARGUMENTS here>\n\n## Your Task\n\n1. Critique this planning prompt. What's missing, vague, weak, or could lead to shallow investigation or incomplete planning?\n2. Consider: Does it encourage thorough exploration? Will it produce an actionable plan? Does it handle edge cases?\n3. Generate an improved version (v2) that addresses your critique.\n4. Be specific about what you changed and why."
+  "prompt": "Create a refined prompt for Claude Code that is optimized for a Codex-to-Claude-Code handoff.\n\nThe prompt should instruct Claude Code to:\n- Treat the user request as a scoped engineering task that requires\n  repository investigation before proposing changes.\n- Explore the codebase efficiently to find the relevant files, entry\n  points, dependencies, configuration, and existing patterns.\n- Analyze the problem in context, including likely causes, affected systems\n  or flows, constraints, edge cases, and risks.\n- Produce a detailed implementation plan before writing code.\n- Make the plan specific, practical, and execution-ready, including:\n  - a short problem summary,\n  - relevant findings from the codebase,\n  - assumptions and unknowns,\n  - questions that must be clarified,\n  - ordered implementation steps,\n  - impacted files or modules,\n  - testing and validation steps,\n  - potential regressions or rollout concerns if applicable.\n- Use the AskUserQuestion tool whenever required information is missing,\n  ambiguous, or materially affects the implementation plan, rather than\n  silently making important assumptions.\n- Prefer resolving questions from the codebase first, and only use\n  AskUserQuestion when the answer cannot be determined reliably from the\n  repository or request.\n- Avoid coding immediately; focus on investigation, analysis, and planning.\n\nAddress this request: $ARGUMENTS\n\nOutput only the final prompt text itself, with no preamble, explanation, or markdown fences."
 }
 ```
 
-**Store the returned `threadId`** for subsequent rounds.
+**Store the returned `threadId`** — every subsequent Codex call in this skill must reuse it via `mcp__codex__codex-reply`. The body of Codex's response is **v0**, the seed planning prompt.
+
+### Round 2 — Claude critiques v0 → v1
+
+No tool call. Internally review Codex's v0 and produce v1 by:
+
+1. Keeping the structural sections that already work (scope, investigation requirements, analysis expectations, planning quality bar)
+2. Tightening vague language and removing redundancy
+3. Adding anything Codex omitted that the user's request clearly needs (domain-specific files, prior conventions visible in the working directory)
+4. Preserving the "investigate before coding, ask before assuming" discipline of v0
+
+v1 is Claude's first contribution and the input to G1a.
+
+### Round 3 — Codex Critique (Gate G1a)
+
+Call `mcp__codex__codex-reply` with the threadId from G0:
+
+```json
+{
+  "threadId": "<threadId from G0>",
+  "prompt": "Here is v1 — my revision of the v0 you just drafted.\n\n## Planning Prompt v1\n\n<paste v1 here>\n\n## Original User Request\n\n<paste $ARGUMENTS here>\n\n## Your Task\n\n1. Critique v1 against your v0. What did the revision improve, what did it lose, what is still missing or vague?\n2. Consider: Does it encourage thorough exploration? Will it produce an actionable plan? Does it handle edge cases?\n3. Generate an improved version (v2) that addresses your critique.\n4. Be specific about what you changed and why."
+}
+```
 
 Parse Codex's response to extract:
 - The critique points
 - The improved v2 prompt
 
-### Round 3 — Claude's v3 (Synthesis)
+### Round 4 — Claude's v3 (Synthesis)
 
 Review Codex's v2 and critique. Generate v3 by synthesizing:
 
@@ -73,18 +72,18 @@ Review Codex's v2 and critique. Generate v3 by synthesizing:
 
 The v3 prompt should be the strongest combination of both versions. Don't just concatenate — synthesize intelligently.
 
-### Round 4 — Codex Convergence Check (Gate G1b)
+### Round 5 — Codex Convergence Check (Gate G1b)
 
 Call `mcp__codex__codex-reply` with:
 
 ```json
 {
-  "threadId": "<threadId from G1a>",
+  "threadId": "<threadId from G0>",
   "prompt": "Here is planning prompt v3 (my synthesis of v1 and your v2):\n\n<paste v3 here>\n\nIs this converged? Critique any remaining weaknesses. If it's good enough to guide thorough investigation and planning, respond with exactly 'CONVERGED' at the start of your response. Otherwise, provide specific feedback on what still needs improvement."
 }
 ```
 
-### Round 5 (Optional — Gate G1c)
+### Round 6 (Optional — Gate G1c)
 
 Only execute if:
 - Codex's response does NOT start with "CONVERGED"
@@ -93,7 +92,7 @@ Only execute if:
 If needed:
 1. Incorporate the final feedback into v4
 2. Call `mcp__codex__codex-reply` one more time for confirmation
-3. Proceed regardless of response (max 3 Codex calls)
+3. Proceed regardless of response (max 4 Codex calls)
 
 ## After Convergence
 
@@ -115,10 +114,11 @@ Once the prompt is finalized (via CONVERGED or max iterations):
 ## Error Handling
 
 ### Codex Unavailable
-If `mcp__codex__codex` fails:
+If `mcp__codex__codex` fails on G0:
 1. Retry once after a brief pause
-2. If still failing, proceed with Claude-only v1 prompt
+2. If still failing, skip G0 and have Claude draft v1 directly using the same meta-instruction inline (the prompt body from Round 1, applied to `$ARGUMENTS`)
 3. Note to user: "Codex unavailable — proceeding with Claude-only refinement"
+4. The remaining G1a/G1b rounds are also skipped (no thread T to reply on); Claude proceeds straight to `EnterPlanMode` with v1 as the planning task
 
 ### Empty or Malformed Response
 If Codex returns empty or unparseable response:
@@ -133,10 +133,11 @@ During refinement, show progress:
 ```
 **Claudex Refinement**
 
-Round 1: Generating initial planning prompt...
-Round 2: Codex critique received (thread `<short-id>`)
-Round 3: Synthesizing v3...
-Round 4: Checking convergence... ✓ CONVERGED
+Round 1: Codex drafting v0 (thread `<short-id>`)...
+Round 2: Critiquing v0 → v1...
+Round 3: Codex critique of v1 received...
+Round 4: Synthesizing v3...
+Round 5: Checking convergence... ✓ CONVERGED
 
 Entering plan mode with refined prompt.
 ```
@@ -145,8 +146,9 @@ Entering plan mode with refined prompt.
 
 User runs: `/claudex Add user authentication with JWT tokens to the Express API`
 
-1. Claude generates v1 planning prompt covering JWT implementation investigation
-2. Codex critiques: "Missing consideration for refresh token strategy, token storage options, middleware placement"
-3. Claude synthesizes v3 incorporating these points while keeping v1's focus on existing patterns
-4. Codex confirms: "CONVERGED"
-5. Claude enters plan mode and begins investigating the codebase per the refined prompt
+1. Codex drafts v0: a structured planning prompt covering JWT investigation, AskUserQuestion guidance, and execution-ready plan requirements (thread `T` opened)
+2. Claude critiques v0 → v1: tightens scope, adds the project's existing Express middleware conventions
+3. Codex critiques v1 → v2 (on thread `T`): "Missing consideration for refresh token strategy, token storage options, middleware placement"
+4. Claude synthesizes v3 incorporating these points while keeping v1's focus on existing patterns
+5. Codex confirms (on thread `T`): "CONVERGED"
+6. Claude enters plan mode and begins investigating the codebase per the refined prompt
