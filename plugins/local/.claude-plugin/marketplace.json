@@ -13,12 +13,6 @@
       "category": "development"
     },
     {
-      "name": "codex-bridge",
-      "description": "Bridge to OpenAI Codex CLI with multi-turn session support",
-      "source": "./codex-bridge",
-      "category": "development"
-    },
-    {
       "name": "code-forge-rig",
       "description": "Code Forge with enforcement hooks for protocol drift prevention",
       "source": "./code-forge-rig",
