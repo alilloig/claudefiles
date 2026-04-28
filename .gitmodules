@@ -13,3 +13,8 @@
 	url = git@github.com:MystenLabs/move-code-review-skill.git
 	branch = main
 	update = merge
+[submodule "code-forge"]
+	path = code-forge
+	url = git@github.com:alilloig/code-forge.git
+	branch = main
+	update = merge
