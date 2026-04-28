@@ -91,8 +91,14 @@ done
 install_plugin "impeccable@impeccable"
 
 # Local plugins
-for p in code-forge code-forge-rig codex-bridge forge-bench sui-wallet; do
+for p in forge-bench sui-wallet; do
     install_plugin "${p}@local"
+done
+
+# Contract-hero plugins (code-forge + codex-bridge migrated here from local;
+# see plugins/marketplaces/contract-hero/.claude-plugin/marketplace.json)
+for p in code-forge codex-bridge sui-pilot; do
+    install_plugin "${p}@contract-hero"
 done
 
 echo ""

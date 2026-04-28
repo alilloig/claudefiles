@@ -267,26 +267,6 @@
         "gitCommitSha": "00d485659af82982aef0328d0419c49a2716d123"
       }
     ],
-    "code-forge@local": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/local/code-forge/1.0.0",
-        "version": "1.0.0",
-        "installedAt": "2026-04-24T21:30:24.173Z",
-        "lastUpdated": "2026-04-24T21:30:24.173Z",
-        "gitCommitSha": "0097ed5488195ba112d1f39e6aa463538c816f17"
-      }
-    ],
-    "codex-bridge@local": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/local/codex-bridge/1.0.0",
-        "version": "1.0.0",
-        "installedAt": "2026-04-24T21:30:26.368Z",
-        "lastUpdated": "2026-04-24T21:30:26.368Z",
-        "gitCommitSha": "0097ed5488195ba112d1f39e6aa463538c816f17"
-      }
-    ],
     "sui-wallet@local": [
       {
         "scope": "user",
@@ -294,26 +274,6 @@
         "version": "1.0.0",
         "installedAt": "2026-04-24T21:30:28.528Z",
         "lastUpdated": "2026-04-24T21:30:28.528Z",
-        "gitCommitSha": "0097ed5488195ba112d1f39e6aa463538c816f17"
-      }
-    ],
-    "code-forge-rig@local": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/local/code-forge-rig/1.0.0",
-        "version": "1.0.0",
-        "installedAt": "2026-04-24T21:30:25.282Z",
-        "lastUpdated": "2026-04-24T21:30:25.282Z",
-        "gitCommitSha": "0097ed5488195ba112d1f39e6aa463538c816f17"
-      }
-    ],
-    "forge-bench@local": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/local/forge-bench/1.0.0",
-        "version": "1.0.0",
-        "installedAt": "2026-04-24T21:30:27.442Z",
-        "lastUpdated": "2026-04-24T21:30:27.442Z",
         "gitCommitSha": "0097ed5488195ba112d1f39e6aa463538c816f17"
       }
     ],
@@ -327,26 +287,6 @@
         "gitCommitSha": "914445ac5f06a164800ea90ba4db41a0486321ae"
       }
     ],
-    "sui-pilot@alilloig": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/alilloig/sui-pilot/0.1.0",
-        "version": "0.1.0",
-        "installedAt": "2026-04-24T17:11:02.916Z",
-        "lastUpdated": "2026-04-24T17:11:02.916Z",
-        "gitCommitSha": "2d82a9ae17860b77ba2f23b9b5c5ab25db3a72a0"
-      }
-    ],
-    "legalzoom@claude-plugins-official": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/legalzoom/1.0.0",
-        "version": "1.0.0",
-        "installedAt": "2026-04-27T08:14:32.877Z",
-        "lastUpdated": "2026-04-27T08:14:32.877Z",
-        "gitCommitSha": "f9fd8a0ca6e1421bc1aacb113a109663a7a6f6d8"
-      }
-    ],
     "ralph-loop@claude-plugins-official": [
       {
         "scope": "user",
@@ -354,6 +294,26 @@
         "version": "1.0.0",
         "installedAt": "2026-04-27T08:14:39.763Z",
         "lastUpdated": "2026-04-27T08:14:39.763Z"
+      }
+    ],
+    "codex-bridge@contract-hero": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/codex-bridge/1.1.0",
+        "version": "1.1.0",
+        "installedAt": "2026-04-27T10:55:51.255Z",
+        "lastUpdated": "2026-04-27T10:55:51.255Z",
+        "gitCommitSha": "bc5f9a7f945ca8998075b4e7a4f1c3f7c347eee6"
+      }
+    ],
+    "sui-pilot@contract-hero": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/sui-pilot/200a1c7e6c85",
+        "version": "200a1c7e6c85",
+        "installedAt": "2026-04-27T10:55:54.815Z",
+        "lastUpdated": "2026-04-27T10:55:54.815Z",
+        "gitCommitSha": "200a1c7e6c85b86b881abc183138258ff1a0690e"
       }
     ]
   }
