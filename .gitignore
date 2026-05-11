@@ -32,5 +32,8 @@ channels/
 # ── Settings backups (auto-generated) ──
 settings.json.backup.*
 
+# ── Cleanup hook marker (regenerated each run) ──
+.last-cleanup
+
 # ── OS junk ──
 .DS_Store

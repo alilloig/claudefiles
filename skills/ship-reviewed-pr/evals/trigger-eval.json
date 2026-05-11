@@ -1,0 +1,23 @@
+[
+  { "query": "ok i'm done with these changes, ship this", "should_trigger": true },
+  { "query": "wrap this up, push, and run the deep review", "should_trigger": true },
+  { "query": "finish the PR pipeline on this branch", "should_trigger": true },
+  { "query": "deep review my changes and push fixes", "should_trigger": true },
+  { "query": "ship it with review", "should_trigger": true },
+  { "query": "run the full PR pipeline before I head out", "should_trigger": true },
+  { "query": "all done — go through the whole thing and ship if there's nothing critical", "should_trigger": true },
+  { "query": "submit this branch as a reviewed PR", "should_trigger": true },
+  { "query": "let's wrap up: commit, open the PR, get the multi-agent review", "should_trigger": true },
+  { "query": "envíalo con review completo, está todo listo en la rama", "should_trigger": true },
+
+  { "query": "review this Move PR for the auction module", "should_trigger": false },
+  { "query": "just commit this for me, don't worry about the rest", "should_trigger": false },
+  { "query": "fix the bug in the auth handler — null deref on empty input", "should_trigger": false },
+  { "query": "open a PR for this branch please", "should_trigger": false },
+  { "query": "run code-review on PR #4 in the api repo", "should_trigger": false },
+  { "query": "simplify this function, it's too nested", "should_trigger": false },
+  { "query": "what's wrong with this code? https://github.com/foo/bar/pull/12 — is the retry logic ok?", "should_trigger": false },
+  { "query": "ship this slide deck to the team via slack before 3pm", "should_trigger": false },
+  { "query": "review my move tests under tests/unit/", "should_trigger": false },
+  { "query": "comment on PR #3 saying LGTM, then close it as won't-fix", "should_trigger": false }
+]
