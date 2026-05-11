@@ -10,6 +10,15 @@
       "Bash(claude:*)",
       "Bash(gh repo create:*)"
     ],
+    "deny": [
+      "Read(~/Library/Containers/**)",
+      "Read(~/Library/Group Containers/**)",
+      "Read(~/Library/Application Support/**)",
+      "Bash(find ~/Library*)",
+      "Bash(ls ~/Library/Containers*)",
+      "Bash(ls ~/Library/Group Containers*)",
+      "Bash(ls ~/Library/Application Support*)"
+    ],
     "defaultMode": "auto"
   },
   "hooks": {
