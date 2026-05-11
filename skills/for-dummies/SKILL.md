@@ -1,14 +1,15 @@
 ---
 name: for-dummies
 description: |
-  Generates a {PROJECT}_FOR_DUMMIES.md intro guide for any project by reading
+  Generates a {PROJECT}_FOR_DUMMIES.html intro guide for any project by reading
   the actual codebase (not guessing). Use when: (1) onboarding new contributors
   or users, (2) documenting a project's architecture and quick-start in one
   place, (3) creating a plain-English entry point for a complex multi-service
   system. Covers architecture, prerequisites, boot sequence, config reference,
   common tasks, and key files — all sourced from code, not assumptions.
   Monorepo-aware: when run inside a sub-package, scopes the guide to that
-  package and derives the filename from its manifest.
+  package and derives the filename from its manifest. Output is a single
+  self-contained HTML file (semantic HTML5, inline CSS, optional inline SVG).
 allowed-tools: Read, Write, Glob, Grep, Bash
 author: Claude Code
 version: 2.1.0
@@ -17,7 +18,7 @@ date: 2026-03-06
 
 # For Dummies Guide Generator
 
-You generate `{PROJECT}_FOR_DUMMIES.md` — a plain-English, ground-truth intro document for the current project. The filename uses the project name in UPPER_SNAKE_CASE (e.g., `TONKA_FOR_DUMMIES.md`, `DEEPBOOK_FOR_DUMMIES.md`). Derive the project name from the repo directory name or `package.json` name field. Every fact in the output must come from files you actually read. Never guess, never assume, never use training knowledge about third-party tools without verifying against real project files.
+You generate `{PROJECT}_FOR_DUMMIES.html` — a plain-English, ground-truth intro document for the current project, as a single self-contained HTML file. The filename uses the project name in UPPER_SNAKE_CASE (e.g., `TONKA_FOR_DUMMIES.html`, `DEEPBOOK_FOR_DUMMIES.html`). Derive the project name from the repo directory name or `package.json` name field. Every fact in the output must come from files you actually read. Never guess, never assume, never use training knowledge about third-party tools without verifying against real project files.
 
 ---
 
@@ -27,14 +28,16 @@ A "for dummies" guide serves **sequential readers** — people who start at the 
 
 **Structure the document in two distinct zones:**
 
-1. **Tutorial zone (numbered sections)** — Walks the reader from "I just cloned this" to "I'm productively using it." Each section builds on the previous one. Use numbered headings (`## 1. What Is This?`, `## 2. Prerequisites`, etc.).
+1. **Tutorial zone (numbered sections)** — Walks the reader from "I just cloned this" to "I'm productively using it." Each section builds on the previous one. Use `<section id="...">` with `<h2>1. What Is This?</h2>`, `<h2>2. Prerequisites</h2>`, etc.
 
-2. **Reference zone (appendices)** — Comprehensive lookup material: full command tables, config references, glossaries, file maps. Use `## Appendix A:`, `## Appendix B:`, etc.
+2. **Reference zone (appendices)** — Comprehensive lookup material: full command tables, config references, glossaries, file maps. Use `<section id="appendix-a-...">` with `<h2>Appendix A: …</h2>`, etc.
 
 The tutorial zone answers: *"How do I go from nothing to working?"*
 The reference zone answers: *"What was that flag/command/variable called?"*
 
-**Never** put reference-density content (exhaustive command tables, full config references) in the tutorial zone. Instead, link to the appendix: *"See the full [Configuration Reference](#appendix-b-configuration-reference) at the end."*
+**Never** put reference-density content (exhaustive command tables, full config references) in the tutorial zone. Instead, link to the appendix: `<a href="#appendix-b-configuration-reference">See the full Configuration Reference at the end.</a>`
+
+Include a top-of-document `<nav>` with anchor links to every tutorial section and every appendix — readers should be able to scan the doc's shape at a glance.
 
 ---
 
@@ -125,15 +128,26 @@ Based on what you found, decide which sections are relevant. Omit sections that 
 
 ### File Header
 
-```markdown
-# [Project Name] for Dummies
+Open with `<!DOCTYPE html>`, `<html lang="en">`, a `<head>` containing `<meta charset="utf-8">`, `<meta name="viewport" content="width=device-width, initial-scale=1">`, a descriptive `<title>` (e.g. `Tonka for Dummies`), and a single inline `<style>` block (see HTML conventions below). The `<body>` opens with:
 
-A beginner's guide to [one-line description of what the user will be doing].
-
----
+```html
+<header>
+  <h1>[Project Name] for Dummies</h1>
+  <p class="subtitle">A beginner's guide to [one-line description of what the user will be doing].</p>
+</header>
+<nav aria-label="Contents">
+  <ul>
+    <li><a href="#what-is-this">1. What Is This?</a></li>
+    <li><a href="#architecture">2. How It All Fits Together</a></li>
+    <!-- … one <li> per tutorial section, then appendices … -->
+  </ul>
+</nav>
+<main>
+  <!-- one <section id="…"> per tutorial item, then one per appendix -->
+</main>
 ```
 
-No table of contents in the header. The numbered sections ARE the navigation. Readers scroll; they don't jump. (Appendices can be linked from the tutorial text when relevant.)
+Always include the top `<nav>`. Tutorial sections still build sequentially top-to-bottom; the nav is for re-finding things later, not for treating the doc as random-access.
 
 ### Tutorial Zone Sections
 
@@ -148,13 +162,15 @@ Be more concrete than the README's marketing copy — describe what actually run
 
 #### Section: How It All Fits Together (Architecture)
 
-Use ASCII diagrams with clear labels. Show real relationships:
-- Use **arrows** to show data/communication flow direction
-- Use **separate boxes** for separate processes/VMs/containers — do NOT nest boxes to imply containment unless one thing literally runs inside another
-- Label communication channels (SSH, HTTP, gRPC, etc.)
-- After the diagram, 2–3 sentences explaining the key components
+Use **inline `<svg>`** diagrams inside `<figure>`+`<figcaption>`. Show real relationships:
+- Use `<line>`/`<path>` with arrowhead `<marker>`s to show data/communication flow direction
+- Use **separate `<rect>`/`<g>` groups** for separate processes/VMs/containers — do NOT nest them to imply containment unless one thing literally runs inside another
+- Label communication channels (SSH, HTTP, gRPC, etc.) on the arrows with `<text>`
+- After the diagram, 2–3 sentences (`<p>`) explaining the key components
 
 Diagrams should be architecturally accurate. If A clones B, show them as peers with an arrow, not B inside A.
+
+Reserve ASCII diagrams only for tiny one-line shapes (e.g. `A → B → C`) — anything bigger goes in SVG.
 
 #### Section: Prerequisites
 
@@ -282,8 +298,9 @@ The guide should feel like a knowledgeable colleague walking you through setup o
 5. **Active voice**: "The indexer reads checkpoints" not "Checkpoints are read by the indexer."
 6. **No hedging**: Do not write "may", "might", "could", "typically", "usually" for facts you have verified from code.
 7. **Present tense**: "The indexer reads checkpoints" not "The indexer will read checkpoints."
-8. **Flat bullets in the tutorial zone**: No nested bullet lists. If you need sub-points, use a table or a new paragraph.
-9. **Nested bullets OK in appendices**: Reference sections can use nesting for structure since readers are scanning, not reading linearly.
+8. **Flat `<ul>` in the tutorial zone**: No nested `<ul>`. If you need sub-points, use a `<table>`, a new `<p>`, or `<details>` for collapsible drill-down.
+9. **Nested `<ul>` OK in appendices**: Reference sections can use nesting for structure since readers are scanning, not reading linearly.
+10. **Callouts as `<aside>`**: Use `<aside class="note">` / `<aside class="warning">` for sidebar-style warnings; place them where they matter, not in a separate section.
 
 ---
 
@@ -307,13 +324,31 @@ If any check fails, re-read the source and correct.
 
 ## Output
 
-Write to `{PROJECT}_FOR_DUMMIES.md`. The filename uses the project name in UPPER_SNAKE_CASE (e.g., `TONKA_FOR_DUMMIES.md`, `DEEPBOOK_FOR_DUMMIES.md`).
+Write to `{PROJECT}_FOR_DUMMIES.html`. The filename uses the project name in UPPER_SNAKE_CASE (e.g., `TONKA_FOR_DUMMIES.html`, `DEEPBOOK_FOR_DUMMIES.html`).
 
 **Where to place the file and how to derive the name:**
 
-- **Sub-package context** (working directory is inside a larger repo): Place the file in the sub-package directory. Derive the project name from the sub-package manifest's `name` field (e.g., `name = "conditional_tokens"` in `Move.toml` produces `CONDITIONAL_TOKENS_FOR_DUMMIES.md`).
+- **Sub-package context** (working directory is inside a larger repo): Place the file in the sub-package directory. Derive the project name from the sub-package manifest's `name` field (e.g., `name = "conditional_tokens"` in `Move.toml` produces `CONDITIONAL_TOKENS_FOR_DUMMIES.html`).
 - **Repo root context**: Place the file at the repo root (same directory as `README.md`). Derive the project name from the repo directory name or root manifest `name` field.
 
-If a `*_FOR_DUMMIES.md` already exists, read it first, then overwrite it completely. Do not merge — rewrite from scratch based on current code state.
+If a `*_FOR_DUMMIES.html` (or legacy `*_FOR_DUMMIES.md`) already exists, read it first to lift any still-accurate facts, then overwrite the `.html` completely. Do not merge — rewrite from scratch based on current code state. If a legacy `.md` exists alongside the new `.html`, leave the `.md` in place unless the user asks to delete it (their git history may reference it).
 
-After writing, confirm by listing the file and reporting its approximate line count.
+After writing, confirm by listing the file and reporting its approximate line count. Note that "open it in a browser" is the intended viewing path; markdown viewers will not render the SVG / `<details>` / `<aside>` cleanly.
+
+---
+
+## HTML Output Conventions
+
+The doc is a single self-contained `.html` file. Defaults to follow (adapt to content, don't over-prescribe):
+
+- **Doctype & shell**: `<!DOCTYPE html>`, `<html lang="en">`, `<head>` with `<meta charset="utf-8">`, viewport meta, `<title>`, and one inline `<style>` block. No external CSS/JS, no CDNs. The file must work when double-clicked into a browser.
+- **Semantic tags**: `<header>`, `<nav>`, `<main>`, `<section id="…">`, `<article>`, `<aside>`, `<figure>`/`<figcaption>`, `<footer>`. Each tutorial section and appendix gets its own `<section>` with a stable `id` matching the nav link.
+- **Tables**: any tabular reference (commands, config vars, "what gets destroyed") goes in `<table>` with `<thead>`/`<tbody>`. Keep columns scannable.
+- **Code**: `<pre><code>` for multi-line; `<code>` inline. Don't pull in Prism/Highlight.js — color a few keywords via simple CSS classes if you need contrast.
+- **Diagrams**: inline `<svg>` for anything bigger than a 1-line shape. No `<img>` references to external files.
+- **Collapsibles**: `<details><summary>` for long appendix lookups, FAQs, or "advanced" drill-downs that would otherwise bloat the tutorial flow.
+- **Callouts**: `<aside class="note">`, `<aside class="warning">`, `<aside class="tip">`.
+- **CSS style**: small inline stylesheet — system-font stack, max-width ~70–80ch on prose, comfortable line-height, mobile-responsive via one `@media (max-width: 720px)` block. Avoid gradients, glass-morphism, neon palettes, emoji-decorated headings.
+- **No JavaScript** unless the doc actually needs interactivity (this skill rarely does).
+
+When unsure how rich to go, lean on the examples at https://thariqs.github.io/html-effectiveness/.

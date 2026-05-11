@@ -1,6 +1,6 @@
 ---
 name: game-design
-description: Creates mechanics-focused Game Design Documents through guided interaction. Helps design core loops, systems, progression, balancing, and game objects - producing documentation ready for code implementation.
+description: Creates mechanics-focused Game Design Documents through guided interaction. Helps design core loops, systems, progression, balancing, and game objects - producing a single self-contained HTML GDD (semantic HTML5, inline CSS, optional inline SVG diagrams) ready for code implementation.
 allowed-tools: Read, Write, Glob, Grep, AskUserQuestion
 ---
 
@@ -351,106 +351,107 @@ At the end, compile all decisions that need more thought:
 
 ## Final Output Format
 
-After completing all phases, write a single markdown file:
+After completing all phases, write a single self-contained HTML file (`<game-title>-mechanics-gdd.html`, slugified):
 
-```markdown
-# [Game Title] - Mechanics GDD
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>[Game Title] — Mechanics GDD</title>
+  <style>/* inline CSS — see HTML Output Conventions below */</style>
+</head>
+<body>
+  <header>
+    <h1>[Game Title] — Mechanics GDD</h1>
+    <p class="concept">[One-sentence concept]</p>
+    <dl class="meta">
+      <dt>Genre</dt><dd>[Genre]</dd>
+      <dt>Target Player</dt><dd>[Player type]</dd>
+      <dt>Session Length</dt><dd>[Duration]</dd>
+    </dl>
+  </header>
 
-> [One-sentence concept]
+  <nav aria-label="Sections">
+    <ul>
+      <li><a href="#core-loop">Core Loop</a></li>
+      <li><a href="#progression">Player Progression</a></li>
+      <li><a href="#systems">Game Systems</a></li>
+      <li><a href="#objects">Game Objects</a></li>
+      <li><a href="#economy">Economy</a></li>
+      <li><a href="#balancing">Balancing</a></li>
+      <li><a href="#controls">Controls</a></li>
+      <li><a href="#unresolved">Unresolved Questions</a></li>
+    </ul>
+  </nav>
 
-**Genre**: [Genre]
-**Target Player**: [Player type]
-**Session Length**: [Duration]
+  <main>
+    <section id="core-loop">
+      <h2>Core Loop</h2>
+      <h3>Primary Loop (30 seconds)</h3>
+      <p class="loop">[ACTION] → [FEEDBACK] → [REWARD]</p>
+      <!-- Optional: inline <svg> diagram of the loop -->
+      <h3>Outer Loop</h3>
+      <p>[Session-to-session progression]</p>
+    </section>
 
----
+    <section id="progression">
+      <h2>Player Progression</h2>
+      <h3>Objectives</h3>      <p>[Primary and secondary goals]</p>
+      <h3>Win/Lose Conditions</h3> <p>[Victory and failure states]</p>
+      <h3>Progression Systems</h3> <p>[Skill, power, content, story progression]</p>
+    </section>
 
-## Core Loop
+    <section id="systems">
+      <h2>Game Systems</h2>
+      <article><h3>[System 1 Name]</h3><!-- full system documentation --></article>
+      <article><h3>[System 2 Name]</h3><!-- full system documentation --></article>
+    </section>
 
-### Primary Loop (30 seconds)
-[ACTION] → [FEEDBACK] → [REWARD]
+    <section id="objects">
+      <h2>Game Objects</h2>
+      <h3>Player Character</h3>
+      <table><thead><tr><th>Attribute</th><th>Value</th><th>Notes</th></tr></thead><tbody><!-- … --></tbody></table>
+      <h3>Enemies</h3>
+      <table><thead><tr><th>Type</th><th>HP</th><th>Speed</th><th>Behavior</th></tr></thead><tbody><!-- … --></tbody></table>
+      <h3>Items</h3>
+      <table><thead><tr><th>Item</th><th>Effect</th><th>Cost</th></tr></thead><tbody><!-- … --></tbody></table>
+    </section>
 
-### Outer Loop
-[Session-to-session progression]
+    <section id="economy">
+      <h2>Economy</h2>
+      <h3>Currencies</h3>    <dl><!-- currency: purpose pairs --></dl>
+      <h3>Resource Flow</h3> <!-- inline <svg> sources → sinks diagram -->
+    </section>
 
----
+    <section id="balancing">
+      <h2>Balancing</h2>
+      <h3>Progression Curves</h3> <table><!-- level/XP --></table>
+      <h3>Combat Formulas</h3>    <pre><code>damage = base * (1 + bonus)</code></pre>
+      <h3>Difficulty Settings</h3> <table><!-- modifiers --></table>
+    </section>
 
-## Player Progression
+    <section id="controls">
+      <h2>Controls</h2>
+      <h3>Control Scheme</h3>
+      <table><thead><tr><th>Action</th><th>PC</th><th>Gamepad</th><th>Mobile</th></tr></thead><tbody><!-- … --></tbody></table>
+      <h3>Input Feedback</h3>
+      <dl><!-- action: feedback pairs --></dl>
+    </section>
 
-### Objectives
-[Primary and secondary goals]
+    <section id="unresolved">
+      <h2>Unresolved Questions</h2>
+      <details><summary>Needs Prototyping</summary><ul><!-- open prototyping items --></ul></details>
+      <details><summary>Open Design Questions</summary><ul><!-- open questions --></ul></details>
+    </section>
+  </main>
 
-### Win/Lose Conditions
-[Victory and failure states]
-
-### Progression Systems
-[Skill, power, content, story progression]
-
----
-
-## Game Systems
-
-### [System 1 Name]
-[Full system documentation]
-
-### [System 2 Name]
-[Full system documentation]
-
----
-
-## Game Objects
-
-### Player Character
-[Attributes table]
-
-### Enemies
-[Enemy types and stats]
-
-### Items
-[Item list and effects]
-
----
-
-## Economy
-
-### Currencies
-[Currency types and purposes]
-
-### Resource Flow
-[Sources and sinks]
-
----
-
-## Balancing
-
-### Progression Curves
-[Level/XP tables]
-
-### Combat Formulas
-[Damage calculations]
-
-### Difficulty Settings
-[Difficulty modifiers]
-
----
-
-## Controls
-
-### Control Scheme
-[Input mappings by platform]
-
-### Input Feedback
-[Feedback for each action]
-
----
-
-## Unresolved Questions
-
-[Open issues organized by priority]
-
----
-
-*Document Version: 1.0*
-*Last Updated: [Date]*
+  <footer>
+    <p>Document Version 1.0 · Last Updated <time datetime="…">[Date]</time></p>
+  </footer>
+</body>
+</html>
 ```
 
 ---
@@ -466,6 +467,24 @@ Let's create your mechanics GDD for a roguelike deckbuilder.
 Starting with the overview - what's your working title?
 And in 1-2 sentences, what's the core hook that makes your game fun?
 ```
+
+---
+
+## HTML Output Conventions
+
+The GDD is a single self-contained `.html` file:
+
+- **Doctype & shell**: `<!DOCTYPE html>`, `<html lang="en">`, `<head>` with `<meta charset="utf-8">`, viewport meta, `<title>`, single inline `<style>` block. No external CSS/JS, no CDNs.
+- **Semantic tags**: `<header>` (game title + concept + meta `<dl>`), `<nav>` (in-page anchor links to every section), `<main>`, one `<section id="…">` per top-level area, `<article>` per game system, `<details><summary>` for collapsible question lists, `<footer>` for version/date.
+- **Tables for stats**: `<table>` with `<thead>`/`<tbody>` for any attribute / stat / level / control table. Highlight changed-values rows via a CSS class.
+- **Formulas / code**: `<pre><code>` for multi-line formulas; `<code>` inline.
+- **Diagrams**: inline `<svg>` for the core loop, resource flow, or any system relationship. No external image references.
+- **Definitions**: `<dl>` for currency, input feedback, and any "term: meaning" pairs.
+- **Callouts**: `<aside class="note">` for design rationale that doesn't fit inline.
+- **CSS style**: small inline stylesheet — system-font stack, max-width ~80ch on prose, comfortable line-height, mobile-responsive via one `@media (max-width: 720px)` block. Avoid gradients, glass-morphism, emoji-decorated headers.
+- **No JavaScript** unless an interactive balance tuner (sliders + live formula preview) genuinely earns it; default to static.
+
+When unsure how rich to go, lean on the examples at https://thariqs.github.io/html-effectiveness/.
 
 [Uses AskUserQuestion to get title, concept, unique mechanics]
 

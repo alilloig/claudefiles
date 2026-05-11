@@ -9,7 +9,9 @@ description: |
   and one or more focused topic guides, (4) simplifying any technical subject
   into its essential concepts ordered for maximum clarity. Covers content
   decomposition, concept prioritization, progressive structure, and formatting
-  choices for educational clarity.
+  choices for educational clarity. Outputs a module of self-contained HTML
+  files: one `index.html` plus one `.html` per topic, cross-linked via
+  semantic anchor tags.
 author: Claude Code
 version: 2.0.0
 date: 2026-01-30
@@ -63,19 +65,16 @@ bound it, then expand it.
 
 ### 3. Structure the Output
 
-For a module with multiple topics, use a two-layer structure:
+For a module with multiple topics, use a two-layer structure of self-contained HTML files:
 
 | Layer | File | Purpose |
 |---|---|---|
-| Index | `README.md` | Navigation hub -- one-liner per topic, links to guides |
-| Guides | `topic_name.md` | One file per topic, carries the conceptual weight |
+| Index | `index.html` | Navigation hub — one-liner per topic, `<a href="topic.html">` per guide |
+| Guides | `topic_name.html` | One self-contained HTML file per topic, carrying the conceptual weight |
 
-The index should be 5-15 lines. It tells the reader what the module covers
-and where to find each piece. Nothing more.
+The index should be short — a `<header>`, a brief `<p>` describing the module, and a `<nav>`/`<ul>` of topic links each with a one-line `<p>` description. It tells the reader what the module covers and where to find each piece. Nothing more.
 
-Each guide is self-contained: a reader should be able to open one guide and
-understand the topic without reading the others (though they may reference
-each other).
+Each guide is self-contained: a reader should be able to open one guide and understand the topic without reading the others (though they may reference each other via `<a href="other_topic.html">`). Each guide opens with a small breadcrumb `<nav>` (`<a href="index.html">← Module index</a>`) and is otherwise standalone.
 
 ### 4. Write Each Guide
 
@@ -85,19 +84,21 @@ Within a single guide, use these formatting principles:
 matters. No headings yet -- just prose that orients the reader.
 
 **Sections follow the progressive order** (What/Why/How/Rules/Variations).
-Not every section needs an explicit heading -- short topics can flow naturally.
-Long topics benefit from clear `##` section breaks.
+Not every section needs an explicit heading — short topics can flow naturally.
+Long topics benefit from clear `<section id="…"><h2>…</h2></section>` breaks with a top-of-page `<nav>` linking to each.
 
 **Formatting choices by content type:**
 
-| Content Type | Best Format |
+| Content Type | Best HTML |
 |---|---|
-| Binary comparisons (yes/no, allowed/forbidden) | Table with two columns |
-| Sequential processes or flows | Numbered list |
-| Feature inventories or option lists | Bullet list |
-| Syntax or configuration | Fenced code block |
-| Key terms with definitions | Bold term followed by dash and explanation |
-| Important caveats | Blockquote |
+| Binary comparisons (yes/no, allowed/forbidden) | `<table>` with two columns |
+| Sequential processes or flows | `<ol>` |
+| Feature inventories or option lists | `<ul>` |
+| Syntax or configuration | `<pre><code>…</code></pre>` |
+| Key terms with definitions | `<dl><dt>term</dt><dd>explanation</dd></dl>` |
+| Important caveats | `<aside class="note">` or `<aside class="warning">` |
+| Optional / advanced drill-down | `<details><summary>…</summary>…</details>` |
+| Inline diagrams | inline `<svg>` |
 
 **Keep paragraphs short.** 2-4 sentences max. Dense walls of text lose
 students. White space is a teaching tool.
@@ -127,11 +128,15 @@ original documentation. The guide is a distillation, not a replacement.
 Students who want the full reference should know where to find it.
 
 Use descriptive link text (not "click here"):
-```markdown
-## Further Reading
 
-- [Package Upgrades Documentation](https://docs.example.io/upgrades)
-- [Compatibility Requirements](https://docs.example.io/upgrades#compatibility)
+```html
+<section id="further-reading">
+  <h2>Further Reading</h2>
+  <ul>
+    <li><a href="https://docs.example.io/upgrades">Package Upgrades Documentation</a></li>
+    <li><a href="https://docs.example.io/upgrades#compatibility">Compatibility Requirements</a></li>
+  </ul>
+</section>
 ```
 
 ### 7. Self-Review Checklist
@@ -139,13 +144,15 @@ Use descriptive link text (not "click here"):
 Before considering a guide complete, verify:
 
 - [ ] Opens with a clear definition and motivation (no heading-first starts)
-- [ ] Concepts build progressively -- no forward references to unexplained ideas
-- [ ] Tables used for comparisons, lists for sequences, prose for narrative
-- [ ] No section exceeds ~1 page of content (split if longer)
-- [ ] Advanced material is clearly labeled and deferrable
-- [ ] Further Reading section links to original source docs
+- [ ] Concepts build progressively — no forward references to unexplained ideas
+- [ ] `<table>` used for comparisons, `<ol>`/`<ul>` for sequences/inventories, prose `<p>` for narrative
+- [ ] No `<section>` exceeds ~1 page of rendered content (split if longer)
+- [ ] Advanced material is clearly labeled and deferrable (`<section id="advanced">` or `<details>`)
+- [ ] Further Reading `<section>` links to original source docs
 - [ ] Terminology is consistent across all guides in the module
-- [ ] Index README links resolve to actual files
+- [ ] `index.html` links resolve to actual `.html` files in the module dir
+- [ ] Every guide opens with a breadcrumb `<nav>` back to `index.html`
+- [ ] Each file is self-contained: valid `<!DOCTYPE html>`, inline `<style>`, no external CSS/JS
 
 ## Example
 
@@ -155,32 +162,50 @@ upgrades for a blockchain platform (50+ pages of reference material).
 **Output:**
 ```
 H1/
-  README.md                # Index: one-liner + link per topic
-  package_management.md    # Guide: what a package is, manifest, deps, CLI
-  package_upgrades.md      # Guide: why upgrades, flow, rules, patterns
+  index.html                # Index: one-liner + link per topic
+  package_management.html   # Guide: what a package is, manifest, deps, CLI
+  package_upgrades.html     # Guide: why upgrades, flow, rules, patterns
 ```
 
-`README.md` (entire file):
-```markdown
-# Package Management & Upgrades
-
-## Contents
-
-### [Package Management](./package_management.md)
-How packages are structured, configured, and published.
-
-### [Package Upgrades](./package_upgrades.md)
-How to safely upgrade published packages while preserving state.
+`index.html` (sketch):
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Package Management &amp; Upgrades</title>
+  <style>/* inline CSS — see HTML Output Conventions below */</style>
+</head>
+<body>
+  <header><h1>Package Management &amp; Upgrades</h1></header>
+  <main>
+    <nav aria-label="Module contents">
+      <ul>
+        <li>
+          <a href="package_management.html"><strong>Package Management</strong></a>
+          <p>How packages are structured, configured, and published.</p>
+        </li>
+        <li>
+          <a href="package_upgrades.html"><strong>Package Upgrades</strong></a>
+          <p>How to safely upgrade published packages while preserving state.</p>
+        </li>
+      </ul>
+    </nav>
+  </main>
+</body>
+</html>
 ```
 
-`package_management.md` structure:
-1. Opening paragraph defining what a package is
-2. Package files (table: file → purpose)
-3. Manifest structure (code block + field explanations)
-4. Dependency types (subsections with examples)
-5. Advanced features (brief, links to docs)
-6. CLI commands (table: command → description)
-7. Further Reading (links)
+`package_management.html` structure:
+1. Breadcrumb `<nav>` back to `index.html`
+2. Opening `<p>` defining what a package is
+3. Package files (`<table>`: file → purpose)
+4. Manifest structure (`<pre><code>` + field `<dl>`)
+5. Dependency types (`<section>`s with examples)
+6. Advanced features (`<section id="advanced">` or `<details>`, brief, links to docs)
+7. CLI commands (`<table>`: command → description)
+8. Further Reading (`<section id="further-reading">` with `<ul>` of links)
 
 ## Notes
 
@@ -194,3 +219,18 @@ How to safely upgrade published packages while preserving state.
   than an advanced masterclass.
 - If the source documentation is poorly organized, don't mirror its structure.
   Reorganize around the learner's journey, not the author's taxonomy.
+
+---
+
+## HTML Output Conventions
+
+Every file (index and each guide) is a single self-contained `.html`:
+
+- **Doctype & shell**: `<!DOCTYPE html>`, `<html lang="en">`, `<head>` with `<meta charset="utf-8">`, viewport meta, descriptive `<title>`, single inline `<style>` block. No external CSS/JS, no CDNs.
+- **Cross-file navigation**: every guide opens with a breadcrumb `<nav>` containing `<a href="index.html">← Module index</a>`. Cross-references between guides use `<a href="other_topic.html">`. The index lists topics as `<a href="topic.html">`.
+- **Semantic tags**: `<header>`, `<nav>`, `<main>`, `<section id="…">`, `<aside class="note">`/`<aside class="warning">`, `<figure>`/`<figcaption>`, `<footer>` if it carries content (e.g. last-updated date).
+- **Content types** map per the "Formatting choices" table in step 4.
+- **CSS style**: small inline stylesheet (kept identical across all files in the module so they feel like one site) — system-font stack, max-width ~70–80ch on prose, comfortable line-height, mobile-responsive via one `@media (max-width: 720px)` block. Avoid gradients, glass-morphism, emoji-decorated headers.
+- **No JavaScript** unless a topic genuinely needs interactivity (e.g. a small interactive demo of the concept). Default to static.
+
+When unsure how rich to go, lean on the examples at https://thariqs.github.io/html-effectiveness/.

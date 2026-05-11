@@ -6,7 +6,8 @@ description: |
   accuracy against a specific CLI version, (2) a CLI tool has been updated and docs may
   have drifted, (3) you need to distinguish between canonical flags, hidden aliases, and
   truly nonexistent options. Covers Rust Clap alias detection, hidden flag discovery,
-  and systematic --help cross-referencing methodology.
+  and systematic --help cross-referencing methodology. Produces a self-contained HTML
+  verification report with severity-tagged discrepancies and recommended fixes.
 author: Claude Code
 version: 1.0.0
 date: 2026-02-04
@@ -92,9 +93,85 @@ Similarly, Clap supports `#[arg(hide = true)]` for backwards-compatible hidden f
 - Useful for deprecated flags kept for backwards compatibility
 - Only discoverable by testing directly
 
-## Verification
+## Phase 5: Report
 
-After fixing documentation:
+Write a single self-contained HTML file (`cli-doc-verification.html` in the project root unless the user specifies otherwise). Skeleton:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CLI Documentation Verification — {tool} {version}</title>
+  <style>/* inline CSS — see HTML Output Conventions below */</style>
+</head>
+<body>
+  <header>
+    <h1>CLI Documentation Verification</h1>
+    <p class="subtitle">Tool: <code>{tool}</code> · Version: <code>{version}</code> · Audited: <time datetime="…">…</time></p>
+  </header>
+
+  <nav aria-label="Contents">
+    <ul>
+      <li><a href="#summary">Summary</a></li>
+      <li><a href="#breaking">Breaking discrepancies</a></li>
+      <li><a href="#aliases">Aliases</a></li>
+      <li><a href="#hidden">Hidden / deprecated</a></li>
+      <li><a href="#noop">No-op</a></li>
+      <li><a href="#methodology">Methodology</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section id="summary">
+      <h2>Summary</h2>
+      <table>
+        <thead><tr><th>Category</th><th>Count</th></tr></thead>
+        <tbody>
+          <tr class="breaking"><td>Breaking</td><td>X</td></tr>
+          <tr class="alias"><td>Alias</td><td>Y</td></tr>
+          <tr class="hidden"><td>Hidden / deprecated</td><td>Z</td></tr>
+          <tr class="noop"><td>No-op</td><td>W</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="breaking">
+      <h2>Breaking discrepancies</h2>
+      <!-- one <article class="finding breaking"> per item -->
+      <article class="finding breaking" id="breaking-1">
+        <header>
+          <h3>{doc location}</h3>
+          <span class="severity">BREAKING</span>
+        </header>
+        <dl>
+          <dt>Found in docs</dt><dd><pre><code>walrus delete --blob-obj-id …</code></pre></dd>
+          <dt>CLI response</dt><dd><pre><code>unexpected argument '--blob-obj-id'…</code></pre></dd>
+          <dt>Canonical form</dt><dd><pre><code>walrus delete --shared-blob-obj-id …</code></pre></dd>
+        </dl>
+        <details>
+          <summary>Fix</summary>
+          <p>Update the docs at {file:line} to use the canonical flag name.</p>
+        </details>
+      </article>
+    </section>
+
+    <section id="aliases">  <h2>Aliases</h2>   <!-- same shape, class="alias" -->  </section>
+    <section id="hidden">   <h2>Hidden / deprecated</h2>   <!-- same shape, class="hidden" -->  </section>
+    <section id="noop">     <h2>No-op</h2>                  <!-- same shape, class="noop" -->     </section>
+
+    <section id="methodology">
+      <h2>Methodology</h2>
+      <p>Commands extracted via <code>rg</code>; each subcommand and flag tested directly against the installed binary; CLI responses interpreted per the four-category table in this skill.</p>
+    </section>
+  </main>
+</body>
+</html>
+```
+
+## Verification (after writing the report)
+
 1. Re-run the full extraction sweep to confirm no old patterns remain
 2. Exclude upstream/imported docs from fixes (only fix what you authored)
 3. Test each fixed command against the CLI to confirm the new form works
@@ -126,3 +203,19 @@ walrus fund-shared-blob --blob-obj-id 2>&1
 - Always record the CLI version being verified against for future reference.
 - This methodology works for any Clap-based CLI (Rust ecosystem), and the general
   principle of testing flags directly applies to any CLI framework.
+
+---
+
+## HTML Output Conventions
+
+The verification report is a single self-contained `.html` file:
+
+- **Doctype & shell**: `<!DOCTYPE html>`, `<html lang="en">`, `<head>` with `<meta charset="utf-8">`, viewport meta, `<title>`, single inline `<style>` block. No external CSS/JS, no CDNs.
+- **Semantic tags**: `<header>`, `<nav>` (anchor links to summary + per-category sections), `<main>`, `<section id="…">` per category, `<article class="finding {category}">` per discrepancy.
+- **Severity classes**: `breaking`, `alias`, `hidden`, `noop` — drive inline-CSS row/article tinting (muted reds for breaking, muted ambers for alias, neutral greys for hidden/no-op). Keep contrast accessible.
+- **Per-discrepancy structure**: `<article>` with a `<header>` (location + severity badge), a `<dl>` of metadata (Found in docs, CLI response, Canonical form), and `<details><summary>Fix</summary>…</details>` for the remediation.
+- **Code**: `<pre><code>` for multi-line commands and CLI output; `<code>` inline. Escape `<`/`>`. No syntax-highlighter CDNs.
+- **CSS style**: small inline stylesheet — system-font stack, max-width ~80–90ch, comfortable line-height, mobile-responsive via one `@media (max-width: 720px)` block. Avoid gradients, glass-morphism, emoji-decorated headers.
+- **No JavaScript**.
+
+When unsure how rich to go, lean on the examples at https://thariqs.github.io/html-effectiveness/.

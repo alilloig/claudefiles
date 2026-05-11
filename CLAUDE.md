@@ -12,6 +12,7 @@
 - Concise, no fluff — lead with action, skip preambles
 - Ask before big architectural or design decisions; proceed on obvious stuff
 - Spanish-friendly — user is native Spanish speaker, switch freely if helpful
+- Prefer self-contained HTML over markdown for any document deliverable (reports, audits, plans, reviews, explainers); markdown is fine for short chat replies and code-only outputs.
 
 ## Sui Move Development
 
