@@ -158,10 +158,10 @@
     "superpowers@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7",
-        "version": "5.0.7",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0",
+        "version": "5.1.0",
         "installedAt": "2026-04-23T09:20:11.157Z",
-        "lastUpdated": "2026-04-23T09:20:11.157Z",
+        "lastUpdated": "2026-05-11T07:48:49.144Z",
         "gitCommitSha": "b55764852ac78870e65c6565fb585b6cd8b3c5c9"
       }
     ],
@@ -267,16 +267,6 @@
         "gitCommitSha": "00d485659af82982aef0328d0419c49a2716d123"
       }
     ],
-    "sui-wallet@local": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/local/sui-wallet/1.0.0",
-        "version": "1.0.0",
-        "installedAt": "2026-04-24T21:30:28.528Z",
-        "lastUpdated": "2026-04-24T21:30:28.528Z",
-        "gitCommitSha": "0097ed5488195ba112d1f39e6aa463538c816f17"
-      }
-    ],
     "remember@claude-plugins-official": [
       {
         "scope": "user",
@@ -309,11 +299,31 @@
     "sui-pilot@contract-hero": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/sui-pilot/200a1c7e6c85",
-        "version": "200a1c7e6c85",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/sui-pilot/f0368e0f27d3",
+        "version": "f0368e0f27d3",
         "installedAt": "2026-04-27T10:55:54.815Z",
-        "lastUpdated": "2026-04-27T10:55:54.815Z",
+        "lastUpdated": "2026-05-02T11:38:11.881Z",
         "gitCommitSha": "200a1c7e6c85b86b881abc183138258ff1a0690e"
+      }
+    ],
+    "code-forge@contract-hero": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/code-forge/0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-04-28T13:18:58.576Z",
+        "lastUpdated": "2026-04-28T13:18:58.576Z",
+        "gitCommitSha": "20ab8d7fb798bf4c4ccf6da4b217e051aa1adc44"
+      }
+    ],
+    "sui-deepbook-course@contract-hero": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/sui-deepbook-course/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-05-02T19:51:53.192Z",
+        "lastUpdated": "2026-05-02T19:51:53.192Z",
+        "gitCommitSha": "91e621164d1fc6e4d2cf8c7c18fe7d7ef9df7f99"
       }
     ]
   }

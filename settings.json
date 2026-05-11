@@ -59,11 +59,11 @@
     "notion@claude-plugins-official": false,
     "chrome-devtools-mcp@claude-plugins-official": true,
     "impeccable@impeccable": true,
-    "sui-wallet@local": true,
     "ralph-loop@claude-plugins-official": true,
     "code-forge@contract-hero": true,
     "codex-bridge@contract-hero": true,
-    "sui-pilot@contract-hero": true
+    "sui-pilot@contract-hero": true,
+    "sui-deepbook-course@contract-hero": true
   },
   "extraKnownMarketplaces": {
     "impeccable": {
@@ -71,13 +71,6 @@
         "source": "github",
         "repo": "pbakaus/impeccable"
       }
-    },
-    "local": {
-      "source": {
-        "source": "directory",
-        "path": "/Users/alilloig/workspace/dotfiles/.claude/plugins/local"
-      },
-      "autoUpdate": true
     },
     "contract-hero": {
       "source": {
