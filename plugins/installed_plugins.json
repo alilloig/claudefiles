@@ -316,14 +316,24 @@
         "gitCommitSha": "20ab8d7fb798bf4c4ccf6da4b217e051aa1adc44"
       }
     ],
-    "sui-deepbook-course@contract-hero": [
+    "agentic-community-college@contract-hero": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/sui-deepbook-course/1.0.0",
-        "version": "1.0.0",
-        "installedAt": "2026-05-02T19:51:53.192Z",
-        "lastUpdated": "2026-05-02T19:51:53.192Z",
-        "gitCommitSha": "91e621164d1fc6e4d2cf8c7c18fe7d7ef9df7f99"
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/agentic-community-college/0.1.1",
+        "version": "0.1.1",
+        "installedAt": "2026-05-12T12:46:51.989Z",
+        "lastUpdated": "2026-05-12T12:46:51.989Z",
+        "gitCommitSha": "58249a8ff4c33a7d67c2de85ad3c92deb61d5422"
+      }
+    ],
+    "acc-deepbook-course@contract-hero": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/acc-deepbook-course/0.1.1",
+        "version": "0.1.1",
+        "installedAt": "2026-05-12T12:46:55.010Z",
+        "lastUpdated": "2026-05-12T12:46:55.010Z",
+        "gitCommitSha": "240b8146faa73f2235669c995de50ce859f240ac"
       }
     ]
   }

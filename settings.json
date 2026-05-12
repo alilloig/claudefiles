@@ -72,7 +72,8 @@
     "code-forge@contract-hero": true,
     "codex-bridge@contract-hero": true,
     "sui-pilot@contract-hero": true,
-    "sui-deepbook-course@contract-hero": true
+    "agentic-community-college@contract-hero": true,
+    "acc-deepbook-course@contract-hero": true
   },
   "extraKnownMarketplaces": {
     "impeccable": {
