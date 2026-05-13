@@ -2,7 +2,7 @@
 name: ship-reviewed-pr
 description: |
   Full PR pipeline — commit current changes, push the branch, open the PR,
-  run the code-simplifier, fan out 6 parallel general-purpose reviewers,
+  run the code-simplifier, fan out 3 parallel general-purpose reviewers,
   consolidate their findings with source-verified double-checking, post a
   single review comment on the PR, and auto-fix every critical or high
   finding before pushing the cleanup commit.
@@ -28,9 +28,9 @@ allowed-tools: Read, Edit, Write, Bash, Glob, Grep, Agent
 
 # Ship a PR with multi-agent review
 
-This skill collapses commit-push-pr → simplify → multi-agent review → fix into a single procedure. Six parallel reviewers do the same general review (no dimension split); the main session double-checks high-severity findings against source before posting one consolidated GitHub comment, then auto-fixes the critical/high items.
+This skill collapses commit-push-pr → simplify → multi-agent review → fix into a single procedure. Three parallel reviewers do the same general review (no dimension split); the main session double-checks high-severity findings against source before posting one consolidated GitHub comment, then auto-fixes the critical/high items.
 
-The fan-out's value is **agreement**, not coverage: when 4+ of 6 independent reviewers flag the same line, that's signal. Singletons get verified or dropped.
+The fan-out's value is **agreement**, not coverage: when 2+ of 3 independent reviewers flag the same line, that's signal. Singletons get verified or dropped.
 
 ## Pre-flight checks
 
@@ -93,12 +93,12 @@ REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner)
 
 Then enumerate every CLAUDE.md the PR touches. Start at the repo root, then for each unique directory containing a changed file walk up to the repo root collecting any `CLAUDE.md`. Write the deduped paths to `$WS/claude-md-paths.txt`. Reviewers consult these for project-specific conventions.
 
-## Phase 4 — Fan out 6 reviewers in a single message
+## Phase 4 — Fan out 3 reviewers in a single message
 
-Make all 6 Agent calls in **one** assistant message so they run in parallel. Use `subagent_type: "general-purpose"` (reviewers are read-only — they don't need write/edit). The prompt to each is identical except for the `K` index. Template:
+Make all 3 Agent calls in **one** assistant message so they run in parallel. Use `subagent_type: "general-purpose"` (reviewers are read-only — they don't need write/edit). The prompt to each is identical except for the `K` index. Template:
 
 ```
-You are reviewer K of 6 doing a parallel general code review of PR #<PR>
+You are reviewer K of 3 doing a parallel general code review of PR #<PR>
 in <REPO> (head sha <HEAD_SHA>).
 
 Inputs:
@@ -156,7 +156,7 @@ Hard rules:
 
 ## Phase 5 — Consolidate (main session)
 
-Read all six `subagent-K.json` files. Then:
+Read all three `subagent-K.json` files. Then:
 
 1. **Cluster** — group findings whose `(file, line_range)` overlap (any line in common). Track per-cluster: `agreement_count` (number of distinct reviewers contributing), `max_severity`, `min_severity`, `categories` (set), and the underlying findings list.
 2. **Verification pass** — for any cluster matching ANY of:
@@ -189,7 +189,7 @@ Read all six `subagent-K.json` files. Then:
    (none)
 
    #### High
-   1. <brief description>. **File:** `path:line` (<reviewer agreement>/6).
+   1. <brief description>. **File:** `path:line` (<reviewer agreement>/3).
       *Verification:* <one-line adjudication note>
       <full-sha file link — see format below>
 
@@ -200,7 +200,7 @@ Read all six `subagent-K.json` files. Then:
    - <one bullet, if reviewers flagged gaps>
 
    #### Methodology
-   - 6 reviewers dispatched in parallel.
+   - 3 reviewers dispatched in parallel.
    - Coverage: <files × reviewers; flag rate>.
    - Clusters before split: M; after split: K.
    - Verification: <count of critical/high/disputed clusters re-read against source>.
@@ -219,7 +219,7 @@ Read all six `subagent-K.json` files. Then:
 gh pr comment "$PR" --body-file "$WS/review.md"
 ```
 
-If the same skill invocation already posted a comment in a prior phase (it shouldn't, but defensively), skip. **Never post six comments** — only the consolidated one.
+If the same skill invocation already posted a comment in a prior phase (it shouldn't, but defensively), skip. **Never post multiple comments** — only the consolidated one.
 
 ## Phase 7 — Auto-fix critical and high
 
@@ -262,12 +262,12 @@ If there were zero critical+high findings, skip Phase 7 entirely and report `No 
 - **Don't auto-fix medium/low/info.** Too much surface for false positives. The user reads the comment and decides.
 - **Don't `git add -A` or `git add .`** at any phase. Stage only the specific files the skill itself produced or that were already staged before invocation.
 - **Don't bypass hooks** with `--no-verify`. If a pre-commit hook fails, surface the failure and stop — that's the hook doing its job.
-- **Don't post six PR comments.** Only the consolidated one.
+- **Don't post multiple PR comments.** Only the consolidated one.
 - **Don't recurse.** If Phase 7 ends up changing the diff substantially, don't re-run reviewers in the same invocation — the user can re-trigger the skill if they want a second pass.
 - **Don't run long test suites** in Phase 7. Typecheck only, by default.
 
 ## Why this design
 
-- **No dimension split** — the user opted for redundancy over depth-per-lens. Six reviewers doing the same job means agreement is the primary signal; the verification step picks up the slack on confidence.
+- **No dimension split** — the user opted for redundancy over depth-per-lens. Three reviewers doing the same job means agreement is the primary signal; the verification step picks up the slack on confidence. (Originally 6; reduced to 3 for token-budget reasons — 2-of-3 duplicate flags are still a strong signal, and the verification pass remains the real filter.)
 - **Source-verified double-check** — copied from `code-forge-v2/agents/consolidator.md`. It's the part that distinguishes "real bug" from "reviewer saw it wrong" and is the most expensive thing to omit.
 - **Auto-fix only critical+high** — these have been re-derived from rubric and verified against source. Lower severities haven't been verified, so auto-fixing them risks code churn for issues the user wouldn't have flagged.
