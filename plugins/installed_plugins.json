@@ -319,21 +319,21 @@
     "agentic-community-college@contract-hero": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/agentic-community-college/0.1.1",
-        "version": "0.1.1",
-        "installedAt": "2026-05-12T12:46:51.989Z",
-        "lastUpdated": "2026-05-12T12:46:51.989Z",
-        "gitCommitSha": "58249a8ff4c33a7d67c2de85ad3c92deb61d5422"
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/agentic-community-college/0.1.4",
+        "version": "0.1.4",
+        "installedAt": "2026-05-13T09:56:54.800Z",
+        "lastUpdated": "2026-05-13T09:56:54.800Z",
+        "gitCommitSha": "f59c79ade1b2100d5a980ae08833576ce354130c"
       }
     ],
     "acc-deepbook-course@contract-hero": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/acc-deepbook-course/0.1.1",
-        "version": "0.1.1",
-        "installedAt": "2026-05-12T12:46:55.010Z",
-        "lastUpdated": "2026-05-12T12:46:55.010Z",
-        "gitCommitSha": "240b8146faa73f2235669c995de50ce859f240ac"
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/acc-deepbook-course/0.1.2",
+        "version": "0.1.2",
+        "installedAt": "2026-05-13T09:56:58.058Z",
+        "lastUpdated": "2026-05-13T09:56:58.058Z",
+        "gitCommitSha": "a7782ef3b202862fafc35d4c0bc7d45e35968f84"
       }
     ]
   }
