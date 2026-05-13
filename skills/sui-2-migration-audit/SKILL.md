@@ -220,15 +220,11 @@ A check is N/A when the feature area is not used in the project:
 
 ## HTML Output Conventions
 
-The audit report is a single self-contained `.html` file:
+**REQUIRED REFERENCE:** Use [html-artifact:html-conventions](../html-artifact/references/html-conventions.md) for the self-contained HTML output rules — semantic HTML5, inline CSS, no external assets, system-font stack, max-width ~80ch, mobile-responsive, no JavaScript.
 
-- **Doctype & shell**: `<!DOCTYPE html>`, `<html lang="en">`, `<head>` with `<meta charset="utf-8">`, viewport meta, `<title>`, single inline `<style>` block. No external CSS/JS, no CDNs.
-- **Semantic tags**: `<header>`, `<nav>` (anchor links to summary, failures, fix plan, checklist), `<main>`, `<section id="…">`, `<article class="finding …">` per failure, `<aside class="success">` when everything passes.
-- **Severity classes**: `pass`, `fail`, `na` on `<td>`/`<tr>`/`<article>` so the inline CSS can color-tag rows (muted greens/reds, not neon). Keep contrast accessible.
-- **Per-failure structure**: `<article>` with a `<header>` (check ID + severity badge), a `<dl>` of metadata (File, Found, Required), and a `<details><summary>Fix</summary>…</details>` for the fix instructions — the summary table stays scannable while drill-down stays one click away.
-- **Code**: `<pre><code>` for multi-line; `<code>` inline. Escape `<`/`>` in the displayed-code examples. No syntax-highlighter CDNs — color a few keywords via CSS classes if needed.
-- **Tables**: `<thead>`/`<tbody>`; the totals row uses `<tr class="total">` with `<th>` cells.
-- **CSS style**: small inline stylesheet — system-font stack, max-width ~80–90ch on the main column, comfortable line-height, mobile-responsive via one `@media (max-width: 720px)` block. Avoid gradients, glass-morphism, emoji-decorated headers.
-- **No JavaScript**.
+Skill-specific conventions:
 
-When unsure how rich to go, lean on the examples at https://thariqs.github.io/html-effectiveness/.
+- **Severity classes** on `<td>`/`<tr>`/`<article>`: `pass`, `fail`, `na`. Style them with muted greens/reds (not neon); keep contrast accessible.
+- **Per-failure `<article class="finding fail">`** with a `<header>` (check ID + severity badge), a `<dl>` of metadata (File, Found, Required), and `<details><summary>Fix</summary>…</details>` for the remediation. The summary table stays scannable; the fix stays one click away.
+- **Totals row** in the summary table uses `<tr class="total">` with `<th>` cells.
+- **Collapse path on full-pass:** when all 32 checks pass, the `#failures` and `#fix-plan` sections collapse into a single `<aside class="success">` and `#checklist` becomes the only detail section.

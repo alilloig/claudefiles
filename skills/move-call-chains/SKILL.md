@@ -174,14 +174,12 @@ If a legacy `CALL_CHAINS.md` already exists, leave it in place (git history may 
 
 ## HTML Output Conventions
 
-The output is a single self-contained `.html` file:
+**REQUIRED REFERENCE:** Use [html-artifact:html-conventions](../html-artifact/references/html-conventions.md) for the self-contained HTML output rules — semantic HTML5, inline CSS/SVG, no external assets, system-font stack, max-width ~80ch, mobile-responsive, no JavaScript by default.
 
-- **Doctype & shell**: `<!DOCTYPE html>`, `<html lang="en">`, `<head>` with `<meta charset="utf-8">`, viewport meta, descriptive `<title>`, single inline `<style>` block. No external CSS/JS, no CDNs.
-- **Diagrams**: inline `<svg viewBox="…" role="img" aria-label="…">`. One arrowhead `<marker>` defined once in `<defs>` and reused via `marker-end="url(#arrow)"`. CSS classes for visibility tiers (`.pub`, `.priv`, `.pkg`, `.ext`, `.cond`, `.evt`) so the legend is style-driven.
-- **Tables** (`<table>`) for accessor / infrastructure / completeness appendices, with `<thead>`/`<tbody>`.
-- **In-page nav** (`<nav>` at top) with anchor links to every `<section id="…">`.
+Skill-specific conventions:
+
+- **Inline SVG diagrams** with `viewBox="…" role="img" aria-label="…"`. Define one arrowhead `<marker>` once in `<defs>` and reuse via `marker-end="url(#arrow)"`.
+- **CSS classes for visibility tiers**: `.pub`, `.priv`, `.pkg`, `.ext`, `.cond`, `.evt` — drive the legend from the same stylesheet that styles diagram nodes, so visibility is style-driven, not text-driven.
+- **One `<svg>` per independent operation.** Connected operations with cross-references stay in a single `<svg>`. Keep each diagram under ~800px tall; split into sub-diagrams per logical phase if it outgrows that.
+- **Appendix tables** with `<thead>`/`<tbody>` for accessor / infrastructure / completeness coverage.
 - **`<details><summary>`** for any "advanced" notes that would otherwise bloat a story's main flow.
-- **CSS style**: small inline stylesheet — system-font stack, max prose width ~80ch, comfortable line-height, mobile-responsive via one `@media (max-width: 720px)` block. Avoid gradients, glass-morphism, neon palettes.
-- **No JavaScript** unless an interactive feature (filter by visibility, jump-to-node) is requested. Default to static.
-
-When unsure how rich to go, lean on the examples at https://thariqs.github.io/html-effectiveness/.

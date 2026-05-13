@@ -472,19 +472,16 @@ And in 1-2 sentences, what's the core hook that makes your game fun?
 
 ## HTML Output Conventions
 
-The GDD is a single self-contained `.html` file:
+**REQUIRED REFERENCE:** Use [html-artifact:html-conventions](../html-artifact/references/html-conventions.md) for the self-contained HTML output rules — semantic HTML5, inline CSS/SVG, no external assets, system-font stack, max-width ~80ch, mobile-responsive, no JavaScript by default.
 
-- **Doctype & shell**: `<!DOCTYPE html>`, `<html lang="en">`, `<head>` with `<meta charset="utf-8">`, viewport meta, `<title>`, single inline `<style>` block. No external CSS/JS, no CDNs.
-- **Semantic tags**: `<header>` (game title + concept + meta `<dl>`), `<nav>` (in-page anchor links to every section), `<main>`, one `<section id="…">` per top-level area, `<article>` per game system, `<details><summary>` for collapsible question lists, `<footer>` for version/date.
-- **Tables for stats**: `<table>` with `<thead>`/`<tbody>` for any attribute / stat / level / control table. Highlight changed-values rows via a CSS class.
-- **Formulas / code**: `<pre><code>` for multi-line formulas; `<code>` inline.
-- **Diagrams**: inline `<svg>` for the core loop, resource flow, or any system relationship. No external image references.
-- **Definitions**: `<dl>` for currency, input feedback, and any "term: meaning" pairs.
-- **Callouts**: `<aside class="note">` for design rationale that doesn't fit inline.
-- **CSS style**: small inline stylesheet — system-font stack, max-width ~80ch on prose, comfortable line-height, mobile-responsive via one `@media (max-width: 720px)` block. Avoid gradients, glass-morphism, emoji-decorated headers.
-- **No JavaScript** unless an interactive balance tuner (sliders + live formula preview) genuinely earns it; default to static.
+Skill-specific conventions:
 
-When unsure how rich to go, lean on the examples at https://thariqs.github.io/html-effectiveness/.
+- **`<header>` block** carries the game title, one-sentence concept, and a `<dl class="meta">` with Genre / Target Player / Session Length.
+- **`<article>` per game system** inside `<section id="systems">` — one article per system, with a `<header>` carrying the system name and a `<dl>`/`<table>` carrying its parameters.
+- **Stat tables** with `<thead>`/`<tbody>` for any attribute / stat / level / control schema. Highlight changed-values rows via a CSS class.
+- **Definitions via `<dl>`** for currencies, input feedback, and any "term: meaning" pairs.
+- **Inline `<svg>` for the core loop and resource flow** — these are central to a GDD and benefit from spatial rendering per the shared reference's first medium-fit criterion.
+- **JavaScript only earns its keep for an interactive balance tuner** (sliders + live formula preview). Default to static.
 
 [Uses AskUserQuestion to get title, concept, unique mechanics]
 
