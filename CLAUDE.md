@@ -12,7 +12,7 @@
 - Concise, no fluff — lead with action, skip preambles
 - Ask before big architectural or design decisions; proceed on obvious stuff
 - Spanish-friendly — user is native Spanish speaker, switch freely if helpful
-- Prefer self-contained HTML over markdown for any document deliverable (reports, audits, plans, reviews, explainers); markdown is fine for short chat replies and code-only outputs.
+- Prefer self-contained HTML over markdown for any document deliverable (reports, audits, plans, reviews, explainers); markdown is fine for short chat replies and code-only outputs. For ad-hoc visual deliverables not covered by a specialized skill, use the `html-artifact` skill; to share an artifact, invoke `publish-html` — never auto-publish.
 
 ## Sui Move Development
 

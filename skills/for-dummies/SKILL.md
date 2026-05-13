@@ -339,16 +339,8 @@ After writing, confirm by listing the file and reporting its approximate line co
 
 ## HTML Output Conventions
 
-The doc is a single self-contained `.html` file. Defaults to follow (adapt to content, don't over-prescribe):
+**REQUIRED REFERENCE:** Use [html-artifact:html-conventions](../html-artifact/references/html-conventions.md) for the self-contained HTML output rules — semantic HTML5, inline CSS/SVG, no external `<link>` / `<script src=…>` / font CDNs, system-font stack, max-width ~72ch, mobile-responsive via one `@media` block, no gradients / glass-morphism / neon palettes / emoji-decorated headings.
 
-- **Doctype & shell**: `<!DOCTYPE html>`, `<html lang="en">`, `<head>` with `<meta charset="utf-8">`, viewport meta, `<title>`, and one inline `<style>` block. No external CSS/JS, no CDNs. The file must work when double-clicked into a browser.
-- **Semantic tags**: `<header>`, `<nav>`, `<main>`, `<section id="…">`, `<article>`, `<aside>`, `<figure>`/`<figcaption>`, `<footer>`. Each tutorial section and appendix gets its own `<section>` with a stable `id` matching the nav link.
-- **Tables**: any tabular reference (commands, config vars, "what gets destroyed") goes in `<table>` with `<thead>`/`<tbody>`. Keep columns scannable.
-- **Code**: `<pre><code>` for multi-line; `<code>` inline. Don't pull in Prism/Highlight.js — color a few keywords via simple CSS classes if you need contrast.
-- **Diagrams**: inline `<svg>` for anything bigger than a 1-line shape. No `<img>` references to external files.
-- **Collapsibles**: `<details><summary>` for long appendix lookups, FAQs, or "advanced" drill-downs that would otherwise bloat the tutorial flow.
-- **Callouts**: `<aside class="note">`, `<aside class="warning">`, `<aside class="tip">`.
-- **CSS style**: small inline stylesheet — system-font stack, max-width ~70–80ch on prose, comfortable line-height, mobile-responsive via one `@media (max-width: 720px)` block. Avoid gradients, glass-morphism, neon palettes, emoji-decorated headings.
-- **No JavaScript** unless the doc actually needs interactivity (this skill rarely does).
+The for-dummies guide additionally adopts: tutorial sections + appendices each as `<section id="…">` matching the top nav, `<details><summary>` for collapsible deep-dives, `<aside class="note">` / `<aside class="warning">` callouts placed where they matter, and the "open in a browser" viewing path noted in the Output section above.
 
 When unsure how rich to go, lean on the examples at https://thariqs.github.io/html-effectiveness/.
