@@ -35,5 +35,13 @@ settings.json.backup.*
 # ── Cleanup hook marker (regenerated each run) ──
 .last-cleanup
 
+# ── Background daemon + job state (recreated by the harness each run) ──
+daemon/
+daemon.lock
+daemon.log
+daemon.status.json
+jobs/
+gh-pr-status-cache.json
+
 # ── OS junk ──
 .DS_Store
