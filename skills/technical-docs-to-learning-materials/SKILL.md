@@ -224,13 +224,10 @@ H1/
 
 ## HTML Output Conventions
 
-Every file (index and each guide) is a single self-contained `.html`:
+**REQUIRED REFERENCE:** Use [html-artifact:html-conventions](../html-artifact/references/html-conventions.md) for the self-contained HTML output rules — semantic HTML5, inline CSS, no external assets, system-font stack, max-width ~72ch, mobile-responsive, no JavaScript by default. The shared reference's "Multi-file linked collection" criterion (#4) is the canonical justification for this skill's multi-file output shape.
 
-- **Doctype & shell**: `<!DOCTYPE html>`, `<html lang="en">`, `<head>` with `<meta charset="utf-8">`, viewport meta, descriptive `<title>`, single inline `<style>` block. No external CSS/JS, no CDNs.
-- **Cross-file navigation**: every guide opens with a breadcrumb `<nav>` containing `<a href="index.html">← Module index</a>`. Cross-references between guides use `<a href="other_topic.html">`. The index lists topics as `<a href="topic.html">`.
-- **Semantic tags**: `<header>`, `<nav>`, `<main>`, `<section id="…">`, `<aside class="note">`/`<aside class="warning">`, `<figure>`/`<figcaption>`, `<footer>` if it carries content (e.g. last-updated date).
-- **Content types** map per the "Formatting choices" table in step 4.
-- **CSS style**: small inline stylesheet (kept identical across all files in the module so they feel like one site) — system-font stack, max-width ~70–80ch on prose, comfortable line-height, mobile-responsive via one `@media (max-width: 720px)` block. Avoid gradients, glass-morphism, emoji-decorated headers.
-- **No JavaScript** unless a topic genuinely needs interactivity (e.g. a small interactive demo of the concept). Default to static.
+Skill-specific conventions:
 
-When unsure how rich to go, lean on the examples at https://thariqs.github.io/html-effectiveness/.
+- **Cross-file navigation:** every guide opens with a breadcrumb `<nav>` containing `<a href="index.html">← Module index</a>`. Cross-references between guides use `<a href="other_topic.html">`. The index lists topics as `<a href="topic.html">`.
+- **CSS consistency across files:** keep the inline `<style>` block identical across `index.html` and every `topic.html` in the module so the files feel like one site. If a token changes, change it everywhere.
+- **Content-type mapping** is the table in step 4 of this skill (binary comparisons → `<table>`, sequential processes → `<ol>`, definitions → `<dl>`, etc.). That table is normative for this skill and takes precedence over the shared reference where they overlap.

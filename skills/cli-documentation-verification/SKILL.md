@@ -208,14 +208,10 @@ walrus fund-shared-blob --blob-obj-id 2>&1
 
 ## HTML Output Conventions
 
-The verification report is a single self-contained `.html` file:
+**REQUIRED REFERENCE:** Use [html-artifact:html-conventions](../html-artifact/references/html-conventions.md) for the self-contained HTML output rules — semantic HTML5, inline CSS, no external assets, system-font stack, max-width ~80ch, mobile-responsive, no JavaScript.
 
-- **Doctype & shell**: `<!DOCTYPE html>`, `<html lang="en">`, `<head>` with `<meta charset="utf-8">`, viewport meta, `<title>`, single inline `<style>` block. No external CSS/JS, no CDNs.
-- **Semantic tags**: `<header>`, `<nav>` (anchor links to summary + per-category sections), `<main>`, `<section id="…">` per category, `<article class="finding {category}">` per discrepancy.
-- **Severity classes**: `breaking`, `alias`, `hidden`, `noop` — drive inline-CSS row/article tinting (muted reds for breaking, muted ambers for alias, neutral greys for hidden/no-op). Keep contrast accessible.
-- **Per-discrepancy structure**: `<article>` with a `<header>` (location + severity badge), a `<dl>` of metadata (Found in docs, CLI response, Canonical form), and `<details><summary>Fix</summary>…</details>` for the remediation.
-- **Code**: `<pre><code>` for multi-line commands and CLI output; `<code>` inline. Escape `<`/`>`. No syntax-highlighter CDNs.
-- **CSS style**: small inline stylesheet — system-font stack, max-width ~80–90ch, comfortable line-height, mobile-responsive via one `@media (max-width: 720px)` block. Avoid gradients, glass-morphism, emoji-decorated headers.
-- **No JavaScript**.
+Skill-specific conventions:
 
-When unsure how rich to go, lean on the examples at https://thariqs.github.io/html-effectiveness/.
+- **Severity classes** on `<tr>`/`<article>`: `breaking`, `alias`, `hidden`, `noop`. Tint with muted reds for breaking, muted ambers for alias, neutral greys for hidden/no-op. Keep contrast accessible.
+- **Per-discrepancy `<article class="finding {category}">`** with a `<header>` (location + severity badge), a `<dl>` of metadata (Found in docs, CLI response, Canonical form), and `<details><summary>Fix</summary>…</details>` for the remediation.
+- **Code blocks** must escape `<`/`>` in displayed CLI output — `<pre><code>` for multi-line, `<code>` inline.
