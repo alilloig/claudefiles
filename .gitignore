@@ -40,6 +40,7 @@ daemon/
 daemon.lock
 daemon.log
 daemon.status.json
+daemon-auth-*
 jobs/
 gh-pr-status-cache.json
 
