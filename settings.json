@@ -73,7 +73,9 @@
     "codex-bridge@contract-hero": true,
     "sui-pilot@contract-hero": true,
     "agentic-community-college@contract-hero": true,
-    "acc-deepbook-course@contract-hero": true
+    "acc-deepbook-course@contract-hero": true,
+    "toolkit@contract-hero": true,
+    "acc-evm-wal@contract-hero": true
   },
   "extraKnownMarketplaces": {
     "impeccable": {
