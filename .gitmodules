@@ -5,7 +5,7 @@
 	update = merge
 [submodule "sui-pilot"]
 	path = sui-pilot
-	url = git@github.com:alilloig/sui-pilot.git
+	url = git@github.com:contract-hero/sui-pilot.git
 	branch = main
 	update = merge
 [submodule "skills/move-code-review"]
