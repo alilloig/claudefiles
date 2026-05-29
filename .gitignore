@@ -1,4 +1,6 @@
 # ── Runtime & session data (machine-specific, ephemeral) ──
+.last-update-result.json
+security/
 backups/
 cache/
 debug/
@@ -25,6 +27,7 @@ plugins/cache/
 plugins/marketplaces/
 plugins/known_marketplaces.json
 plugins/install-counts-cache.json
+plugins/plugin-catalog-cache.json
 
 # ── Channels (bot tokens, access control — NEVER commit) ──
 channels/
