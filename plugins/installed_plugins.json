@@ -306,16 +306,6 @@
         "gitCommitSha": "200a1c7e6c85b86b881abc183138258ff1a0690e"
       }
     ],
-    "code-forge@contract-hero": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/code-forge/0.2.0",
-        "version": "0.2.0",
-        "installedAt": "2026-04-28T13:18:58.576Z",
-        "lastUpdated": "2026-05-22T08:37:06.694Z",
-        "gitCommitSha": "20ab8d7fb798bf4c4ccf6da4b217e051aa1adc44"
-      }
-    ],
     "agentic-community-college@contract-hero": [
       {
         "scope": "user",
