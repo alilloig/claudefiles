@@ -47,5 +47,9 @@ daemon-auth-*
 jobs/
 gh-pr-status-cache.json
 
+# ── sui-pilot always-on context (machine-local symlink into the installed plugin) ──
+# Recreated each session by hooks/refresh-sui-pilot-symlink.sh; was a submodule pre-marketplace.
+/sui-pilot
+
 # ── OS junk ──
 .DS_Store
