@@ -119,6 +119,23 @@ for p in "${disabled_plugins[@]}"; do
 done
 echo "  ✓ Disabled: github, linear, playwright, slack, notion"
 
+# --- 6. EVM / Solidity-security stack (opt-in) ---
+# Heavy toolchain (Foundry, Slither, Aderyn, Halmos, Mythril, Medusa, Echidna)
+# plus analysis-only MCP servers and auditor skill repos. Off by default so
+# normal bootstraps stay fast; enable with:
+#     INSTALL_EVM_STACK=1 bash setup.sh
+# The installer is idempotent and safe to re-run.
+echo ""
+echo "--- EVM / Solidity-security stack ---"
+if [ "${INSTALL_EVM_STACK:-0}" = "1" ]; then
+    echo "  INSTALL_EVM_STACK=1 -> running scripts/setup-sol-sec-stack.sh --yes"
+    bash "$REPO_DIR/scripts/setup-sol-sec-stack.sh" --yes || \
+        echo "  ! EVM stack install reported issues (see output above)"
+else
+    echo "  · skipped (set INSTALL_EVM_STACK=1 to install)"
+    echo "    or run manually: bash ~/.claude/scripts/setup-sol-sec-stack.sh"
+fi
+
 # --- Done ---
 echo ""
 echo "=== Setup complete ==="

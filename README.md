@@ -99,6 +99,26 @@ See `.gitignore` for the complete list.
 | codex-bridge | `plugins/codex-bridge/` | MCP bridge between Claude Code and OpenAI Codex CLI |
 | sui-wallet | `plugins/sui-wallet/` | Sui wallet plugin |
 
+### Scripts
+
+| Script | Description |
+|--------|-------------|
+| `scripts/setup-sol-sec-stack.sh` | Idempotent installer for the EVM / Solidity-security stack: Foundry, Slither, Aderyn, Halmos, Mythril, Medusa, Echidna, plus analysis-only MCP servers (Slither, OpenZeppelin, optional Etherscan) and the Pashov + Trail of Bits auditor skill repos (cloned to `skills-src/`, gitignored). Safe by design — never installs wallet/tx-signing MCPs. |
+
+This installer is **opt-in** during bootstrap (it's a heavy toolchain). `setup.sh`
+runs it only when `INSTALL_EVM_STACK=1` is set:
+
+```bash
+INSTALL_EVM_STACK=1 bash setup.sh          # as part of a full bootstrap
+bash ~/.claude/scripts/setup-sol-sec-stack.sh   # or standalone, any time
+bash ~/.claude/scripts/setup-sol-sec-stack.sh --check-only   # report only
+```
+
+Notes for a fresh machine: enable the cloned skills by symlinking the ones you want
+into `skills/`, export `ETHERSCAN_API_KEY` before running to auto-register the
+Etherscan MCP, and ensure `~/go/bin` is on `PATH` (dotfiles `.zshrc` adds it) so the
+`medusa` binary is found.
+
 ### Hooks
 
 A SessionStart hook in `settings.json` runs `mkdir -p "${CLAUDE_PROJECT_DIR:-.}/.remember/logs"` on every session.

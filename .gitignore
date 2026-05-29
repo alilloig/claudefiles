@@ -51,5 +51,10 @@ gh-pr-status-cache.json
 # Recreated each session by hooks/refresh-sui-pilot-symlink.sh; was a submodule pre-marketplace.
 /sui-pilot
 
+# ── EVM/Solidity-security auditor skill repos (regenerable clones) ──
+# Cloned by scripts/setup-sol-sec-stack.sh; they're independent git repos,
+# re-fetched on demand — never commit them into dotclaude.
+skills-src/
+
 # ── OS junk ──
 .DS_Store
