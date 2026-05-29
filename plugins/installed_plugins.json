@@ -312,7 +312,7 @@
         "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/agentic-community-college/0.2.0",
         "version": "0.2.0",
         "installedAt": "2026-05-13T09:56:54.800Z",
-        "lastUpdated": "2026-05-22T08:37:07.476Z",
+        "lastUpdated": "2026-05-29T14:05:12.164Z",
         "gitCommitSha": "f59c79ade1b2100d5a980ae08833576ce354130c"
       }
     ],
@@ -344,6 +344,396 @@
         "installedAt": "2026-05-14T13:08:23.678Z",
         "lastUpdated": "2026-05-22T08:37:06.682Z",
         "gitCommitSha": "85df71e42f8408c7e6ead69b28e9505a6dae4be0"
+      }
+    ],
+    "ask-questions-if-underspecified@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/ask-questions-if-underspecified/1.0.1",
+        "version": "1.0.1",
+        "installedAt": "2026-05-29T15:26:18.040Z",
+        "lastUpdated": "2026-05-29T15:26:18.040Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "audit-context-building@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/audit-context-building/1.1.0",
+        "version": "1.1.0",
+        "installedAt": "2026-05-29T15:26:19.173Z",
+        "lastUpdated": "2026-05-29T15:26:19.173Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "building-secure-contracts@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/building-secure-contracts/1.1.1",
+        "version": "1.1.1",
+        "installedAt": "2026-05-29T15:26:20.499Z",
+        "lastUpdated": "2026-05-29T15:26:20.499Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "burpsuite-project-parser@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/burpsuite-project-parser/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-05-29T15:26:21.283Z",
+        "lastUpdated": "2026-05-29T15:26:21.283Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "claude-in-chrome-troubleshooting@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/claude-in-chrome-troubleshooting/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-05-29T15:26:22.263Z",
+        "lastUpdated": "2026-05-29T15:26:22.263Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "constant-time-analysis@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/constant-time-analysis/0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-05-29T15:26:23.427Z",
+        "lastUpdated": "2026-05-29T15:26:23.427Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "culture-index@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/culture-index/1.1.0",
+        "version": "1.1.0",
+        "installedAt": "2026-05-29T15:26:24.285Z",
+        "lastUpdated": "2026-05-29T15:26:24.285Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "debug-buttercup@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/debug-buttercup/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-05-29T15:26:25.585Z",
+        "lastUpdated": "2026-05-29T15:26:25.585Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "devcontainer-setup@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/devcontainer-setup/0.2.0",
+        "version": "0.2.0",
+        "installedAt": "2026-05-29T15:26:26.324Z",
+        "lastUpdated": "2026-05-29T15:26:26.324Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "differential-review@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/differential-review/1.1.0",
+        "version": "1.1.0",
+        "installedAt": "2026-05-29T15:26:27.265Z",
+        "lastUpdated": "2026-05-29T15:26:27.265Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "firebase-apk-scanner@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/firebase-apk-scanner/2.1.0",
+        "version": "2.1.0",
+        "installedAt": "2026-05-29T15:26:28.210Z",
+        "lastUpdated": "2026-05-29T15:26:28.210Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "gh-cli@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/gh-cli/1.4.1",
+        "version": "1.4.1",
+        "installedAt": "2026-05-29T15:26:29.116Z",
+        "lastUpdated": "2026-05-29T15:26:29.116Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "dwarf-expert@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/dwarf-expert/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-05-29T15:26:30.049Z",
+        "lastUpdated": "2026-05-29T15:26:30.049Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "entry-point-analyzer@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/entry-point-analyzer/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-05-29T15:26:31.042Z",
+        "lastUpdated": "2026-05-29T15:26:31.042Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "mutation-testing@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/mutation-testing/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-05-29T15:26:32.271Z",
+        "lastUpdated": "2026-05-29T15:26:32.271Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "property-based-testing@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/property-based-testing/1.1.0",
+        "version": "1.1.0",
+        "installedAt": "2026-05-29T15:26:33.420Z",
+        "lastUpdated": "2026-05-29T15:26:33.420Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "semgrep-rule-creator@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/semgrep-rule-creator/1.2.0",
+        "version": "1.2.0",
+        "installedAt": "2026-05-29T15:26:34.348Z",
+        "lastUpdated": "2026-05-29T15:26:34.348Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "semgrep-rule-variant-creator@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/semgrep-rule-variant-creator/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-05-29T15:26:35.437Z",
+        "lastUpdated": "2026-05-29T15:26:35.437Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "sharp-edges@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/sharp-edges/1.1.0",
+        "version": "1.1.0",
+        "installedAt": "2026-05-29T15:26:36.328Z",
+        "lastUpdated": "2026-05-29T15:26:36.328Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "static-analysis@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/static-analysis/1.2.1",
+        "version": "1.2.1",
+        "installedAt": "2026-05-29T15:26:37.378Z",
+        "lastUpdated": "2026-05-29T15:26:37.378Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "spec-to-code-compliance@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/spec-to-code-compliance/1.1.0",
+        "version": "1.1.0",
+        "installedAt": "2026-05-29T15:26:38.323Z",
+        "lastUpdated": "2026-05-29T15:26:38.323Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "testing-handbook-skills@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/testing-handbook-skills/1.0.1",
+        "version": "1.0.1",
+        "installedAt": "2026-05-29T15:26:39.303Z",
+        "lastUpdated": "2026-05-29T15:26:39.303Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "trailmark@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/trailmark/0.8.1",
+        "version": "0.8.1",
+        "installedAt": "2026-05-29T15:26:40.303Z",
+        "lastUpdated": "2026-05-29T15:26:40.303Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "variant-analysis@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/variant-analysis/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-05-29T15:26:41.300Z",
+        "lastUpdated": "2026-05-29T15:26:41.300Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "c-review@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/c-review/1.1.2",
+        "version": "1.1.2",
+        "installedAt": "2026-05-29T15:26:42.341Z",
+        "lastUpdated": "2026-05-29T15:26:42.341Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "modern-python@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/modern-python/1.5.0",
+        "version": "1.5.0",
+        "installedAt": "2026-05-29T15:26:43.288Z",
+        "lastUpdated": "2026-05-29T15:26:43.288Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "insecure-defaults@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/insecure-defaults/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-05-29T15:26:44.254Z",
+        "lastUpdated": "2026-05-29T15:26:44.254Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "second-opinion@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/second-opinion/1.6.0",
+        "version": "1.6.0",
+        "installedAt": "2026-05-29T15:26:45.308Z",
+        "lastUpdated": "2026-05-29T15:26:45.308Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "yara-authoring@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/yara-authoring/2.0.0",
+        "version": "2.0.0",
+        "installedAt": "2026-05-29T15:26:46.315Z",
+        "lastUpdated": "2026-05-29T15:26:46.315Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "git-cleanup@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/git-cleanup/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-05-29T15:26:47.314Z",
+        "lastUpdated": "2026-05-29T15:26:47.314Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "workflow-skill-design@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/workflow-skill-design/1.0.1",
+        "version": "1.0.1",
+        "installedAt": "2026-05-29T15:26:48.294Z",
+        "lastUpdated": "2026-05-29T15:26:48.294Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "seatbelt-sandboxer@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/seatbelt-sandboxer/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-05-29T15:26:49.336Z",
+        "lastUpdated": "2026-05-29T15:26:49.336Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "supply-chain-risk-auditor@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/supply-chain-risk-auditor/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-05-29T15:26:50.421Z",
+        "lastUpdated": "2026-05-29T15:26:50.421Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "zeroize-audit@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/zeroize-audit/0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-05-29T15:26:51.494Z",
+        "lastUpdated": "2026-05-29T15:26:51.494Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "let-fate-decide@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/let-fate-decide/1.2.0",
+        "version": "1.2.0",
+        "installedAt": "2026-05-29T15:26:52.545Z",
+        "lastUpdated": "2026-05-29T15:26:52.545Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "agentic-actions-auditor@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/agentic-actions-auditor/1.2.0",
+        "version": "1.2.0",
+        "installedAt": "2026-05-29T15:26:53.560Z",
+        "lastUpdated": "2026-05-29T15:26:53.560Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "skill-improver@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/skill-improver/1.0.2",
+        "version": "1.0.2",
+        "installedAt": "2026-05-29T15:26:54.607Z",
+        "lastUpdated": "2026-05-29T15:26:54.607Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "fp-check@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/fp-check/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-05-29T15:26:55.632Z",
+        "lastUpdated": "2026-05-29T15:26:55.632Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
+      }
+    ],
+    "dimensional-analysis@trailofbits": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/trailofbits/dimensional-analysis/3.0.0",
+        "version": "3.0.0",
+        "installedAt": "2026-05-29T15:26:56.737Z",
+        "lastUpdated": "2026-05-29T15:26:56.737Z",
+        "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
       }
     ]
   }

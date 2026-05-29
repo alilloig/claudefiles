@@ -101,6 +101,28 @@ for p in code-forge codex-bridge sui-pilot; do
     install_plugin "${p}@contract-hero"
 done
 
+# Trail of Bits security plugins (marketplace: trailofbits/skills, declared in
+# settings.json extraKnownMarketplaces). Full set — AI-assisted security
+# analysis, fuzzing, static analysis, audit workflows, etc.
+tob_plugins=(
+    ask-questions-if-underspecified audit-context-building
+    building-secure-contracts burpsuite-project-parser
+    claude-in-chrome-troubleshooting constant-time-analysis culture-index
+    debug-buttercup devcontainer-setup differential-review
+    firebase-apk-scanner gh-cli dwarf-expert entry-point-analyzer
+    mutation-testing property-based-testing semgrep-rule-creator
+    semgrep-rule-variant-creator sharp-edges static-analysis
+    spec-to-code-compliance testing-handbook-skills trailmark
+    variant-analysis c-review modern-python insecure-defaults
+    second-opinion yara-authoring git-cleanup workflow-skill-design
+    seatbelt-sandboxer supply-chain-risk-auditor zeroize-audit
+    let-fate-decide agentic-actions-auditor skill-improver fp-check
+    dimensional-analysis
+)
+for p in "${tob_plugins[@]}"; do
+    install_plugin "${p}@trailofbits"
+done
+
 echo ""
 echo "  Installed: $installed  Already present: $skipped"
 
