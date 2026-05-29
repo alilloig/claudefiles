@@ -149,10 +149,10 @@
     "security-guidance@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/security-guidance/unknown",
-        "version": "unknown",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/security-guidance/2.0.0",
+        "version": "2.0.0",
         "installedAt": "2026-04-23T09:20:07.351Z",
-        "lastUpdated": "2026-05-14T10:46:58.235Z"
+        "lastUpdated": "2026-05-29T07:13:53.338Z"
       }
     ],
     "superpowers@claude-plugins-official": [
@@ -250,10 +250,10 @@
     "chrome-devtools-mcp@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/chrome-devtools-mcp/1.0.1",
-        "version": "1.0.1",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/chrome-devtools-mcp/1.1.0",
+        "version": "1.1.0",
         "installedAt": "2026-04-23T09:19:40.252Z",
-        "lastUpdated": "2026-05-19T08:10:00.703Z",
+        "lastUpdated": "2026-05-29T07:19:10.337Z",
         "gitCommitSha": "a1612be8e01401cf1711c64bc2ef5da5763ba956"
       }
     ],
@@ -299,40 +299,40 @@
     "sui-pilot@contract-hero": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/sui-pilot/aee572259e9a",
-        "version": "aee572259e9a",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/sui-pilot/f135c915a0b7",
+        "version": "f135c915a0b7",
         "installedAt": "2026-04-27T10:55:54.815Z",
-        "lastUpdated": "2026-05-14T13:06:44.950Z",
+        "lastUpdated": "2026-05-25T15:01:37.796Z",
         "gitCommitSha": "200a1c7e6c85b86b881abc183138258ff1a0690e"
       }
     ],
     "code-forge@contract-hero": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/code-forge/0.1.0",
-        "version": "0.1.0",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/code-forge/0.2.0",
+        "version": "0.2.0",
         "installedAt": "2026-04-28T13:18:58.576Z",
-        "lastUpdated": "2026-05-14T10:46:58.235Z",
+        "lastUpdated": "2026-05-22T08:37:06.694Z",
         "gitCommitSha": "20ab8d7fb798bf4c4ccf6da4b217e051aa1adc44"
       }
     ],
     "agentic-community-college@contract-hero": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/agentic-community-college/0.1.5",
-        "version": "0.1.5",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/agentic-community-college/0.2.0",
+        "version": "0.2.0",
         "installedAt": "2026-05-13T09:56:54.800Z",
-        "lastUpdated": "2026-05-14T12:52:47.005Z",
+        "lastUpdated": "2026-05-22T08:37:07.476Z",
         "gitCommitSha": "f59c79ade1b2100d5a980ae08833576ce354130c"
       }
     ],
     "acc-deepbook-course@contract-hero": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/acc-deepbook-course/0.1.2",
-        "version": "0.1.2",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/acc-deepbook-course/0.2.0",
+        "version": "0.2.0",
         "installedAt": "2026-05-13T09:56:58.058Z",
-        "lastUpdated": "2026-05-14T10:46:58.235Z",
+        "lastUpdated": "2026-05-22T08:37:06.627Z",
         "gitCommitSha": "a7782ef3b202862fafc35d4c0bc7d45e35968f84"
       }
     ],
@@ -349,10 +349,10 @@
     "toolkit@contract-hero": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/toolkit/0.1.0",
-        "version": "0.1.0",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/toolkit/0.3.0",
+        "version": "0.3.0",
         "installedAt": "2026-05-14T13:08:23.678Z",
-        "lastUpdated": "2026-05-14T13:08:23.678Z",
+        "lastUpdated": "2026-05-22T08:37:06.682Z",
         "gitCommitSha": "85df71e42f8408c7e6ead69b28e9505a6dae4be0"
       }
     ]

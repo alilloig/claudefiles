@@ -33,6 +33,9 @@
       }
     ]
   },
+  "worktree": {
+    "baseRef": "fresh"
+  },
   "statusLine": {
     "type": "command",
     "command": "bash /Users/alilloig/.claude/statusline-command.sh"
@@ -88,7 +91,8 @@
       "source": {
         "source": "github",
         "repo": "contract-hero/plugin-marketplace"
-      }
+      },
+      "autoUpdate": true
     }
   },
   "autoUpdatesChannel": "latest",
@@ -96,6 +100,7 @@
   "theme": "dark-ansi",
   "editorMode": "vim",
   "preferredNotifChannel": "iterm2",
+  "autoCompactEnabled": false,
   "teammateMode": "tmux",
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": false,
