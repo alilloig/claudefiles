@@ -99,11 +99,14 @@ You orchestrate; you do NOT review yourself. All spawning happens here, in the m
 ### 3.3 Receive the consolidator's summary and sanity-check
 - A spawned teammate's RETURN VALUE is not delivered to you — only its `SendMessage`
   reaches you (confirmed in `references/spike-results.md`). The consolidator is instructed
-  to SendMessage you its summary; wait for that message. (If it stays silent, read its
-  findings + `$RUN_DIR/review-payload.json` and the team inbox at
-  `~/.claude/teams/<team>/inboxes/<lead>.json`.)
-- Confirm a review was actually posted: `gh pr view "$PR_NUMBER" --json reviews -q '.reviews | length'`
-  should be ≥ 1, or trust the review id the consolidator reported.
+  to SendMessage you its summary; wait for that message.
+- If the consolidator stays silent, recover in this order — do NOT block indefinitely:
+  1. **Authoritative:** `gh pr view "$PR_NUMBER" --json reviews -q '.reviews | length'`
+     ≥ 1 confirms the review posted; trust any review id the consolidator reported.
+  2. Read `$RUN_DIR/review-payload.json` to see what it built.
+  3. Best-effort only: check the team inbox under `~/.claude/teams/` (exact filename
+     may vary — do not depend on a fixed path).
+- Confirm the review posted with the `gh pr view` check above regardless.
 - Keep the summary (kept/dropped counts, inline suggestions list, walkthrough-only items)
   — Phase 4 adjudicates from it + the posted review.
 
