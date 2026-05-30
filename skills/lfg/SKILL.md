@@ -63,7 +63,49 @@ If `/commit-push-pr` did not result in an open PR (e.g. push failed), stop and r
 3. Refresh the changed-file list (it may have grown): `git diff --name-only "$BASE_REF"...HEAD`.
 
 ## Phase 3 — Team review
-<!-- filled in Task 7 -->
+
+You orchestrate; you do NOT review yourself. All spawning happens here, in the main session.
+
+### 3.1 Classify the diff and choose reviewers
+- Split the changed-file list into Move files (`*.move`, `Move.toml`) and the rest.
+- Pick dimensions to cover (scale count to diff size; small diff → fewer):
+  correctness/bugs, security, performance, tests, docs/comments, CLAUDE.md & conventions,
+  API/type design. Drop dimensions with no relevant files (e.g. no tests touched → you may
+  still include `tests` to check for MISSING coverage; use judgment).
+- Assign each dimension a reviewer:
+  - If that dimension's scope is Move files → `subagent_type: sui-pilot:sui-pilot-agent`
+    (fallback chain: `sui-pilot:sui-pilot-agent` → `sui-pilot-agent` → `general-purpose`;
+    the sui-pilot reviewer additionally runs `/move-code-review` + `/move-code-quality`).
+  - Otherwise → `subagent_type: general-purpose`.
+- Determine reporting mode per reviewer from `references/spike-results.md` + the agent's
+  grant: an agent reports via **Mode A (chat)** only if peer-SendMessage WORKS *and* its
+  type grants SendMessage (today: only generic agents). Everyone else uses **Mode B (file drop)**.
+
+### 3.2 Spawn the team — ALL in ONE assistant turn
+- `TeamCreate` a team (e.g. `lfg-review-<PR_NUMBER>`) BEFORE spawning — `team_name` on the
+  `Agent` tool does not auto-create the team.
+- In a single turn, dispatch every reviewer + the consolidator as parallel `Agent` calls,
+  all with the same `team_name`, each with a unique `name`:
+  - Reviewers: prompt = `references/reviewer_prompt.md` with `{{...}}` filled
+    (DIMENSION, DIMENSION_PREFIX, DIMENSION_GUIDANCE, FILE_LIST scoped to that reviewer,
+    PR/repo refs, CONSOLIDATOR_NAME, RUN_DIR, and the chosen reporting mode).
+  - Consolidator: `name` = the CONSOLIDATOR_NAME you gave reviewers,
+    `subagent_type: general-purpose` (needs Bash + SendMessage), prompt =
+    `references/consolidator_prompt.md` with `{{...}}` filled (REVIEWER_NAMES roster,
+    LEAD_NAME = your team-lead name, RUN_DIR, SKILL_DIR, PR/repo refs).
+- Reviewers report (chat or file); the consolidator collects, verifies, and posts the
+  PR review.
+
+### 3.3 Receive the consolidator's summary and sanity-check
+- A spawned teammate's RETURN VALUE is not delivered to you — only its `SendMessage`
+  reaches you (confirmed in `references/spike-results.md`). The consolidator is instructed
+  to SendMessage you its summary; wait for that message. (If it stays silent, read its
+  findings + `$RUN_DIR/review-payload.json` and the team inbox at
+  `~/.claude/teams/<team>/inboxes/<lead>.json`.)
+- Confirm a review was actually posted: `gh pr view "$PR_NUMBER" --json reviews -q '.reviews | length'`
+  should be ≥ 1, or trust the review id the consolidator reported.
+- Keep the summary (kept/dropped counts, inline suggestions list, walkthrough-only items)
+  — Phase 4 adjudicates from it + the posted review.
 
 ## Phase 4 — Self-adjudicate + approve
 <!-- filled in Task 8 -->
