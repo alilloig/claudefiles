@@ -735,6 +735,16 @@
         "lastUpdated": "2026-05-29T15:26:56.737Z",
         "gitCommitSha": "c94841be3deae8a880fa1a9078979adac7ca3dbc"
       }
+    ],
+    "code-forge@contract-hero": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/code-forge/0.3.1",
+        "version": "0.3.1",
+        "installedAt": "2026-05-30T13:54:28.646Z",
+        "lastUpdated": "2026-05-30T13:54:28.646Z",
+        "gitCommitSha": "ae299af6a53e2c0856cd04713388677b024d9898"
+      }
     ]
   }
 }

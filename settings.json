@@ -120,7 +120,8 @@
     "agentic-actions-auditor@trailofbits": true,
     "skill-improver@trailofbits": true,
     "fp-check@trailofbits": true,
-    "dimensional-analysis@trailofbits": true
+    "dimensional-analysis@trailofbits": true,
+    "code-forge@contract-hero": true
   },
   "extraKnownMarketplaces": {
     "impeccable": {
