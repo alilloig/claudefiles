@@ -1,0 +1,12 @@
+{
+  "event": "COMMENT",
+  "body": "## /lfg review\n\nWalkthrough of proposed changes:\n\n1. **src/a.ts:42** — sanitize untrusted input before use.",
+  "comments": [
+    {
+      "path": "src/a.ts",
+      "line": 42,
+      "side": "RIGHT",
+      "body": "Untrusted input reaches the sink unchecked.\n\n```suggestion\nconst v = sanitize(input);\n```"
+    }
+  ]
+}
