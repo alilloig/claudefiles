@@ -104,6 +104,12 @@ done
 # Trail of Bits security plugins (marketplace: trailofbits/skills, declared in
 # settings.json extraKnownMarketplaces). Full set — AI-assisted security
 # analysis, fuzzing, static analysis, audit workflows, etc.
+#
+# Gated behind INSTALL_EVM_STACK (same flag as the heavy toolchain below) so a
+# default bootstrap stays lean. These 39 plugins register always-on hooks
+# (gh-cli Bash PreToolUse; fp-check/skill-improver Stop) and pull in extra MCP
+# servers, so they're opt-in. settings.json ships them disabled; the runtime
+# switch is scripts/sol-sec-stack.sh {on,off}.
 tob_plugins=(
     ask-questions-if-underspecified audit-context-building
     building-secure-contracts burpsuite-project-parser
@@ -119,9 +125,14 @@ tob_plugins=(
     let-fate-decide agentic-actions-auditor skill-improver fp-check
     dimensional-analysis
 )
-for p in "${tob_plugins[@]}"; do
-    install_plugin "${p}@trailofbits"
-done
+if [ "${INSTALL_EVM_STACK:-0}" = "1" ]; then
+    for p in "${tob_plugins[@]}"; do
+        install_plugin "${p}@trailofbits"
+    done
+else
+    echo "  · Trail of Bits plugins skipped (set INSTALL_EVM_STACK=1 to install)"
+    echo "    runtime toggle: ~/.claude/scripts/sol-sec-stack.sh on"
+fi
 
 echo ""
 echo "  Installed: $installed  Already present: $skipped"

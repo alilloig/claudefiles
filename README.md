@@ -104,15 +104,37 @@ See `.gitignore` for the complete list.
 | Script | Description |
 |--------|-------------|
 | `scripts/setup-sol-sec-stack.sh` | Idempotent installer for the EVM / Solidity-security stack: Foundry, Slither, Aderyn, Halmos, Mythril, Medusa, Echidna, plus analysis-only MCP servers (Slither, OpenZeppelin, optional Etherscan) and the Pashov + Trail of Bits auditor skill repos (cloned to `skills-src/`, gitignored). Safe by design — never installs wallet/tx-signing MCPs. |
+| `scripts/sol-sec-stack.sh` | Runtime **on/off/status** toggle for the EVM / Solidity-security stack. Flips all 39 `@trailofbits` plugins in `settings.json` and adds/removes the `openzeppelin` + `slither` MCP servers in `~/.claude.json` — in one command, no reinstall. |
 
-This installer is **opt-in** during bootstrap (it's a heavy toolchain). `setup.sh`
-runs it only when `INSTALL_EVM_STACK=1` is set:
+### EVM / Solidity-security stack — two switches
+
+The Solidity stack is **off by default** and governed by two complementary switches:
+
+- **Bootstrap switch — `INSTALL_EVM_STACK=1`**: what `setup.sh` reads to decide
+  whether to *install* the heavy toolchain (`setup-sol-sec-stack.sh`) **and** the
+  39 Trail of Bits plugins. A plain `bash setup.sh` installs neither, so fresh
+  machines stay lean.
+- **Runtime switch — `scripts/sol-sec-stack.sh {on,off}`**: enables/disables the
+  already-installed stack without reinstalling. `off` also strips the always-on
+  hooks the plugins register (gh-cli Bash `PreToolUse`; fp-check/skill-improver
+  `Stop`) and the bundled MCP servers, which are the main per-session cost.
+  `settings.json` ships with all `@trailofbits` plugins disabled, so "off" is the
+  committed default.
 
 ```bash
+# Bootstrap (heavy toolchain + plugins)
 INSTALL_EVM_STACK=1 bash setup.sh          # as part of a full bootstrap
-bash ~/.claude/scripts/setup-sol-sec-stack.sh   # or standalone, any time
+bash ~/.claude/scripts/setup-sol-sec-stack.sh   # toolchain standalone, any time
 bash ~/.claude/scripts/setup-sol-sec-stack.sh --check-only   # report only
+
+# Runtime toggle (no reinstall) — restart Claude Code after flipping
+~/.claude/scripts/sol-sec-stack.sh on      # enable plugins + MCP servers
+~/.claude/scripts/sol-sec-stack.sh off     # disable everything
+~/.claude/scripts/sol-sec-stack.sh status  # show current state
 ```
+
+The pashov `solidity-auditor` / `x-ray` skills in `skills/` are left enabled by
+either switch — they only load when explicitly invoked, so they cost nothing at rest.
 
 Notes for a fresh machine: enable the cloned skills by symlinking the ones you want
 into `skills/`, export `ETHERSCAN_API_KEY` before running to auto-register the
