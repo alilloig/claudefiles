@@ -108,4 +108,30 @@ You orchestrate; you do NOT review yourself. All spawning happens here, in the m
   — Phase 4 adjudicates from it + the posted review.
 
 ## Phase 4 — Self-adjudicate + approve
-<!-- filled in Task 8 -->
+
+You now act as the PR author deciding what to take from the review.
+
+1. Read the posted review and the consolidator's summary. For EACH inline suggestion and
+   each walkthrough item, decide ACCEPT or REJECT on its merits (correctness + fit with the
+   codebase). Be willing to reject low-value or wrong suggestions — explain why.
+2. Apply every ACCEPTED change locally by editing the file to match the suggestion. (We
+   apply via local edits, not GitHub's "commit suggestion" button.)
+3. If you accepted any change:
+   ```bash
+   git add -A && git commit -m "apply review suggestions" && git push
+   ```
+4. Post your adjudication so the threads aren't left dangling. Reply once summarizing
+   per-item ACCEPT/REJECT (+ one-line reasons):
+   ```bash
+   gh pr comment "$PR_NUMBER" --body-file "$RUN_DIR/adjudication.md"
+   ```
+   (Best-effort: to resolve individual inline threads, fetch thread ids via
+   `gh api graphql` querying `pullRequest.reviewThreads` then call the
+   `resolveReviewThread` mutation per id. Skip if it adds no value.)
+5. Approve, leaving the PR open + merge-ready for a human:
+   ```bash
+   gh pr review "$PR_NUMBER" --approve --body "lfg pipeline complete: shipped, simplified, reviewed (N kept / M dropped), suggestions adjudicated. Ready for human merge."
+   ```
+6. Report to the user: the PR URL (the deliverable), the commits made (feature /
+   simplify / apply review suggestions), kept-vs-dropped finding counts, what you
+   accepted vs rejected and why, and that the PR is approved and awaiting human merge.
