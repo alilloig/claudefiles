@@ -9,7 +9,7 @@ description: |
 
   Use this skill whenever:
   - About to drive a web3 / dapp end-to-end test through chrome-devtools-mcp
-    (MetaMask popups, Slush approvals, wallet signatures, on-chain mints).
+    and the wallet Chrome is not yet confirmed running on port 9222.
   - The user says "launch dev chrome", "start dev chrome", "bring up dev
     chrome", "open my testing chrome", "abre el chrome de pruebas", or any
     variant.
@@ -25,6 +25,10 @@ description: |
     of the isolated dev profile.
   - chrome-devtools-mcp is already proven attached to the WALLET profile in
     this session (a `list_pages` succeeded AND the extension check below passed).
+  - The browser is already up and you only need to click Approve/Sign in a
+    Slush/MetaMask popup, connect a wallet, or finish a wallet login — that is
+    drive-slush-wallet's job. This skill only brings the browser UP on 9222; it
+    does not interact with wallet popups.
 allowed-tools: Bash
 ---
 
