@@ -32,6 +32,9 @@ plugins/plugin-catalog-cache.json
 # ── Channels (bot tokens, access control — NEVER commit) ──
 channels/
 
+# ── OAuth / API credentials (NEVER commit) ──
+.credentials.json
+
 # ── Settings backups (auto-generated) ──
 settings.json.backup.*
 

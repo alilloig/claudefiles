@@ -28,6 +28,9 @@ message a *sibling* (not just the orchestrator).
 2. **File-drop fallback is needed only for agent types whose `tools:` grant lacks
    `SendMessage`** — today that is `sui-pilot-agent` (until the companion change in Task 9
    ships). Generic (`general-purpose`/`claude`) reviewers chat directly.
+   > **Update 2026-06-01:** `sui-pilot-agent` now carries the `SendMessage` grant in
+   > the published build, so all current reviewer types use Mode A; Mode B stays as the
+   > capability-based fallback for any future grant-less agent type.
 3. **CRITICAL operational rule discovered:** a spawned teammate's *return value is NOT
    delivered to the orchestrator* — only `SendMessage` content and idle notifications reach
    the team lead. Therefore:
