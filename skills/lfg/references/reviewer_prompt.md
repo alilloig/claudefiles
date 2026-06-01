@@ -43,7 +43,8 @@ the consolidator — you MUST use SendMessage.
 **Mode B — file drop (you lack SendMessage):**
 Write the same `{ "reviewer", "agent_type", "findings": [...] }` JSON to
 `{{RUN_DIR}}/findings-{{DIMENSION}}.json`. Return a one-line final report naming the
-file you wrote. (Move reviewers via sui-pilot-agent use this mode until that agent
-gains the SendMessage grant.)
+file you wrote. (This is the fallback for any reviewer whose agent type lacks the
+SendMessage grant; the orchestrator selects it per agent. Today both generic and
+sui-pilot-agent reviewers grant SendMessage, so this mode is normally unused.)
 
 If you found nothing, still report/write an empty `findings: []`.

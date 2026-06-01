@@ -79,7 +79,8 @@ You orchestrate; you do NOT review yourself. All spawning happens here, in the m
   - Otherwise → `subagent_type: general-purpose`.
 - Determine reporting mode per reviewer from `references/spike-results.md` + the agent's
   grant: an agent reports via **Mode A (chat)** only if peer-SendMessage WORKS *and* its
-  type grants SendMessage (today: only generic agents). Everyone else uses **Mode B (file drop)**.
+  type grants SendMessage (currently both generic and sui-pilot-agent qualify). Any agent
+  type without the SendMessage grant falls back to **Mode B (file drop)**.
 
 ### 3.2 Spawn the team — ALL in ONE assistant turn
 - `TeamCreate` a team (e.g. `lfg-review-<PR_NUMBER>`) BEFORE spawning — `team_name` on the
