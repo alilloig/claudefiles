@@ -79,7 +79,7 @@ official_plugins=(
     frontend-design github gopls-lsp hookify
     learning-output-style legalzoom linear mcp-server-dev
     notion playground playwright plugin-dev pr-review-toolkit
-    pyright-lsp ralph-loop remember rust-analyzer-lsp
+    pyright-lsp ralph-loop rust-analyzer-lsp
     security-guidance skill-creator slack superpowers
     swift-lsp telegram typescript-lsp
 )

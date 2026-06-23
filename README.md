@@ -35,7 +35,6 @@ bash ~/.claude/setup.sh
 | Global permissions | `settings.local.json` |
 | User settings (hooks, plugins, env) | `settings.json` |
 | Hook scripts | `hooks/` |
-| `.remember/` skeleton (workaround for plugin bootstrap bug — see Hooks below) | `.remember/` |
 | Agent teams | `teams/` |
 | Local plugins | `plugins/codex-bridge/`, `plugins/sui-wallet/`, … |
 | Plugin state | `plugins/*.json` |
@@ -143,9 +142,10 @@ Etherscan MCP, and ensure `~/go/bin` is on `PATH` (dotfiles `.zshrc` adds it) so
 
 ### Hooks
 
-A SessionStart hook in `settings.json` runs `mkdir -p "${CLAUDE_PROJECT_DIR:-.}/.remember/logs"` on every session.
+Two SessionStart hooks in `settings.json` run on every session:
 
-Why: the `remember` plugin (v0.5.0) declares hook commands in `hooks.json` that end with `2>> .remember/logs/hook-errors.log`. The shell evaluates the redirect target *before* running the command, so on a fresh project where `.remember/logs/` does not exist the redirect fails with `No such file or directory` — even on the plugin's own SessionStart script that would otherwise create the dir. This user-settings hook has no redirect of its own (so it can't suffer the same bug) and pre-creates the dir before the plugin's hooks need it. The committed `.remember/` skeleton (see "What's Tracked") is a belt-and-suspenders companion that ensures the dir exists from the very first checkout of `.claude/` itself, with no `mkdir` race at all.
+- `hooks/refresh-sui-pilot-symlink.sh` — refreshes the persistent sui-pilot symlink.
+- `hooks/patch-chrome-devtools-mcp.sh` — injects `--browser-url` into the chrome-devtools-mcp `plugin.json` so it attaches to the existing Chrome-for-Testing on :9222 instead of spawning a fresh one.
 
 ### Agent Roles & Team Recipes
 
