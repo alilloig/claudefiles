@@ -21,14 +21,11 @@
     ],
     "defaultMode": "auto"
   },
+  "model": "opus[1m]",
   "hooks": {
     "SessionStart": [
       {
         "hooks": [
-          {
-            "type": "command",
-            "command": "mkdir -p \"${CLAUDE_PROJECT_DIR:-.}/.remember/logs\""
-          },
           {
             "type": "command",
             "command": "bash /Users/alilloig/.claude/hooks/refresh-sui-pilot-symlink.sh"
@@ -72,7 +69,6 @@
     "typescript-lsp@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
     "telegram@claude-plugins-official": true,
-    "remember@claude-plugins-official": true,
     "hookify@claude-plugins-official": true,
     "gopls-lsp@claude-plugins-official": true,
     "mcp-server-dev@claude-plugins-official": true,
@@ -125,7 +121,8 @@
     "skill-improver@trailofbits": false,
     "fp-check@trailofbits": false,
     "dimensional-analysis@trailofbits": false,
-    "code-forge@contract-hero": true
+    "code-forge@contract-hero": true,
+    "sui-agent-tank@contract-hero": true
   },
   "extraKnownMarketplaces": {
     "impeccable": {

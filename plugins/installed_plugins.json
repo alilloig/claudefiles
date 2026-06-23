@@ -39,11 +39,12 @@
     ],
     "code-simplifier@claude-plugins-official": [
       {
-        "scope": "user",
+        "scope": "project",
+        "projectPath": "/Users/alilloig/workspace/slush",
         "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/code-simplifier/1.0.0",
         "version": "1.0.0",
         "installedAt": "2026-04-23T09:19:48.656Z",
-        "lastUpdated": "2026-05-14T10:46:58.235Z"
+        "lastUpdated": "2026-06-04T19:29:39.812Z"
       }
     ],
     "typescript-lsp@claude-plugins-official": [
@@ -267,16 +268,6 @@
         "gitCommitSha": "00d485659af82982aef0328d0419c49a2716d123"
       }
     ],
-    "remember@claude-plugins-official": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/remember/0.7.2",
-        "version": "0.7.2",
-        "installedAt": "2026-04-27T08:14:42.475Z",
-        "lastUpdated": "2026-05-19T08:09:51.514Z",
-        "gitCommitSha": "914445ac5f06a164800ea90ba4db41a0486321ae"
-      }
-    ],
     "ralph-loop@claude-plugins-official": [
       {
         "scope": "user",
@@ -292,17 +283,17 @@
         "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/codex-bridge/1.1.0",
         "version": "1.1.0",
         "installedAt": "2026-04-27T10:55:51.255Z",
-        "lastUpdated": "2026-05-14T10:46:58.235Z",
+        "lastUpdated": "2026-06-01T22:33:45.349Z",
         "gitCommitSha": "bc5f9a7f945ca8998075b4e7a4f1c3f7c347eee6"
       }
     ],
     "sui-pilot@contract-hero": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/sui-pilot/f135c915a0b7",
-        "version": "f135c915a0b7",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/sui-pilot/924278442671",
+        "version": "924278442671",
         "installedAt": "2026-04-27T10:55:54.815Z",
-        "lastUpdated": "2026-05-25T15:01:37.796Z",
+        "lastUpdated": "2026-06-01T15:01:52.063Z",
         "gitCommitSha": "200a1c7e6c85b86b881abc183138258ff1a0690e"
       }
     ],
@@ -312,27 +303,27 @@
         "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/agentic-community-college/0.2.0",
         "version": "0.2.0",
         "installedAt": "2026-05-13T09:56:54.800Z",
-        "lastUpdated": "2026-05-29T14:05:12.164Z",
+        "lastUpdated": "2026-06-01T22:33:53.275Z",
         "gitCommitSha": "f59c79ade1b2100d5a980ae08833576ce354130c"
       }
     ],
     "acc-deepbook-course@contract-hero": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/acc-deepbook-course/0.2.0",
-        "version": "0.2.0",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/acc-deepbook-course/0.3.0",
+        "version": "0.3.0",
         "installedAt": "2026-05-13T09:56:58.058Z",
-        "lastUpdated": "2026-05-22T08:37:06.627Z",
+        "lastUpdated": "2026-06-02T00:11:51.364Z",
         "gitCommitSha": "a7782ef3b202862fafc35d4c0bc7d45e35968f84"
       }
     ],
     "acc-evm-wal@contract-hero": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/acc-evm-wal/0.1.0",
-        "version": "0.1.0",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/acc-evm-wal/0.1.1",
+        "version": "0.1.1",
         "installedAt": "2026-05-14T13:07:34.454Z",
-        "lastUpdated": "2026-05-14T13:07:34.454Z",
+        "lastUpdated": "2026-06-02T22:20:58.249Z",
         "gitCommitSha": "02d1228acf95139e06be851e756f8f4fcaf7e087"
       }
     ],
@@ -342,7 +333,7 @@
         "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/toolkit/0.3.0",
         "version": "0.3.0",
         "installedAt": "2026-05-14T13:08:23.678Z",
-        "lastUpdated": "2026-05-22T08:37:06.682Z",
+        "lastUpdated": "2026-06-01T17:48:03.842Z",
         "gitCommitSha": "85df71e42f8408c7e6ead69b28e9505a6dae4be0"
       }
     ],
@@ -742,8 +733,18 @@
         "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/code-forge/0.3.1",
         "version": "0.3.1",
         "installedAt": "2026-05-30T13:54:28.646Z",
-        "lastUpdated": "2026-05-30T13:54:28.646Z",
+        "lastUpdated": "2026-06-01T22:33:45.676Z",
         "gitCommitSha": "ae299af6a53e2c0856cd04713388677b024d9898"
+      }
+    ],
+    "sui-agent-tank@contract-hero": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/sui-agent-tank/0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-06-01T17:45:00.312Z",
+        "lastUpdated": "2026-06-01T22:33:46.321Z",
+        "gitCommitSha": "d99c74b6a9c9ab186882d8311730a63f623e2c3a"
       }
     ]
   }
