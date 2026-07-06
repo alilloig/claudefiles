@@ -24,8 +24,8 @@ Run dir for file-drop findings: {{RUN_DIR}}
 For EACH critical/high finding, and any finding with confidence < 70:
 - Re-read the cited file/lines yourself and re-derive the problem path.
 - If a reviewer is chat-capable, SendMessage them to justify uncertain findings; weigh
-  the reply against the code. (If peer messaging is unavailable per spike-results.md,
-  rely on your own re-reading.)
+  the reply against the code. (SendMessage auto-resumes a stopped reviewer, but don't
+  block on a reply — if none comes, rely on your own re-reading.)
 - Drop findings that don't survive: not reachable, pre-existing, intended behavior, or
   a nitpick. Keep a short note of what you dropped and why.
 
@@ -48,7 +48,8 @@ Write `{{RUN_DIR}}/review-payload.json` shaped as:
 - Post: `bash {{SKILL_DIR}}/scripts/post_review.sh {{OWNER}} {{REPO}} {{PR_NUMBER}} {{RUN_DIR}}/review-payload.json`
 
 ## 6. Report back to the orchestrator — via SendMessage (REQUIRED)
-Your return value is NOT delivered to the team lead; you MUST `SendMessage` it.
+Do not rely on your plain return value reaching the team lead — delivery varies by
+teammate backend. You MUST `SendMessage` your summary.
 Send ONE message to "{{LEAD_NAME}}" containing: counts (kept/dropped per severity), the
 list of inline suggestions (file:line + title), the list of walkthrough-only items, and
 the review URL/id from the `gh api` response. The orchestrator (main session) adjudicates
