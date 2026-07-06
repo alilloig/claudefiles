@@ -2,14 +2,15 @@
 
 Two spikes inform the /lfg Phase 3 design. The 2026-05-30 spike validated messaging
 under the OLD explicit-team model (removed in Claude Code 2.1.178); the 2026-07-06
-re-spike re-grounded the skill in the current implicit-team model. Trust the 2026-07-06
-sections; the 2026-05-30 results are kept only where the mechanism they proved survives.
+re-spike re-verified everything under the current implicit-team model. Trust the
+2026-07-06 sections; the 2026-05-30 results are historical.
 
-## 2026-07-06 re-spike (Claude Code 2.1.201, implicit-team model)
+## 2026-07-06 re-spike (Claude Code 2.1.201, implicit-team model) — COMPLETE
 
 **Setup:** two `general-purpose` teammates (`spike-listener`, `spike-echo`) spawned with
-the `Agent` tool's `name` parameter from a headless background session; peer + lead
-messaging exercised via `SendMessage`.
+the `Agent` tool's `name` parameter from a headless background session. Echo messaged the
+listener (peer) and the lead; the listener relayed what it received; both also emitted
+plain final messages. All channels were eventually observed end-to-end.
 
 ### Confirmed empirically
 
@@ -20,47 +21,47 @@ messaging exercised via `SendMessage`.
    `config.json` (members, `leadAgentId`) and per-member `inboxes/<name>.json` the moment
    teammates spawn. Same shape as the old per-team dirs, new session-derived naming.
 3. **The lead's address is `team-lead`** — fixed by the harness
-   (`leadAgentId: team-lead@session-…` in config.json). Use it as `{{LEAD_NAME}}`.
-4. **Teammates launch on a tmux/pane backend** (`backendType: "tmux"` in config.json;
-   the orchestrating session is `in-process`). **From a headless/background session the
-   teammate processes never started**: both members stayed `isActive: false`, produced no
-   output, and a wake `SendMessage` (queued successfully) was never consumed. This is why
-   SKILL.md requires running /lfg from an interactive main session.
-5. **Inbox JSON files are a delivery queue, not an archive** — a successfully queued
-   message no longer appears in the file after the harness processes it, so inbox files
-   are only a weak debugging signal (hence "best-effort only" in Phase 3.3 recovery).
+   (`leadAgentId: team-lead@session-…`); a teammate's `SendMessage` to it was delivered
+   (`LEAD-MSG-9` roundtrip). Use it as `{{LEAD_NAME}}`.
+4. **Peer-to-peer SendMessage between named teammates WORKS** under the implicit model:
+   `spike-echo → spike-listener` (`PEER-MSG-7`) was delivered and relayed back on first
+   try. Re-confirms the 2026-05-30 result on the current harness.
+5. **A teammate's plain final message IS delivered to the lead** as a teammate message,
+   alongside idle notifications (`RETVAL-ALPHA-42` report arrived without any
+   teammate-initiated SendMessage to the lead). This resolves the old open question —
+   but keep reporting SendMessage-primary anyway (see "Design consequence" below).
+6. **Teammates carry the `Agent` tool** (and Bash natively; SendMessage/TaskCreate via
+   ToolSearch). "Having the Agent tool" is therefore NOT a valid main-session check;
+   nested teammate spawning is restricted at the harness level instead (2.1.69).
+7. **Headless/background sessions start teammates with LONG delays** — on a tmux/pane
+   backend (`backendType: "tmux"`), both teammates sat `isActive: false` with silent
+   inboxes for ~25+ minutes before running and delivering everything. Not a failure, but
+   plan for it: run /lfg interactively, budget generous waits, and don't declare a
+   teammate dead early.
+8. **Inbox JSON files are a delivery queue, not an archive** — a successfully queued
+   message no longer appears in the file after processing, so inbox files are only a weak
+   debugging signal (hence "best-effort only" in Phase 3.3 recovery).
 
-### Confirmed from official docs (not re-verified empirically under the new model)
+### Also relevant (from docs/changelog, consistent with observations)
 
-- **Peer-to-peer SendMessage between named teammates** — agent-teams docs: any teammate
-  can message any other by name. Also proven empirically on 2026-05-30 under the old
-  model (`FINDING count=21` / `ACK:42` roundtrip). The skill's Mode A relies on this.
-- **SendMessage auto-resumes stopped agents** (2.1.77) and **wakes stuck teammates**
-  (2.1.198); a send to a name that now resolves to a different agent than earlier in the
+- `SendMessage` auto-resumes stopped agents (2.1.77) and wakes stuck teammates (2.1.198);
+  a send to a name that now resolves to a different agent than earlier in the
   conversation is **refused** (2.1.199) — so per-run unique names (PR-number suffix).
 
-### Unresolved — and deliberately not load-bearing
+### Design consequence for Phase 3
 
-- **Whether a teammate's plain return value reaches the lead** under the implicit-team
-  model. The 2026-05-30 spike observed it does NOT (only SendMessage + idle notifications
-  arrived); current sub-agent docs say a subagent's final message IS returned to its
-  spawner; teammate backends may differ. The headless re-spike could not settle it.
-  Phase 3 is therefore written to work either way: the consolidator MUST SendMessage its
-  summary, the lead accepts a completion notification carrying the same content, and
-  `gh pr view` is the authoritative recovery check.
+Both reporting channels work, but final-message delivery can lag badly on slow-starting
+teammates and its timing is not under the skill's control. So the consolidator MUST
+`SendMessage` its summary to `team-lead` AND the lead accepts the final-message delivery
+as the same report — whichever arrives first — with `gh pr view` as the authoritative
+recovery check. Redundant on purpose; cheap insurance either way.
 
 ## 2026-05-30 spike (historical — explicit-team model, pre-2.1.178)
 
 Two `general-purpose` agents spawned into an explicit team (`lfg-spike`) created with
-`TeamCreate`. Results that still matter:
-
-- Peer roundtrip worked: reviewer → consolidator `"FINDING count=21"`, consolidator →
-  reviewer `"ACK:42"`; reviewer reported `ROUNDTRIP: WORKS` to the lead.
-- A teammate's return value was NOT delivered to the orchestrator — only SendMessage
-  content and idle notifications reached the lead (see "Unresolved" above for current
-  status).
-
-Results that are now dead: the `TeamCreate`-before-spawn requirement and everything
-`team_name`-related (the tool was removed and the parameter is ignored as of 2.1.178);
-the per-agent-type SendMessage-grant inventory (point-in-time; SKILL.md 3.1 now derives
-the mode from the agent type's tools grant at dispatch time instead of from this file).
+`TeamCreate`. Peer roundtrip worked (`FINDING count=21` / `ACK:42`; `ROUNDTRIP: WORKS`).
+Its other conclusions are superseded: the return-value-never-delivered rule no longer
+holds (see item 5 above), the `TeamCreate`-before-spawn requirement and everything
+`team_name`-related are dead (2.1.178), and the per-agent-type SendMessage-grant
+inventory was point-in-time (SKILL.md 3.1 now derives the mode from the agent type's
+tools grant at dispatch time instead of from this file).
