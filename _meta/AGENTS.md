@@ -1,8 +1,12 @@
 # Agent Catalog & Team Recipes
 
-Reference for creating agent teams via TeamCreate. Defines reusable role templates and common team compositions.
+Reference for composing agent teams. Since Claude Code 2.1.178 there is no team-setup
+step: every session has a single implicit team, and spawning an agent with the `Agent`
+tool's `name` parameter makes it a teammate (`TeamCreate`/`TeamDelete` were removed;
+`team_name` is accepted but ignored). Defines reusable role templates and common team
+compositions. The lead is always addressable as `team-lead`.
 
-**How to use**: When creating a team, look up the relevant role(s) below. Use the system prompt template as the base `prompt` parameter, then append task-specific instructions.
+**How to use**: When spawning teammates, look up the relevant role(s) below. Use the system prompt template as the base `prompt` parameter, then append task-specific instructions.
 
 ---
 

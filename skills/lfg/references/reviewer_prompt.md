@@ -44,7 +44,7 @@ the consolidator — you MUST use SendMessage.
 Write the same `{ "reviewer", "agent_type", "findings": [...] }` JSON to
 `{{RUN_DIR}}/findings-{{DIMENSION}}.json`. Return a one-line final report naming the
 file you wrote. (This is the fallback for any reviewer whose agent type lacks the
-SendMessage grant; the orchestrator selects it per agent. Today both generic and
-sui-pilot-agent reviewers grant SendMessage, so this mode is normally unused.)
+SendMessage grant; the orchestrator selects the mode per agent type from its tools
+grant at dispatch time.)
 
 If you found nothing, still report/write an empty `findings: []`.

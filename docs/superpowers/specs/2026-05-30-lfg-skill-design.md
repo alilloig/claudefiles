@@ -4,6 +4,11 @@
 **Status:** Approved (brainstorming complete; ready for implementation plan)
 **Author:** Álvaro + Claude
 
+> **⚠ Historical (2026-07-06):** the team-coordination model this design assumes was
+> removed in Claude Code 2.1.178 — `TeamCreate` no longer exists and `team_name` is
+> ignored (every session has one implicit team). The shipped skill was updated to the
+> implicit-team model; see `skills/lfg/` for the current pattern. Kept for design rationale.
+
 ## Summary
 
 `/lfg` ("let's f***ing go") is a one-command "ship + harden + review + adjudicate"
