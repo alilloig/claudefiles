@@ -23,13 +23,15 @@ description: |
 
 Run the full pipeline from the MAIN session, interactively. Never run /lfg from inside a
 spawned subagent (nested teammate spawning is restricted), and prefer an interactive host:
-named teammates launch on a tmux/pane backend that can fail to start from headless or
-background sessions (observed 2026-07-06 — see `references/spike-results.md`).
+named teammates launch on a tmux/pane backend that can take tens of minutes to start from
+headless or background sessions (observed 2026-07-06 — see `references/spike-results.md`),
+so budget generous waits before invoking the Phase 3.3 recovery ladder.
 
 ## Phase 0 — Preflight
 
-You MUST be the main session (you have the `Agent` tool). If you are a spawned subagent,
-STOP and tell the user to run `/lfg` from the top-level session.
+You MUST be the main session. (Having the `Agent` tool is NOT proof — spawned teammates
+carry it too.) If you were spawned by another session, STOP and tell the user to run
+`/lfg` from the top-level session.
 
 1. Confirm a GitHub remote + auth: `gh auth status` and `git remote get-url origin`.
    If either fails, stop and report what's missing.
@@ -104,10 +106,10 @@ You orchestrate; you do NOT review yourself. All spawning happens here, in the m
   PR review.
 
 ### 3.3 Receive the consolidator's summary and sanity-check
-- Do NOT rely on a teammate's plain return value as the reporting channel — whether it
-  reaches the lead varies by teammate backend (see `references/spike-results.md`). The
-  consolidator is instructed to `SendMessage` you its summary; wait for that message, and
-  accept the same content if it arrives via the consolidator's completion notification.
+- A teammate's final message IS delivered to the lead as a teammate message (verified
+  2026-07-06, `references/spike-results.md`) — but delivery can lag badly on slow-starting
+  teammates, so the consolidator is ALSO instructed to `SendMessage` you its summary.
+  Accept whichever arrives first; treat them as the same report.
 - If the consolidator stays silent, recover in this order — do NOT block indefinitely:
   1. **Authoritative:** `gh pr view "$PR_NUMBER" --json reviews -q '.reviews | length'`
      ≥ 1 confirms the review posted; trust any review id the consolidator reported.
