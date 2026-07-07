@@ -239,11 +239,25 @@ You now act as the PR author deciding what to take from the review.
    (Best-effort: to resolve individual inline threads, fetch thread ids via
    `gh api graphql` querying `pullRequest.reviewThreads` then call the
    `resolveReviewThread` mutation per id. Skip if it adds no value.)
-5. Approve, leaving the PR open + merge-ready for a human:
+5. Tear down the review team — the reviewers park themselves "available for
+   justification requests" and never self-exit, so an orchestrator that skips this
+   leaves every teammate idling after the run. Shut down the whole roster you recorded
+   in Phase 3.2:
+   ```bash
+   roster="$(bash "$SKILL_DIR/scripts/run_state.sh" get "$RUN_DIR" roster 2>/dev/null | jq -r '.[]?')"
+   consolidator="$(bash "$SKILL_DIR/scripts/run_state.sh" get "$RUN_DIR" consolidator 2>/dev/null)"
+   ```
+   Send a `shutdown_request` (via `SendMessage`) to each reviewer name in `roster` and to
+   `consolidator`. This is idempotent and best-effort: a teammate that already exited or
+   died (e.g. an out-of-credits `failed` teammate, or an unnamed async consolidator that
+   returned) is already down — a refused/undeliverable send is fine, do not retry or
+   block. Skip any name that never spawned. You do NOT need the teammates' acks to
+   proceed.
+6. Approve, leaving the PR open + merge-ready for a human:
    ```bash
    gh pr review "$PR_NUMBER" --approve --body "lfg pipeline complete: shipped, simplified, reviewed (N kept / M dropped), suggestions adjudicated. Ready for human merge."
    ```
    Then checkpoint: `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase complete`.
-6. Report to the user: the PR URL (the deliverable), the commits made (feature /
+7. Report to the user: the PR URL (the deliverable), the commits made (feature /
    simplify / apply review suggestions), kept-vs-dropped finding counts, what you
    accepted vs rejected and why, and that the PR is approved and awaiting human merge.
