@@ -2,8 +2,7 @@
 
 Two spikes inform the /lfg Phase 3 design. The 2026-05-30 spike validated messaging
 under the OLD explicit-team model (removed in Claude Code 2.1.178); the 2026-07-06
-re-spike re-verified everything under the current implicit-team model. Trust the
-2026-07-06 sections; the 2026-05-30 results are historical.
+re-spike re-verified everything under the current implicit-team model.
 
 ## 2026-07-06 re-spike (Claude Code 2.1.201, implicit-team model) — COMPLETE
 
@@ -28,7 +27,7 @@ plain final messages. All channels were eventually observed end-to-end.
    try. Re-confirms the 2026-05-30 result on the current harness.
 5. **A teammate's plain final message IS delivered to the lead** as a teammate message,
    alongside idle notifications (`RETVAL-ALPHA-42` report arrived without any
-   teammate-initiated SendMessage to the lead). This resolves the old open question —
+   teammate-initiated SendMessage to the lead). This reverses the 2026-05-30 finding —
    but keep reporting SendMessage-primary anyway (see "Design consequence" below).
 6. **Teammates carry the `Agent` tool** (and Bash natively; SendMessage/TaskCreate via
    ToolSearch). "Having the Agent tool" is therefore NOT a valid main-session check;
@@ -50,11 +49,10 @@ plain final messages. All channels were eventually observed end-to-end.
 
 ### Design consequence for Phase 3
 
-Both reporting channels work, but final-message delivery can lag badly on slow-starting
-teammates and its timing is not under the skill's control. So the consolidator MUST
-`SendMessage` its summary to `team-lead` AND the lead accepts the final-message delivery
-as the same report — whichever arrives first — with `gh pr view` as the authoritative
-recovery check. Redundant on purpose; cheap insurance either way.
+Both reporting channels work, but final-message delivery timing isn't under the skill's
+control on slow-starting teammates — so Phase 3.3 keeps reporting dual-channel
+(SendMessage-primary, whichever arrives first) with `gh pr view` as the authoritative
+recovery check.
 
 ## 2026-05-30 spike (historical — explicit-team model, pre-2.1.178)
 
@@ -63,5 +61,5 @@ Two `general-purpose` agents spawned into an explicit team (`lfg-spike`) created
 Its other conclusions are superseded: the return-value-never-delivered rule no longer
 holds (see item 5 above), the `TeamCreate`-before-spawn requirement and everything
 `team_name`-related are dead (2.1.178), and the per-agent-type SendMessage-grant
-inventory was point-in-time (SKILL.md 3.1 now derives the mode from the agent type's
-tools grant at dispatch time instead of from this file).
+inventory was point-in-time — check the agent type's tools grant at dispatch time
+instead.

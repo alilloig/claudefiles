@@ -1,10 +1,10 @@
 # Agent Catalog & Team Recipes
 
-Reference for composing agent teams. Since Claude Code 2.1.178 there is no team-setup
-step: every session has a single implicit team, and spawning an agent with the `Agent`
-tool's `name` parameter makes it a teammate (`TeamCreate`/`TeamDelete` were removed;
-`team_name` is accepted but ignored). Defines reusable role templates and common team
-compositions. The lead is always addressable as `team-lead`.
+Reference for composing agent teams: reusable role templates and common team
+compositions. There is no team-setup step — spawning an agent with the `Agent` tool's
+`name` parameter makes it a teammate (`team_name` is ignored), and the lead is always
+addressable as `team-lead`. Verified behavior and version history:
+`skills/lfg/references/spike-results.md`.
 
 **How to use**: When spawning teammates, look up the relevant role(s) below. Use the system prompt template as the base `prompt` parameter, then append task-specific instructions.
 

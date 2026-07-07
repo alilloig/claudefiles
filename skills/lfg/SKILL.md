@@ -21,11 +21,9 @@ description: |
 
 # /lfg — ship, harden, review, adjudicate
 
-Run the full pipeline from the MAIN session, interactively. Never run /lfg from inside a
-spawned subagent (nested teammate spawning is restricted), and prefer an interactive host:
-named teammates launch on a tmux/pane backend that can take tens of minutes to start from
-headless or background sessions (observed 2026-07-06 — see `references/spike-results.md`),
-so budget generous waits before invoking the Phase 3.3 recovery ladder.
+Run the full pipeline from the MAIN session, interactively — teammate startup can take
+tens of minutes from headless/background sessions (see `references/spike-results.md`).
+Never run /lfg from inside a spawned subagent (nested teammate spawning is restricted).
 
 ## Phase 0 — Preflight
 
@@ -83,41 +81,39 @@ You orchestrate; you do NOT review yourself. All spawning happens here, in the m
   - Otherwise → `subagent_type: general-purpose`.
 - Determine reporting mode per reviewer from its agent type's tools grant alone: an agent
   reports via **Mode A (chat)** if its type grants `SendMessage`; any type without the
-  grant falls back to **Mode B (file drop)**. (Peer messaging between named teammates is
-  a core harness feature — no other precondition; see `references/spike-results.md`.)
+  grant falls back to **Mode B (file drop)**.
 
 ### 3.2 Spawn the team — parallel `Agent` calls in ONE assistant turn
-- There is NO team-setup step. Every session has a single implicit team (Claude Code
-  2.1.178+ removed `TeamCreate`/`TeamDelete`; `team_name` on the `Agent` tool is accepted
-  but IGNORED — do not pass it). Spawning an agent with a `name` makes it a teammate.
+- There is NO team-setup step — every session has a single implicit team, and spawning an
+  agent with a `name` makes it a teammate. Do not pass `team_name` (accepted but ignored;
+  history in `references/spike-results.md`).
 - In a single turn, dispatch every reviewer + the consolidator as parallel `Agent` calls,
-  each with a unique `name` — names are the `SendMessage` addresses, and a send to a name
-  that resolves to a different agent than earlier in the conversation is refused (2.1.199),
-  so suffix names with the PR number (e.g. `rev-security-17`):
+  each with a unique `name` — names are the `SendMessage` addresses and reused names get
+  sends refused, so suffix with the PR number (e.g. `rev-security-17`):
   - Reviewers: prompt = `references/reviewer_prompt.md` with `{{...}}` filled
     (DIMENSION, DIMENSION_PREFIX, DIMENSION_GUIDANCE, FILE_LIST scoped to that reviewer,
     PR/repo refs, CONSOLIDATOR_NAME, RUN_DIR, and the chosen reporting mode).
   - Consolidator: `name` = the CONSOLIDATOR_NAME you gave reviewers,
     `subagent_type: general-purpose` (needs Bash + SendMessage), prompt =
     `references/consolidator_prompt.md` with `{{...}}` filled (REVIEWER_NAMES roster,
-    LEAD_NAME = `team-lead` — the implicit team's lead address, fixed by the harness,
-    RUN_DIR, SKILL_DIR, PR/repo refs).
+    LEAD_NAME = `team-lead` (fixed by the harness), RUN_DIR, SKILL_DIR, PR/repo refs).
 - Reviewers report (chat or file); the consolidator collects, verifies, and posts the
   PR review.
 
 ### 3.3 Receive the consolidator's summary and sanity-check
-- A teammate's final message IS delivered to the lead as a teammate message (verified
-  2026-07-06, `references/spike-results.md`) — but delivery can lag badly on slow-starting
-  teammates, so the consolidator is ALSO instructed to `SendMessage` you its summary.
-  Accept whichever arrives first; treat them as the same report.
+- The consolidator reports on two channels — its `SendMessage` summary and its plain
+  final message; both reach you (see `references/spike-results.md`). Accept whichever
+  arrives first and treat them as the same report. Delivery can lag on slow-starting
+  teammates: the read-only checks below (steps 1–2) are cheap to run anytime while you
+  wait; reserve long waits for step 3 and for declaring a teammate dead.
 - If the consolidator stays silent, recover in this order — do NOT block indefinitely:
   1. **Authoritative:** `gh pr view "$PR_NUMBER" --json reviews -q '.reviews | length'`
      ≥ 1 confirms the review posted; trust any review id the consolidator reported.
   2. Read `$RUN_DIR/review-payload.json` to see what it built.
-  3. Best-effort only: nudge it — `SendMessage` auto-resumes stopped teammates (2.1.77)
-     and wakes stuck ones (2.1.198) — then check the session team inbox at
-     `~/.claude/teams/session-*/inboxes/<name>.json` (layout may change; don't depend on it).
-- Confirm the review posted with the `gh pr view` check above regardless.
+  3. Best-effort only: peek the session team inbox for stuck queued messages (layout in
+     `references/spike-results.md`), then nudge via `SendMessage` — it auto-resumes and
+     wakes stopped teammates.
+- Confirm the review posted with the `gh pr view` check above (skip if step 1 already ran).
 - Keep the summary (kept/dropped counts, inline suggestions list, walkthrough-only items)
   — Phase 4 adjudicates from it + the posted review.
 
