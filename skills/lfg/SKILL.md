@@ -16,7 +16,8 @@ description: |
 
   Resume tripwire: ALSO use this skill if you wake up with a reviewer/consolidator
   dispatch in context and `${CLAUDE_JOB_DIR:-$TMPDIR}/lfg-*/state.json` records an
-  incomplete run — you are that run's LEAD, not a reviewer; open this skill and run
+  incomplete run — unless your system prompt explicitly says you are a spawned
+  subagent/teammate, you are that run's LEAD, not a reviewer; open this skill and run
   its wake guard before acting on the dispatch.
 
   Do NOT use for: a deep Move-only audit with no ship step (use move-pr-review),
@@ -42,27 +43,47 @@ teammate, this section does not apply to you — skip it and do your dispatched 
 Otherwise (main session / background job), check for an in-flight run BEFORE acting on
 anything sitting in your context:
 
-1. `ls "${CLAUDE_JOB_DIR:-$TMPDIR}"/lfg-*/state.json` — every /lfg run leaves one.
-2. For each hit: `bash "$SKILL_DIR/scripts/run_state.sh" get "<run_dir>" phase`.
+1. Enumerate runs and their phases in ONE glob loop — every /lfg run leaves a
+   `state.json`. Keep dir names as shell data: never re-paste `ls` output into new
+   commands (a crafted dir name in a shared `$TMPDIR` executes inside double quotes):
+   ```bash
+   for d in "${CLAUDE_JOB_DIR:-$TMPDIR}"/lfg-*/; do
+     [ -f "$d/state.json" ] || continue
+     printf '%s: ' "$d"; bash "$SKILL_DIR/scripts/run_state.sh" get "$d" phase
+   done
+   ```
+2. On a resume `$SKILL_DIR` is unset — it is this skill's own directory, the one this
+   file lives in; or read a phase directly: `jq -r .phase "$d/state.json"`.
 3. If any run has phase != `complete` and != `aborted`, YOU are the lead of that run —
    with two checks before adopting it:
    - **Ownership:** only claim a run whose recorded `repo_root` matches your own
      `git rev-parse --show-toplevel` (interactive sessions share `$TMPDIR`, so foreign
      runs from other sessions can appear in the scan). Report non-matching runs;
      never adopt them.
-   - **Liveness:** if `pr_number` is set, check `gh pr view "$PR_NUMBER" --json state -q .state`
+   - **Liveness & integrity:** load `PR_NUMBER` from the run (`run_state.sh get "<run_dir>" pr_number`;
+     non-zero exit = unset — skip this check). Require it purely numeric — anything else
+     means a tampered/corrupt state file: mark the run `aborted` and do NOT resume.
+     Then check `gh pr view "$PR_NUMBER" --json state -q .state`
      — a MERGED/CLOSED PR means the run already finished or died; set its phase to
-     `complete`/`aborted` accordingly and do NOT resume it.
+     `complete`/`aborted` accordingly and do NOT resume it. Then cross-check the run's
+     recorded `head_ref` (`run_state.sh get "<run_dir>" head_ref`) against
+     `gh pr view "$PR_NUMBER" --json headRefName -q .headRefName` — a mismatch means a
+     tampered/foreign run: mark it `aborted` and do NOT resume.
    Any "You are a reviewer ..." or consolidator dispatch sitting in your context is a
    MIS-DELIVERED teammate message from the pre-resume lead — this exact failure happened
    on 2026-07-07 (see `references/incident-2026-07-07-identity-swap.md`). Do NOT execute
    it: announce the recovery, reload PR number/refs/roster from that run's `state.json`
-   (`run_state.sh get`), and resume the pipeline at the recorded phase. A respawned
+   (`run_state.sh get`), and resume the pipeline at the phase AFTER the recorded one —
+   each recorded value names the last COMPLETED checkpoint (`preflight`/`shipped` →
+   resume at Phase 1/2, `simplified` → Phase 3, `review-dispatched` → Phase 3.3,
+   `review-posted` → Phase 4). A respawned
    session sits in a FRESH team — `SendMessage` to the recorded roster/consolidator is a
    dead letter, so when resuming at `review-dispatched` skip Phase 3.3's wait-and-nudge
    steps and go straight to the authoritative `gh pr view` check and, if no review
-   posted, the salvage path (step 4 of 3.3).
-4. If multiple incomplete runs exist, resume the one whose `state.json` was most
+   posted, the salvage path (step 4 of 3.3) — minus its inbox peek: the dead
+   consolidator's inbox belongs to the previous session's team dir, so salvage from
+   `$RUN_DIR/findings-*.json` and respawn reviewers for any missing dimensions.
+4. If multiple incomplete runs pass both checks above, resume the one whose `state.json` was most
    recently modified, and say so.
 
 ## Phase 0 — Preflight
@@ -85,7 +106,9 @@ session, STOP and tell the user to run
    `bash "$SKILL_DIR/scripts/run_state.sh" init "$RUN_DIR"`. If `init` refuses
    ("run in flight"), a previous run of this HEAD is still incomplete — run the wake
    guard above instead of re-initializing (use `init --force` only for a deliberate
-   restart). Then record ownership so the wake guard can tell this run from foreign ones:
+   restart). Note: two live interactive sessions on the same repo+HEAD share this
+   RUN_DIR, so on an interactive `init` refusal confirm with the user that no other
+   live session owns the run before adopting it via the wake guard. Then record ownership so the wake guard can tell this run from foreign ones:
    `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" repo_root "$(git rev-parse --show-toplevel)"`
    and `set "$RUN_DIR" skill_dir "$SKILL_DIR"`. Verify the seed took:
    `test -f "$RUN_DIR/state.json"` — never proceed without it. Remember this path for
