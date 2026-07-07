@@ -14,7 +14,8 @@ Team lead (orchestrator) to report back to: {{LEAD_NAME}}
 Run dir for file-drop findings: {{RUN_DIR}}
 
 ## 1. Collect
-- For chat-capable reviewers: wait until each has sent you its findings JSON message.
+- For chat-capable reviewers: collect each findings JSON message as it arrives — start
+  Step 2 on findings you already have instead of idling for slower reviewers.
   (A reviewer's plain return text is NOT delivered to you — only its SendMessage is.)
 - For file-drop reviewers: read every `{{RUN_DIR}}/findings-*.json`.
 - Validate each file-drop file first:
@@ -23,9 +24,9 @@ Run dir for file-drop findings: {{RUN_DIR}}
 ## 2. Verify (false-positive filter)
 For EACH critical/high finding, and any finding with confidence < 70:
 - Re-read the cited file/lines yourself and re-derive the problem path.
-- If a reviewer is chat-capable, SendMessage them to justify uncertain findings; weigh
-  the reply against the code. (SendMessage auto-resumes a stopped reviewer, but don't
-  block on a reply — if none comes, rely on your own re-reading.)
+- If your own re-read leaves a finding unresolved and the reviewer is chat-capable,
+  SendMessage them to justify it; weigh the reply against the code, but don't block on
+  a reply — if none comes, decide from your re-read.
 - Drop findings that don't survive: not reachable, pre-existing, intended behavior, or
   a nitpick. Keep a short note of what you dropped and why.
 
@@ -48,8 +49,7 @@ Write `{{RUN_DIR}}/review-payload.json` shaped as:
 - Post: `bash {{SKILL_DIR}}/scripts/post_review.sh {{OWNER}} {{REPO}} {{PR_NUMBER}} {{RUN_DIR}}/review-payload.json`
 
 ## 6. Report back to the orchestrator — via SendMessage (REQUIRED)
-Do not rely on your plain return value reaching the team lead — delivery varies by
-teammate backend. You MUST `SendMessage` your summary.
+Do not rely on your plain return value alone — you MUST `SendMessage` your summary.
 Send ONE message to "{{LEAD_NAME}}" containing: counts (kept/dropped per severity), the
 list of inline suggestions (file:line + title), the list of walkthrough-only items, and
 the review URL/id from the `gh api` response. The orchestrator (main session) adjudicates

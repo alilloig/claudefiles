@@ -43,8 +43,6 @@ the consolidator — you MUST use SendMessage.
 **Mode B — file drop (you lack SendMessage):**
 Write the same `{ "reviewer", "agent_type", "findings": [...] }` JSON to
 `{{RUN_DIR}}/findings-{{DIMENSION}}.json`. Return a one-line final report naming the
-file you wrote. (This is the fallback for any reviewer whose agent type lacks the
-SendMessage grant; the orchestrator selects the mode per agent type from its tools
-grant at dispatch time.)
+file you wrote.
 
 If you found nothing, still report/write an empty `findings: []`.
