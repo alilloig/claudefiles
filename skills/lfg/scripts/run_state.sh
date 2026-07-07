@@ -46,7 +46,7 @@ case "$cmd" in
       esac
     fi
     mkdir -p "$run_dir"
-    atomic_write "$state" "$(jq -cn '{phase: "preflight"}')"
+    atomic_write "$state" '{"phase":"preflight"}'
     ;;
   set)
     run_dir="${2:?usage: run_state.sh set <RUN_DIR> <key> <value>}"
