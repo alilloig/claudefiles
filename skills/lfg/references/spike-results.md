@@ -45,7 +45,8 @@ plain final messages. All channels were eventually observed end-to-end.
 
 - `SendMessage` auto-resumes stopped agents (2.1.77) and wakes stuck teammates (2.1.198);
   a send to a name that now resolves to a different agent than earlier in the
-  conversation is **refused** (2.1.199) — so per-run unique names (PR-number suffix).
+  conversation is **refused** (2.1.199) — so names must be unique per RUN, not just per
+  PR: PR-number suffix plus a run token when re-running on the same PR in one session.
 
 ### Design consequence for Phase 3
 

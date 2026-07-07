@@ -21,14 +21,16 @@ description: |
 
 # /lfg — ship, harden, review, adjudicate
 
-Run the full pipeline from the MAIN session, interactively — teammate startup can take
-tens of minutes from headless/background sessions (see `references/spike-results.md`).
+Run the full pipeline from the MAIN session, preferably interactively — headless/background
+runs work but budget tens of minutes for teammate startup (see `references/spike-results.md`).
 Never run /lfg from inside a spawned subagent (nested teammate spawning is restricted).
 
 ## Phase 0 — Preflight
 
 You MUST be the main session. (Having the `Agent` tool is NOT proof — spawned teammates
-carry it too.) If you were spawned by another session, STOP and tell the user to run
+carry it too; the reliable signal is your own system prompt — spawned teammates are
+explicitly told they are running as an agent in a team.) If you were spawned by another
+session, STOP and tell the user to run
 `/lfg` from the top-level session.
 
 1. Confirm a GitHub remote + auth: `gh auth status` and `git remote get-url origin`.
@@ -89,7 +91,9 @@ You orchestrate; you do NOT review yourself. All spawning happens here, in the m
   history in `references/spike-results.md`).
 - In a single turn, dispatch every reviewer + the consolidator as parallel `Agent` calls,
   each with a unique `name` — names are the `SendMessage` addresses and reused names get
-  sends refused, so suffix with the PR number (e.g. `rev-security-17`):
+  sends refused, so make names unique per run, not just per PR — suffix with the PR
+  number, plus a run token when re-running on the same PR in the same session (e.g.
+  `rev-security-17`, then `rev-security-17-r2`):
   - Reviewers: prompt = `references/reviewer_prompt.md` with `{{...}}` filled
     (DIMENSION, DIMENSION_PREFIX, DIMENSION_GUIDANCE, FILE_LIST scoped to that reviewer,
     PR/repo refs, CONSOLIDATOR_NAME, RUN_DIR, and the chosen reporting mode).
@@ -105,7 +109,8 @@ You orchestrate; you do NOT review yourself. All spawning happens here, in the m
   final message; both reach you (see `references/spike-results.md`). Accept whichever
   arrives first and treat them as the same report. Delivery can lag on slow-starting
   teammates: the read-only checks below (steps 1–2) are cheap to run anytime while you
-  wait; reserve long waits for step 3 and for declaring a teammate dead.
+  wait; escalate to step 3 (the nudge), and eventually declare a teammate dead, only
+  after a generous wait.
 - If the consolidator stays silent, recover in this order — do NOT block indefinitely:
   1. **Authoritative:** `gh pr view "$PR_NUMBER" --json reviews -q '.reviews | length'`
      ≥ 1 confirms the review posted; trust any review id the consolidator reported.
@@ -113,6 +118,11 @@ You orchestrate; you do NOT review yourself. All spawning happens here, in the m
   3. Best-effort only: peek the session team inbox for stuck queued messages (layout in
      `references/spike-results.md`), then nudge via `SendMessage` — it auto-resumes and
      wakes stopped teammates.
+  4. Last resort — the nudge produced nothing after a generous bound (the spike observed
+     ~25-minute startup lag; wait well past that): salvage findings yourself — unprocessed
+     reviewer messages remain queued in the consolidator's inbox file, plus any
+     `$RUN_DIR/findings-*.json` — then respawn a fresh consolidator under a NEW name or
+     build + post the review directly with `scripts/post_review.sh`.
 - Confirm the review posted with the `gh pr view` check above (skip if step 1 already ran).
 - Keep the summary (kept/dropped counts, inline suggestions list, walkthrough-only items)
   — Phase 4 adjudicates from it + the posted review.

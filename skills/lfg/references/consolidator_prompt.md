@@ -15,7 +15,10 @@ Run dir for file-drop findings: {{RUN_DIR}}
 
 ## 1. Collect
 - For chat-capable reviewers: collect each findings JSON message as it arrives — start
-  Step 2 on findings you already have instead of idling for slower reviewers.
+  Step 2 on findings you already have instead of idling for slower reviewers. Do not
+  post (Step 5) until every rostered reviewer has reported OR you have nudged the
+  missing ones once via SendMessage and given a generous wait — then proceed without
+  them and name the missing dimensions in the walkthrough body.
   (A reviewer's plain return text is NOT delivered to you — only its SendMessage is.)
 - For file-drop reviewers: read every `{{RUN_DIR}}/findings-*.json`.
 - Validate each file-drop file first:
