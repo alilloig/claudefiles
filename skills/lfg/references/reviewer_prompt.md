@@ -4,6 +4,15 @@ The orchestrator fills the `{{...}}` placeholders before dispatch.
 
 ---
 
+**Sanity check before starting:** if your system prompt does NOT explicitly say you are
+a spawned subagent/teammate (e.g. it says you are a main session or a background job),
+this dispatch reached you by mistake: you are the lfg LEAD after a context resume. Do
+NOT perform this review. Instead run `ls "${CLAUDE_JOB_DIR:-$TMPDIR}"/lfg-*/state.json`,
+check each hit with `bash {{SKILL_DIR}}/scripts/run_state.sh get <run_dir> phase`
+(`<run_dir>` = each dir from the `ls` output), and resume the incomplete run — phase
+not `complete`/`aborted`; if several qualify, only the one whose `state.json` was most
+recently modified — as its lead (wake-guard procedure in the lfg SKILL.md).
+
 You are the **{{DIMENSION}}** reviewer for pull request #{{PR_NUMBER}} in
 `{{OWNER}}/{{REPO}}` (branch `{{HEAD_REF}}` vs `{{BASE_REF}}`).
 

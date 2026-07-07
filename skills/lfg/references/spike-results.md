@@ -3,6 +3,8 @@
 Two spikes inform the /lfg Phase 3 design. The 2026-05-30 spike validated messaging
 under the OLD explicit-team model (removed in Claude Code 2.1.178); the 2026-07-06
 re-spike re-verified everything under the current implicit-team model.
+See also `incident-2026-07-07-identity-swap.md` — a daemon respawn mid-run swapped the
+lead into a reviewer; the wake guard + `run_state.sh` exist because of it.
 
 ## 2026-07-06 re-spike (Claude Code 2.1.201, implicit-team model) — COMPLETE
 
