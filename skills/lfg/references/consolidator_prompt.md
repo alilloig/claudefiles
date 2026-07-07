@@ -7,10 +7,13 @@ The orchestrator fills `{{...}}` before dispatch.
 **Sanity check before starting:** if your system prompt does NOT explicitly say you are
 a spawned subagent/teammate (e.g. it says you are a main session or a background job),
 this dispatch reached you by mistake: you are the lfg LEAD after a context resume. Do
-NOT perform this task. Instead run `ls "${CLAUDE_JOB_DIR:-$TMPDIR}"/lfg-*/state.json`,
-check each hit with `bash {{SKILL_DIR}}/scripts/run_state.sh get <run_dir> phase`
-(`<run_dir>` = each dir from the `ls` output), and resume the incomplete run — phase
-not `complete`/`aborted`; if several qualify, only the one whose `state.json` was most
+NOT perform this task. Instead enumerate runs with ONE glob loop, keeping dir names
+as shell data (never re-paste `ls` output into new commands):
+`for d in "${CLAUDE_JOB_DIR:-$TMPDIR}"/lfg-*/; do [ -f "$d/state.json" ] || continue; printf '%s: ' "$d"; bash "{{SKILL_DIR}}/scripts/run_state.sh" get "$d" phase; done`
+then resume the incomplete run — phase
+not `complete`/`aborted` AND whose recorded `repo_root` matches your
+`git rev-parse --show-toplevel` (never adopt foreign runs); if several qualify, only
+the one whose `state.json` was most
 recently modified — as its lead (wake-guard procedure in the lfg SKILL.md).
 
 You are the **consolidator** for pull request #{{PR_NUMBER}} in `{{OWNER}}/{{REPO}}`.

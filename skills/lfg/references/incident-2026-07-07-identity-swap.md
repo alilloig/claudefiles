@@ -8,7 +8,7 @@ A headless background job ("sui-pilot-prover", Claude Code 2.1.202, daemon backe
 /lfg against a repo PR #38. Phase 1 shipped the PR normally. Phase 2's /simplify fanned
 out four dimension subagents (`simp-reuse-38`, `simp-simplify-38`, `simp-efficiency-38`,
 `simp-altitude-38`); a second /lfg pass respawned them under `-r2` names. Background
-subagents took hours to start (the documented ~25min+ lag from `spike-results.md`,
+subagents took hours to start (the ~25min+ lag `spike-results.md` documents for the tmux backend;
 observed worse). During the long waits the job daemon respawned/resumed the MAIN
 conversation several times; on the final respawn the main transcript began with a
 reviewer dispatch — `<teammate-message teammate_id=team-lead>You are an ALTITUDE

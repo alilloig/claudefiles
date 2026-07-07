@@ -44,6 +44,16 @@ for i in "${!KEYS[@]}"; do
   fi
 done
 
+# --- every allowed phase round-trips (hyphenated ones included) ---
+for p in preflight shipped simplified review-dispatched review-posted complete aborted; do
+  if bash "$RS" set "$RUN" phase "$p" > /dev/null 2>&1 && [[ "$(bash "$RS" get "$RUN" phase)" == "$p" ]]; then
+    pass "phase: '$p' accepted and round-trips"
+  else
+    fail "phase: '$p' accepted and round-trips"
+  fi
+done
+bash "$RS" set "$RUN" phase shipped  # restore the in-flight phase later cases depend on
+
 # --- roster round-trips as a JSON array ---
 bash "$RS" set "$RUN" roster "rev-security-38, rev-tests-38,rev-docs-38"
 assert_valid_json "atomicity smoke: valid JSON after set roster" "$RUN"
@@ -74,6 +84,20 @@ if bash "$RS" set "$RUN" phase not-a-phase > /dev/null 2>&1; then
   fail "set: rejects unknown phase value"
 else
   pass "set: rejects unknown phase value"
+fi
+
+# --- set rejects a multi-word key that substring-matches the whitelist ---
+if bash "$RS" set "$RUN" "pr_number base_ref" oops > /dev/null 2>&1; then
+  fail "set: rejects multi-word key sneaking past the whitelist"
+else
+  pass "set: rejects multi-word key sneaking past the whitelist"
+fi
+
+# --- set rejects a multi-word phase that substring-matches ALLOWED_PHASES ---
+if bash "$RS" set "$RUN" phase "shipped simplified" > /dev/null 2>&1; then
+  fail "set: rejects multi-word phase sneaking past the whitelist"
+else
+  pass "set: rejects multi-word phase sneaking past the whitelist"
 fi
 
 # --- get on missing file fails ---
@@ -131,6 +155,26 @@ if [[ "$(bash "$RS" get "$RUN" phase)" == "preflight" ]]; then
   pass "re-init after aborted: resets phase to preflight"
 else
   fail "re-init after aborted: resets phase to preflight"
+fi
+
+# --- init re-seeds over a corrupt state.json without --force ---
+CORRUPT="$SANDBOX/lfg-corrupt"
+mkdir -p "$CORRUPT"
+echo 'not json {{{' > "$CORRUPT/state.json"
+if bash "$RS" init "$CORRUPT" > /dev/null 2>&1 && [[ "$(bash "$RS" get "$CORRUPT" phase)" == "preflight" ]]; then
+  pass "init: re-seeds over corrupt state.json without --force"
+else
+  fail "init: re-seeds over corrupt state.json without --force"
+fi
+
+# --- init re-seeds over a state.json with no phase key ---
+NOPHASE="$SANDBOX/lfg-nophase"
+mkdir -p "$NOPHASE"
+echo '{}' > "$NOPHASE/state.json"
+if bash "$RS" init "$NOPHASE" > /dev/null 2>&1 && [[ "$(bash "$RS" get "$NOPHASE" phase)" == "preflight" ]]; then
+  pass "init: re-seeds over phase-less state.json without --force"
+else
+  fail "init: re-seeds over phase-less state.json without --force"
 fi
 
 # --- no stray tmp files left behind ---
