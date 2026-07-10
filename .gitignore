@@ -54,6 +54,11 @@ daemon-auth-*
 jobs/
 gh-pr-status-cache.json*
 remote-settings.json
+policy-limits.json
+
+# ── Retired sui-pilot symlink (hook removed 2026-07-10; stale sessions may
+# still recreate it — keep ignored so it never gets tracked by accident) ──
+/sui-pilot
 
 # ── EVM/Solidity-security auditor skill repos (regenerable clones) ──
 # Cloned by scripts/setup-sol-sec-stack.sh; they're independent git repos,
