@@ -13,14 +13,14 @@ cd ~/workspace/dotfiles && ./setup.sh
 
 `dotfiles/setup.sh` will:
 
-1. `git submodule update --init --recursive` (brings in `dotclaude` and its nested submodules).
+1. `git submodule update --init --recursive` (brings in `dotclaude`).
 2. Create the `~/.claude` → `~/workspace/dotfiles/.claude` symlink via its `backup_and_link` helper.
 3. Invoke `~/.claude/setup.sh` to register plugin marketplaces, install plugins, and fix hook permissions.
 
 ### Standalone (without dotfiles)
 
 ```bash
-git clone --recurse-submodules git@github.com:alilloig/dotclaude.git ~/workspace/dotclaude
+git clone git@github.com:alilloig/dotclaude.git ~/workspace/dotclaude
 ln -s ~/workspace/dotclaude ~/.claude
 bash ~/.claude/setup.sh
 ```
@@ -36,11 +36,10 @@ bash ~/.claude/setup.sh
 | User settings (hooks, plugins, env) | `settings.json` |
 | Hook scripts | `hooks/` |
 | Agent teams | `teams/` |
-| Local plugins | `plugins/codex-bridge/`, `plugins/sui-wallet/`, … |
-| Plugin state | `plugins/*.json` |
+| Local plugins | `plugins/forge-bench/`, `plugins/sui-wallet/`, `plugins/coworking-monitor/` |
+| Plugin state | `plugins/installed_plugins.json`, `plugins/local/` |
 | Agent catalog & recipes | `_meta/AGENTS.md` |
 | Documentation & audits | `_meta/docs/` |
-| Sui/Walrus/Seal docs (submodule) | `sui-pilot/` |
 
 ## What's Gitignored
 
@@ -62,12 +61,16 @@ See `.gitignore` for the complete list.
 
 | Skill | Description |
 |-------|-------------|
-| `move-code-quality` | Analyzes Move packages against the Move Book Code Quality Checklist *(submodule)* |
-| `move-code-review` | Security, architecture, and design review for Sui Move contracts *(submodule)* |
 | `sui-marp-theme` | Applies Sui corporate theme to Marp slide markdown (20+ layout classes, product illustrations) |
 | `sui-move-tip` | Concise Move/Sui feature summaries for sharing on Slack |
 | `sui-2-migration-audit` | Audits TypeScript codebases for Sui SDK 2.0 migration completeness |
 | `sui-balance-json-parsing` | Correct JSON structure and TypeScript parsing for Sui Balance fields |
+| `move-tests` | Move test authoring patterns |
+| `deepbook-release` | DeepBook sandbox release-cycle workflow |
+| `drive-slush-wallet` | Drives the Slush wallet extension during chrome-devtools-mcp dapp testing |
+| `launch-dev-chrome` | Launches Chrome for Testing on :9222 with the wallet dev profile |
+
+Move code-quality/code-review live in the **sui-pilot plugin** (contract-hero marketplace) as `/move-code-quality` and `/move-code-review` — no longer vendored here.
 
 #### General
 
@@ -78,9 +81,9 @@ See `.gitignore` for the complete list.
 | `technical-docs-to-learning-materials` | Transforms reference docs into structured educational content |
 | `cli-documentation-verification` | Verifies CLI tool docs against the actual installed binary |
 | `corpus-qa-skill-pattern` | Architectural pattern for building Q&A skills over large doc corpora |
-| `for-dummies` | Generates plain-English intro guides by reading the actual codebase |
-| `codex-bridge` | Integration between Claude Code and OpenAI Codex CLI via MCP |
 | `marp-slide-content` | Turns source material into well-structured generic Marp slide markdown |
+| `lfg` | One-command ship + harden + review + adjudicate pipeline for a PR |
+| `stepped-pr` | Co-review a PR file-by-file with the user |
 | `cli-agent-mcp-integration` | Pattern for integrating external CLI agents via MCP server mode |
 | `git-submodule-add` | Adds a new git submodule with the user's preferred pattern (`branch = main` + `update = merge` so a single command fast-forwards every submodule to its declared branch tip) |
 
@@ -93,10 +96,15 @@ See `.gitignore` for the complete list.
 
 ### Plugins
 
+Local plugin sources (registered via the `plugins/local/` marketplace, except coworking-monitor):
+
 | Plugin | Path | Description |
 |--------|------|-------------|
-| codex-bridge | `plugins/codex-bridge/` | MCP bridge between Claude Code and OpenAI Codex CLI |
-| sui-wallet | `plugins/sui-wallet/` | Sui wallet plugin |
+| forge-bench | `plugins/forge-bench/` | Benchmarking framework for comparing Code Forge variants |
+| sui-wallet | `plugins/sui-wallet/` | Mock Sui wallet for browser-based dApp testing |
+| coworking-monitor | `plugins/coworking-monitor/` | Hook-based session notifier |
+
+Everything else (sui-pilot, codex-bridge, code-forge, toolkit, the ACC courses, …) installs from the **contract-hero marketplace**; official Anthropic plugins from **claude-plugins-official**. `settings.json` `enabledPlugins` is the source of truth for what's active.
 
 ### Scripts
 
@@ -142,24 +150,17 @@ Etherscan MCP, and ensure `~/go/bin` is on `PATH` (dotfiles `.zshrc` adds it) so
 
 ### Hooks
 
-Two SessionStart hooks in `settings.json` run on every session:
+One SessionStart hook in `settings.json` runs on every session:
 
-- `hooks/refresh-sui-pilot-symlink.sh` — refreshes the persistent sui-pilot symlink.
 - `hooks/patch-chrome-devtools-mcp.sh` — injects `--browser-url` into the chrome-devtools-mcp `plugin.json` so it attaches to the existing Chrome-for-Testing on :9222 instead of spawning a fresh one.
 
 ### Agent Roles & Team Recipes
 
 Defined in [`_meta/AGENTS.md`](_meta/AGENTS.md). Reusable roles (`move-agent`, `frontend-agent`, `docs-agent`, `review-agent`, `event-services-agent`) and team recipes (`full-stack`, `contract-only`, `frontend-only`, `review`).
 
-### Documentation Bridge
+### Sui/Walrus/Seal Documentation
 
-The `sui-pilot/` submodule provides 500+ doc files extracted from official sources:
-
-| Directory | Docs | Topics |
-|-----------|------|--------|
-| `.sui-docs/` | 370 | Blockchain, Move language, objects, transactions, SDKs |
-| `.walrus-docs/` | 125 | Decentralized storage, blobs, Walrus Sites, TypeScript SDK |
-| `.seal-docs/` | 13 | Secrets management, encryption, key servers, access control |
+The 500+ bundled doc files (`.sui-docs/`, `.walrus-docs/`, `.seal-docs/`) ship inside the **sui-pilot plugin** installed from the contract-hero marketplace — nothing is vendored in this repo.
 
 ## Adding New Items
 
@@ -171,22 +172,6 @@ The `sui-pilot/` submodule provides 500+ doc files extracted from official sourc
 
 ## Submodules
 
-| Submodule | Path | Source |
-|-----------|------|--------|
-| move-code-quality | `skills/move-code-quality/` | [1NickPappas/move-code-quality-skill](https://github.com/1NickPappas/move-code-quality-skill) |
-| move-code-review | `skills/move-code-review/` | [MystenLabs/move-code-review-skill](https://github.com/MystenLabs/move-code-review-skill) |
-| sui-pilot | `sui-pilot/` | [alilloig/sui-pilot](https://github.com/alilloig/sui-pilot) |
+This repo nests **no submodules** — plugins install from marketplaces (see above). `dotclaude` itself is consumed as a submodule of [`alilloig/dotfiles`](https://github.com/alilloig/dotfiles) at `.claude/`; `~/workspace/dotfiles/bump-submodules.sh` fast-forwards that pin.
 
-Every submodule declares `branch = main` and `update = merge` in `.gitmodules` so `git submodule update --remote --merge` fast-forwards everything to the latest tip without detached HEAD. Combined with `submodule.recurse = true` in the user's `.gitconfig`, `git pull/push/checkout/clone` auto-recurse.
-
-```bash
-# Bump every submodule (parent + nested) to its declared branch tip
-~/workspace/dotfiles/bump-submodules.sh
-
-# Or, manually for one submodule:
-git -C sui-pilot pull origin main && git add sui-pilot && git commit -m "Update sui-pilot submodule"
-```
-
-When adding a **new** submodule, invoke the `git-submodule-add` skill so the pattern is applied from the start.
-
-> **Note on nesting**: when consumed via `dotfiles`, `dotclaude` itself is a submodule and the entries above become transitive submodules. `git clone --recurse-submodules` on `dotfiles` (or `git submodule update --init --recursive`) brings them all in.
+If a submodule is ever added again, invoke the `git-submodule-add` skill so the `branch = main` + `update = merge` pattern is applied from the start.

@@ -55,10 +55,6 @@ jobs/
 gh-pr-status-cache.json*
 remote-settings.json
 
-# ── sui-pilot always-on context (machine-local symlink into the installed plugin) ──
-# Recreated each session by hooks/refresh-sui-pilot-symlink.sh; was a submodule pre-marketplace.
-/sui-pilot
-
 # ── EVM/Solidity-security auditor skill repos (regenerable clones) ──
 # Cloned by scripts/setup-sol-sec-stack.sh; they're independent git repos,
 # re-fetched on demand — never commit them into dotclaude.
