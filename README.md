@@ -38,8 +38,6 @@ bash ~/.claude/setup.sh
 | Agent teams | `teams/` |
 | Local plugins | `plugins/forge-bench/`, `plugins/sui-wallet/`, `plugins/coworking-monitor/` |
 | Plugin state | `plugins/installed_plugins.json`, `plugins/local/` |
-| Agent catalog & recipes | `_meta/AGENTS.md` |
-| Documentation & audits | `_meta/docs/` |
 
 ## What's Gitignored
 
@@ -153,10 +151,6 @@ Etherscan MCP, and ensure `~/go/bin` is on `PATH` (dotfiles `.zshrc` adds it) so
 One SessionStart hook in `settings.json` runs on every session:
 
 - `hooks/patch-chrome-devtools-mcp.sh` — injects `--browser-url` into the chrome-devtools-mcp `plugin.json` so it attaches to the existing Chrome-for-Testing on :9222 instead of spawning a fresh one.
-
-### Agent Roles & Team Recipes
-
-Defined in [`_meta/AGENTS.md`](_meta/AGENTS.md). Reusable roles (`move-agent`, `frontend-agent`, `docs-agent`, `review-agent`, `event-services-agent`) and team recipes (`full-stack`, `contract-only`, `frontend-only`, `review`).
 
 ### Sui/Walrus/Seal Documentation
 

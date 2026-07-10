@@ -34,11 +34,22 @@ else
     echo "✓ Created ~/.claude -> $REPO_DIR"
 fi
 
-# --- 2. Git submodules ---
+# --- 2. Plugin hook permissions ---
+# Some plugins ship hook scripts without +x, which makes SessionStart (or other
+# hook events) fail with "permission denied". Recurs after plugin updates since
+# new versions are fresh checkouts — safe to re-run any time.
 echo ""
-echo "--- Submodules ---"
-git -C "$REPO_DIR" submodule update --init --recursive --remote --merge
-echo "✓ Submodules initialized + fast-forwarded to declared branches"
+echo "--- Plugin hook permissions ---"
+if [ -d "$REPO_DIR/plugins/cache" ]; then
+    count=0
+    while IFS= read -r -d '' f; do
+        chmod +x "$f"
+        count=$((count + 1))
+    done < <(find "$REPO_DIR/plugins/cache" -name '*.sh' ! -perm -u+x -print0)
+    echo "✓ Made $count plugin hook script(s) executable"
+else
+    echo "· no plugin cache yet (first run)"
+fi
 
 # --- 3. Marketplaces ---
 echo ""
@@ -76,12 +87,12 @@ install_plugin() {
 official_plugins=(
     chrome-devtools-mcp claude-code-setup claude-md-management
     code-review code-simplifier commit-commands feature-dev
-    frontend-design github gopls-lsp hookify
-    learning-output-style legalzoom linear mcp-server-dev
-    notion playground playwright plugin-dev pr-review-toolkit
+    frontend-design hookify
+    learning-output-style linear mcp-server-dev
+    notion playground plugin-dev pr-review-toolkit
     pyright-lsp ralph-loop rust-analyzer-lsp
-    security-guidance skill-creator slack superpowers
-    swift-lsp telegram typescript-lsp
+    security-guidance skill-creator slack
+    telegram typescript-lsp
 )
 for p in "${official_plugins[@]}"; do
     install_plugin "${p}@claude-plugins-official"
@@ -141,16 +152,14 @@ echo "  Installed: $installed  Already present: $skipped"
 echo ""
 echo "--- Disable optional plugins ---"
 disabled_plugins=(
-    github@claude-plugins-official
     linear@claude-plugins-official
-    playwright@claude-plugins-official
     slack@claude-plugins-official
     notion@claude-plugins-official
 )
 for p in "${disabled_plugins[@]}"; do
     claude plugin disable "$p" 2>/dev/null || true
 done
-echo "  ✓ Disabled: github, linear, playwright, slack, notion"
+echo "  ✓ Disabled: linear, slack, notion"
 
 # --- 6. EVM / Solidity-security stack (opt-in) ---
 # Heavy toolchain (Foundry, Slither, Aderyn, Halmos, Mythril, Medusa, Echidna)
