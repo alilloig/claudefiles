@@ -36,7 +36,7 @@ bash ~/.claude/setup.sh
 | User settings (hooks, plugins, env) | `settings.json` |
 | Hook scripts | `hooks/` |
 | Agent teams | `teams/` |
-| Local plugins | `plugins/forge-bench/`, `plugins/sui-wallet/`, `plugins/coworking-monitor/` |
+| Local plugins | `plugins/forge-bench/`, `plugins/sui-wallet/` |
 | Plugin state | `plugins/installed_plugins.json`, `plugins/local/` |
 
 ## What's Gitignored
@@ -94,13 +94,12 @@ Move code-quality/code-review live in the **sui-pilot plugin** (contract-hero ma
 
 ### Plugins
 
-Local plugin sources (registered via the `plugins/local/` marketplace, except coworking-monitor):
+Local plugin sources (registered via the `plugins/local/` marketplace):
 
 | Plugin | Path | Description |
 |--------|------|-------------|
 | forge-bench | `plugins/forge-bench/` | Benchmarking framework for comparing Code Forge variants |
 | sui-wallet | `plugins/sui-wallet/` | Mock Sui wallet for browser-based dApp testing |
-| coworking-monitor | `plugins/coworking-monitor/` | Hook-based session notifier |
 
 Everything else (sui-pilot, codex-bridge, code-forge, toolkit, the ACC courses, …) installs from the **contract-hero marketplace**; official Anthropic plugins from **claude-plugins-official**. `settings.json` `enabledPlugins` is the source of truth for what's active.
 

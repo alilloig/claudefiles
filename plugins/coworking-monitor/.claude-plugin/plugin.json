@@ -1,5 +1,0 @@
-{
-  "name": "coworking-monitor",
-  "description": "Reports Claude Code session and sub-agent lifecycle events to a local monitoring server",
-  "version": "1.0.0"
-}
