@@ -19,15 +19,6 @@
         "lastUpdated": "2026-05-14T10:46:58.235Z"
       }
     ],
-    "github@claude-plugins-official": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/github/unknown",
-        "version": "unknown",
-        "installedAt": "2026-04-27T08:14:27.387Z",
-        "lastUpdated": "2026-05-14T10:46:58.235Z"
-      }
-    ],
     "feature-dev@claude-plugins-official": [
       {
         "scope": "user",
@@ -52,15 +43,6 @@
         "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/typescript-lsp/1.0.0",
         "version": "1.0.0",
         "installedAt": "2026-04-23T09:20:13.897Z",
-        "lastUpdated": "2026-05-14T10:46:58.235Z"
-      }
-    ],
-    "playwright@claude-plugins-official": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/playwright/unknown",
-        "version": "unknown",
-        "installedAt": "2026-04-27T08:14:36.908Z",
         "lastUpdated": "2026-05-14T10:46:58.235Z"
       }
     ],
@@ -128,15 +110,6 @@
         "lastUpdated": "2026-05-14T10:46:58.235Z"
       }
     ],
-    "swift-lsp@claude-plugins-official": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/swift-lsp/1.0.0",
-        "version": "1.0.0",
-        "installedAt": "2026-04-23T09:20:11.556Z",
-        "lastUpdated": "2026-05-14T10:46:58.235Z"
-      }
-    ],
     "playground@claude-plugins-official": [
       {
         "scope": "user",
@@ -153,16 +126,6 @@
         "version": "2.0.0",
         "installedAt": "2026-04-23T09:20:07.351Z",
         "lastUpdated": "2026-05-29T07:13:53.338Z"
-      }
-    ],
-    "superpowers@claude-plugins-official": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0",
-        "version": "5.1.0",
-        "installedAt": "2026-04-23T09:20:11.157Z",
-        "lastUpdated": "2026-05-14T10:46:58.235Z",
-        "gitCommitSha": "b55764852ac78870e65c6565fb585b6cd8b3c5c9"
       }
     ],
     "rust-analyzer-lsp@claude-plugins-official": [
@@ -216,15 +179,6 @@
         "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/hookify/unknown",
         "version": "unknown",
         "installedAt": "2026-04-23T09:19:52.766Z",
-        "lastUpdated": "2026-05-14T10:46:58.235Z"
-      }
-    ],
-    "gopls-lsp@claude-plugins-official": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/gopls-lsp/1.0.0",
-        "version": "1.0.0",
-        "installedAt": "2026-04-23T09:19:52.080Z",
         "lastUpdated": "2026-05-14T10:46:58.235Z"
       }
     ],
