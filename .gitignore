@@ -25,10 +25,13 @@ todos/
 
 # ── Plugin runtime (keep config, ignore downloaded cache/repos) ──
 plugins/cache/
+plugins/data/
 plugins/marketplaces/
 plugins/known_marketplaces.json
 plugins/install-counts-cache.json
 plugins/plugin-catalog-cache.json
+plugins/blocklist.json
+plugins/.last_inuse_sweep
 
 # ── Channels (bot tokens, access control — NEVER commit) ──
 channels/
@@ -49,7 +52,8 @@ daemon.log
 daemon.status.json
 daemon-auth-*
 jobs/
-gh-pr-status-cache.json
+gh-pr-status-cache.json*
+remote-settings.json
 
 # ── sui-pilot always-on context (machine-local symlink into the installed plugin) ──
 # Recreated each session by hooks/refresh-sui-pilot-symlink.sh; was a submodule pre-marketplace.
@@ -62,4 +66,5 @@ skills-src/
 
 # ── OS junk ──
 .DS_Store
+__pycache__/
 worktrees/

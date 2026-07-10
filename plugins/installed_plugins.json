@@ -39,12 +39,11 @@
     ],
     "code-simplifier@claude-plugins-official": [
       {
-        "scope": "project",
-        "projectPath": "/Users/alilloig/workspace/slush",
+        "scope": "user",
         "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/code-simplifier/1.0.0",
         "version": "1.0.0",
         "installedAt": "2026-04-23T09:19:48.656Z",
-        "lastUpdated": "2026-06-04T19:29:39.812Z"
+        "lastUpdated": "2026-07-10T08:43:50.030Z"
       }
     ],
     "typescript-lsp@claude-plugins-official": [
@@ -113,10 +112,10 @@
     "slack@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/slack/1.0.0",
-        "version": "1.0.0",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/slack/1.1.0",
+        "version": "1.1.0",
         "installedAt": "2026-04-27T08:14:45.937Z",
-        "lastUpdated": "2026-05-14T10:46:58.235Z",
+        "lastUpdated": "2026-07-09T09:40:30.870Z",
         "gitCommitSha": "7b9458950d38bb01ddb48b669f9fa89bcdfd98b8"
       }
     ],
@@ -268,15 +267,6 @@
         "gitCommitSha": "00d485659af82982aef0328d0419c49a2716d123"
       }
     ],
-    "ralph-loop@claude-plugins-official": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/ralph-loop/1.0.0",
-        "version": "1.0.0",
-        "installedAt": "2026-04-27T08:14:39.763Z",
-        "lastUpdated": "2026-05-14T10:46:58.235Z"
-      }
-    ],
     "codex-bridge@contract-hero": [
       {
         "scope": "user",
@@ -290,10 +280,10 @@
     "sui-pilot@contract-hero": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/sui-pilot/924278442671",
-        "version": "924278442671",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/sui-pilot/18e0e7b99151",
+        "version": "18e0e7b99151",
         "installedAt": "2026-04-27T10:55:54.815Z",
-        "lastUpdated": "2026-06-01T15:01:52.063Z",
+        "lastUpdated": "2026-07-08T17:00:11.514Z",
         "gitCommitSha": "200a1c7e6c85b86b881abc183138258ff1a0690e"
       }
     ],
@@ -330,10 +320,10 @@
     "toolkit@contract-hero": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/toolkit/0.3.0",
-        "version": "0.3.0",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/toolkit/0.5.0",
+        "version": "0.5.0",
         "installedAt": "2026-05-14T13:08:23.678Z",
-        "lastUpdated": "2026-06-01T17:48:03.842Z",
+        "lastUpdated": "2026-07-03T15:19:59.511Z",
         "gitCommitSha": "85df71e42f8408c7e6ead69b28e9505a6dae4be0"
       }
     ],
@@ -745,6 +735,15 @@
         "installedAt": "2026-06-01T17:45:00.312Z",
         "lastUpdated": "2026-06-01T22:33:46.321Z",
         "gitCommitSha": "d99c74b6a9c9ab186882d8311730a63f623e2c3a"
+      }
+    ],
+    "ralph-loop@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/ralph-loop/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-07-10T08:43:50.030Z",
+        "lastUpdated": "2026-07-10T08:43:50.030Z"
       }
     ]
   }
