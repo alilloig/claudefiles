@@ -28,7 +28,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /Users/alilloig/.claude/hooks/patch-chrome-devtools-mcp.sh"
+            "command": "bash \"$HOME/.claude/hooks/patch-chrome-devtools-mcp.sh\""
           }
         ]
       }
@@ -39,7 +39,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "bash /Users/alilloig/.claude/statusline-command.sh"
+    "command": "bash \"$HOME/.claude/statusline-command.sh\""
   },
   "enabledPlugins": {
     "claude-code-setup@claude-plugins-official": true,
