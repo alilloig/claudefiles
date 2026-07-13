@@ -1,16 +1,42 @@
 # Global Claude Code Guidelines
 
-## Preferred Stack
+## Tooling defaults
 
 - **TypeScript** over JavaScript — always `.ts`/`.tsx`
 - **pnpm** — never npm or yarn
-- **Next.js + React** for frontend
-- **Sui Move** (edition 2024) for smart contracts
+- Stack choices (frameworks, chains, languages) are per-project: define them
+  in each project's own CLAUDE.md — when starting or adopting a project,
+  write its preferred stack there (create the file if missing) rather than
+  assuming global defaults
 
 ## Communication
 
-- Concise, no fluff — lead with action, skip preambles
-- Ask before big architectural or design decisions; proceed on obvious stuff
+- Truly concise, tl;dr by default — answer in a few sentences leading with the
+  conclusion; never pad with process narration or restated context. If an
+  answer genuinely can't fit that shape (deep explanations, multi-part
+  analysis), keep the chat reply to the tl;dr and put the full version in an
+  HTML artifact instead of a long chat message.
+- Prefer asking over assuming — when a decision hinges on my intent or taste
+  (scope, approach, design direction, priorities), use the AskUserQuestion
+  tool with concrete options rather than guessing. Don't overdo it: technical
+  judgment calls, implementation details, and creative choices are yours to
+  make; ask when my answer would change what you build, not to seek permission.
 - Spanish-friendly — user is native Spanish speaker, switch freely if helpful
-- Prefer self-contained HTML over markdown for any document deliverable (reports, audits, plans, reviews, explainers); markdown is fine for short chat replies and code-only outputs. For ad-hoc visual deliverables not covered by a specialized skill, use the `html-artifact` skill; to share an artifact, invoke `publish-html` — never auto-publish.
-- Whenever you produce a **markdown or HTML deliverable** the user should review (plans, audits, reports, reviews, analyses, design docs, anything not throwaway), end the turn with a clickable **Vlervcode deep-link** — automatically, without being asked. URL form: `vlerv://open?path=<percent-encoded-abs-path>`; Finicky hands it to the running Vlervcode app. Percent-encode everything outside RFC 3986 unreserved (`A-Z a-z 0-9 - _ . ~`) — slashes become `%2F`. Render as nice markdown — `[<filename or short title>](vlerv://open?path=...)` — never a bare URL. Skip only for throwaway snippets, code-only output, or when the user asked for a different app. Pure file paths or `file://` URLs are fallbacks when Vlervcode doesn't apply.
+
+## Deliverables
+
+A "deliverable" = any document meant for review: report, audit, plan, review,
+analysis, explainer, design doc. Not throwaway snippets or code-only output.
+
+- Deliverables ship as self-contained HTML; markdown only for short chat
+  replies and code-only outputs
+- No specialized skill fits → `html-artifact`; share only via `publish-html`,
+  never auto-publish
+- End the turn with a clickable Vlervcode deep-link to every deliverable,
+  unprompted:
+  - Form: `[<filename or short title>](vlerv://open?path=<abs path>)` — never
+    a bare URL. Finicky hands it to the running Vlervcode app.
+  - Encode everything outside RFC 3986 unreserved chars (`A-Za-z0-9-_.~`);
+    slashes become `%2F`
+  - Fallback: plain path or `file://` when Vlervcode doesn't apply, or the
+    user asked for a different app
