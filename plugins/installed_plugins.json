@@ -164,15 +164,6 @@
         "lastUpdated": "2026-05-14T10:46:58.235Z"
       }
     ],
-    "telegram@claude-plugins-official": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/telegram/0.0.6",
-        "version": "0.0.6",
-        "installedAt": "2026-04-23T09:20:13.188Z",
-        "lastUpdated": "2026-05-14T10:46:58.235Z"
-      }
-    ],
     "hookify@claude-plugins-official": [
       {
         "scope": "user",
@@ -211,16 +202,6 @@
         "gitCommitSha": "a1612be8e01401cf1711c64bc2ef5da5763ba956"
       }
     ],
-    "impeccable@impeccable": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/impeccable/impeccable/2.1.1",
-        "version": "2.1.1",
-        "installedAt": "2026-04-23T09:20:15.347Z",
-        "lastUpdated": "2026-05-14T10:46:58.235Z",
-        "gitCommitSha": "00d485659af82982aef0328d0419c49a2716d123"
-      }
-    ],
     "codex-bridge@contract-hero": [
       {
         "scope": "user",
@@ -234,41 +215,11 @@
     "sui-pilot@contract-hero": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/sui-pilot/18e0e7b99151",
-        "version": "18e0e7b99151",
+        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/sui-pilot/b7801aa23bad",
+        "version": "b7801aa23bad",
         "installedAt": "2026-04-27T10:55:54.815Z",
-        "lastUpdated": "2026-07-08T17:00:11.514Z",
+        "lastUpdated": "2026-07-13T11:42:10.121Z",
         "gitCommitSha": "200a1c7e6c85b86b881abc183138258ff1a0690e"
-      }
-    ],
-    "agentic-community-college@contract-hero": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/agentic-community-college/0.2.0",
-        "version": "0.2.0",
-        "installedAt": "2026-05-13T09:56:54.800Z",
-        "lastUpdated": "2026-06-01T22:33:53.275Z",
-        "gitCommitSha": "f59c79ade1b2100d5a980ae08833576ce354130c"
-      }
-    ],
-    "acc-deepbook-course@contract-hero": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/acc-deepbook-course/0.3.0",
-        "version": "0.3.0",
-        "installedAt": "2026-05-13T09:56:58.058Z",
-        "lastUpdated": "2026-06-02T00:11:51.364Z",
-        "gitCommitSha": "a7782ef3b202862fafc35d4c0bc7d45e35968f84"
-      }
-    ],
-    "acc-evm-wal@contract-hero": [
-      {
-        "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/contract-hero/acc-evm-wal/0.1.1",
-        "version": "0.1.1",
-        "installedAt": "2026-05-14T13:07:34.454Z",
-        "lastUpdated": "2026-06-02T22:20:58.249Z",
-        "gitCommitSha": "02d1228acf95139e06be851e756f8f4fcaf7e087"
       }
     ],
     "toolkit@contract-hero": [
@@ -691,13 +642,14 @@
         "gitCommitSha": "d99c74b6a9c9ab186882d8311730a63f623e2c3a"
       }
     ],
-    "ralph-loop@claude-plugins-official": [
+    "scroll-world@scroll-world": [
       {
         "scope": "user",
-        "installPath": "/Users/alilloig/.claude/plugins/cache/claude-plugins-official/ralph-loop/1.0.0",
-        "version": "1.0.0",
-        "installedAt": "2026-07-10T08:43:50.030Z",
-        "lastUpdated": "2026-07-10T08:43:50.030Z"
+        "installPath": "/Users/alilloig/.claude/plugins/cache/scroll-world/scroll-world/0.2.0",
+        "version": "0.2.0",
+        "installedAt": "2026-07-13T07:49:33.287Z",
+        "lastUpdated": "2026-07-13T07:49:33.287Z",
+        "gitCommitSha": "f941ef93eec785f08634d5f42fb2cbd652dd06c6"
       }
     ]
   }

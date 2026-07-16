@@ -1,4 +1,9 @@
 {
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_COORDINATOR_MODE": "1",
+    "CLAUDE_CODE_NO_FLICKER": "1"
+  },
   "permissions": {
     "allow": [
       "Bash(claude team:*)",
@@ -16,14 +21,14 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "opus",
+  "model": "claude-fable-5[1m]",
   "hooks": {
     "SessionStart": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/patch-chrome-devtools-mcp.sh\""
+            "command": "bash /Users/alilloig/.claude/hooks/patch-chrome-devtools-mcp.sh"
           }
         ]
       }
@@ -34,7 +39,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "bash \"$HOME/.claude/statusline-command.sh\""
+    "command": "bash /Users/alilloig/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
     "claude-code-setup@claude-plugins-official": true,
@@ -57,7 +62,7 @@
     "skill-creator@claude-plugins-official": true,
     "hookify@claude-plugins-official": true,
     "mcp-server-dev@claude-plugins-official": true,
-    "notion@claude-plugins-official": true,
+    "notion@claude-plugins-official": false,
     "chrome-devtools-mcp@claude-plugins-official": true,
     "codex-bridge@contract-hero": true,
     "sui-pilot@contract-hero": true,
@@ -103,9 +108,16 @@
     "dimensional-analysis@trailofbits": false,
     "code-forge@contract-hero": true,
     "sui-agent-tank@contract-hero": true,
+    "language-transfer@language-transfer-dev": true,
     "scroll-world@scroll-world": true
   },
   "extraKnownMarketplaces": {
+    "impeccable": {
+      "source": {
+        "source": "github",
+        "repo": "pbakaus/impeccable"
+      }
+    },
     "contract-hero": {
       "source": {
         "source": "github",
@@ -117,6 +129,12 @@
       "source": {
         "source": "github",
         "repo": "trailofbits/skills"
+      }
+    },
+    "language-transfer-dev": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/alilloig/.language-transfer/marketplace"
       }
     },
     "scroll-world": {
@@ -140,6 +158,6 @@
   "autoCompactEnabled": false,
   "teammateMode": "tmux",
   "remoteControlAtStartup": true,
-  "agentPushNotifEnabled": true,
+  "agentPushNotifEnabled": false,
   "skipAutoPermissionPrompt": true
 }
