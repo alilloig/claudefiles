@@ -64,9 +64,11 @@ anything sitting in your context:
      `git rev-parse --show-toplevel` (interactive sessions share `$TMPDIR`, so foreign
      runs from other sessions can appear in the scan). Note the recorded `repo_root`
      is normally a LINKED WORKTREE of the project (Phase 0 moves runs there): if it
-     doesn't match your toplevel, check `git worktree list` first — a path listed
-     there is still yours; re-enter that worktree and resume from inside it. Report
-     truly non-matching runs; never adopt them.
+     doesn't match your toplevel, require an EXACT match against a worktree path from
+     `git worktree list --porcelain | sed -n 's/^worktree //p'` — never a substring
+     grep, since a crafted `repo_root` that merely prefixes a real path would pass.
+     On an exact hit the run is still yours; re-enter that worktree and resume from
+     inside it. Report truly non-matching runs; never adopt them.
    - **Liveness & integrity:** load `PR_NUMBER` from the run (`run_state.sh get "<run_dir>" pr_number`;
      non-zero exit = unset — skip this check). Require it purely numeric — anything else
      means a tampered/corrupt state file: mark the run `aborted` and do NOT resume.
@@ -102,7 +104,10 @@ session, STOP and tell the user to run
    If either fails, stop and report what's missing.
 2. Capture repo coordinates: `OWNER/REPO` from `gh repo view --json owner,name -q '.owner.login+"/"+.name'`.
 3. Confirm there are changes to ship: `git status --porcelain`. If empty AND no branch-vs-main
-   diff exists, stop — there is nothing to /lfg.
+   diff exists, check for a run that died mid-migration before concluding anything: an
+   `lfg-migrate` entry in `git stash list`, or an orphaned `lfg-*` entry in
+   `git worktree list`, means step 4 already parked the work — recover from there.
+   Only if both are clean, stop — there is nothing to /lfg.
 4. **Worktree guard — never ship from the main checkout.** Detect where you are:
    ```bash
    [ "$(git rev-parse --path-format=absolute --git-dir)" = "$(git rev-parse --path-format=absolute --git-common-dir)" ] \
@@ -115,8 +120,14 @@ session, STOP and tell the user to run
       `DEFAULT_BRANCH="$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name)"`.
    2. If `git status --porcelain` is non-empty, park the changes:
       `git stash push -u -m lfg-migrate`. (Stashes live in the shared git dir, so the
-      new worktree can pop them.) If ANY later sub-step fails, `git stash pop` back in
-      the main checkout and abort — never leave the work stranded in the stash.
+      new worktree can pop them.) Also record `ORIG_BRANCH="$(git branch --show-current)"`
+      and `ORIG_SHA="$(git rev-parse HEAD)"` — sub-step 3 mutates the main checkout, so a
+      blanket "pop back in the main checkout" would apply the diff onto a different base
+      than the stash was taken from. If a later sub-step fails BEFORE sub-step 5's pop:
+      pop inside `$WT` if the worktree already exists, otherwise restore the main checkout
+      first (`git switch "$ORIG_BRANCH"` if sub-step 3 already switched away,
+      `git reset --hard "$ORIG_SHA"` if it already reset) and `git stash pop` there.
+      After sub-step 5's pop there is no stash left. Never leave the work stranded.
    3. Create the worktree OUTSIDE the repo tree, at
       `WT="${TOPLEVEL}-worktrees/lfg-<slug>"` (short kebab slug for the work;
       `mkdir -p "${TOPLEVEL}-worktrees"` first):
@@ -124,12 +135,16 @@ session, STOP and tell the user to run
         sees a non-default branch and skips branching): `git worktree add "$WT" -b <slug>`.
         If the default branch also carried UNPUSHED local commits, they ride along on
         the new branch (it was created at HEAD); after confirming that with
-        `git -C "$WT" log --oneline -5`, drop them from the main checkout with
-        `git reset --hard "origin/$DEFAULT_BRANCH"` (safe: the tree is clean post-stash
+        `git -C "$WT" log --oneline "origin/$DEFAULT_BRANCH..HEAD"` (non-empty output) and
+        `[ "$(git -C "$WT" rev-parse HEAD)" = "$(git rev-parse HEAD)" ]`, drop them from the main checkout with
+        `git fetch origin "$DEFAULT_BRANCH" && git reset --hard "origin/$DEFAULT_BRANCH"` (safe: the tree is clean post-stash
         and the commits now live on the worktree branch).
       - On a non-default branch `X` → move that branch into the worktree: a branch can
         only be checked out in one worktree, so first `git switch "$DEFAULT_BRANCH"`
         (tree is clean post-stash), then `git worktree add "$WT" X`.
+      - Detached HEAD (e.g. a submodule checkout) → treat like the default-branch case:
+        `git worktree add "$WT" -b <slug>` mints the branch at HEAD; skip the
+        `git reset --hard` step and leave the main checkout where it was.
    4. Enter the worktree — prefer the `EnterWorktree` tool with `path: "$WT"` (it
       re-points the session's file tools there); otherwise `cd "$WT"` in Bash.
    5. If sub-step 2 stashed: `git stash pop` (now inside the worktree) and confirm
@@ -156,14 +171,17 @@ session, STOP and tell the user to run
 ## Phase 1 — Ship (/commit-push-pr, as a DRAFT)
 
 Invoke the `/commit-push-pr` skill, telling it the PR must be opened as a **draft**
-(`gh pr create --draft`). It branches off `main` if needed (usually not — Phase 0's
-worktree guard already minted the branch), makes one commit, pushes, and opens the PR.
-The PR stays in draft for the whole pipeline; the user promotes or merges it at the end.
+(`gh pr create --draft`). It branches off the default branch if needed (usually not —
+Phase 0's worktree guard already minted the branch), makes one commit, pushes, and opens
+the PR. The PR normally stays in draft for the whole pipeline (Phase 3's post fallback
+may drop it); the user promotes or merges it at the end.
 After it completes, capture for later phases:
 
 - `PR_NUMBER`: `gh pr view --json number -q .number`
 - Draft check: `gh pr view --json isDraft -q .isDraft` — if `false` (the sub-skill
-  ignored the instruction), convert it back: `gh pr ready "$PR_NUMBER" --undo`.
+  ignored the instruction), convert it back: `gh pr ready "$PR_NUMBER" --undo`. Drafts
+  are plan-gated (gh: "if supported by your plan") — if draft creation/conversion is
+  rejected because the repo's plan lacks draft PRs, continue non-draft; don't abort.
 - `BASE_REF` / `HEAD_REF`: `gh pr view --json baseRefName,headRefName -q '.baseRefName+" "+.headRefName'`
 - `HEAD_SHA`: `git rev-parse HEAD`
 - changed files vs base: `git diff --name-only "$BASE_REF"...HEAD` (this is the review scope)
@@ -268,5 +286,6 @@ user's call on GitHub.
 6. Report to the user: the PR URL (the deliverable), the worktree path the work now
    lives in, the commits made (feature / simplify / apply review suggestions),
    kept-vs-dropped finding counts, what you accepted vs rejected and why, whether the
-   PR is still a draft, and the single remaining human action on GitHub: press
-   "Ready for review" (team project) or merge it (solo project).
+   PR is still a draft, and the remaining human action on GitHub: press
+   "Ready for review" (team project), or mark it ready and merge (solo project) —
+   GitHub cannot merge a PR while it is still a draft.
