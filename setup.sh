@@ -90,7 +90,7 @@ official_plugins=(
     frontend-design hookify
     learning-output-style linear mcp-server-dev
     notion playground plugin-dev pr-review-toolkit
-    pyright-lsp ralph-loop rust-analyzer-lsp
+    pyright-lsp ralph-loop receipts rust-analyzer-lsp
     security-guidance skill-creator slack
     telegram typescript-lsp
 )
@@ -152,14 +152,13 @@ echo "  Installed: $installed  Already present: $skipped"
 echo ""
 echo "--- Disable optional plugins ---"
 disabled_plugins=(
-    linear@claude-plugins-official
     slack@claude-plugins-official
     notion@claude-plugins-official
 )
 for p in "${disabled_plugins[@]}"; do
     claude plugin disable "$p" 2>/dev/null || true
 done
-echo "  ✓ Disabled: linear, slack, notion"
+echo "  ✓ Disabled: slack, notion"
 
 # --- 6. EVM / Solidity-security stack (opt-in) ---
 # Heavy toolchain (Foundry, Slither, Aderyn, Halmos, Mythril, Medusa, Echidna)
