@@ -2,12 +2,14 @@
 name: lfg
 description: |
   One-command "ship + harden + review + adjudicate" pipeline for a pull request.
-  Runs four phases from the main session: (1) /commit-push-pr to branch, commit,
-  push and open the PR; (2) /simplify then a second commit; (3) a team of
-  dimension-specialised reviewer subagents + one consolidator that posts a single
-  GitHub PR review with inline ```suggestion blocks and a walkthrough comment;
-  (4) the main session accepts/rejects each suggestion, lands accepted ones as a
-  third commit, and approves the PR, leaving it merge-ready for a human.
+  Runs four phases from the main session: (1) preflight moves the work into a
+  fresh git worktree if it is sitting in the main checkout, then /commit-push-pr
+  branches, commits, pushes and opens a DRAFT PR; (2) /simplify then a second
+  commit; (3) a team of dimension-specialised reviewer subagents + one
+  consolidator that posts a single GitHub PR review with inline ```suggestion
+  blocks and a walkthrough comment; (4) the main session accepts/rejects each
+  suggestion and lands accepted ones as a third commit, leaving the draft PR
+  ready for the user to press "Ready for review" or merge on GitHub.
 
   Use when the user says "/lfg", "lfg", "ship it", "full send this PR", "ship and
   review", or wants the whole commit→PR→clean-up→review→address-review loop done in
@@ -58,8 +60,11 @@ anything sitting in your context:
    with two checks before adopting it:
    - **Ownership:** only claim a run whose recorded `repo_root` matches your own
      `git rev-parse --show-toplevel` (interactive sessions share `$TMPDIR`, so foreign
-     runs from other sessions can appear in the scan). Report non-matching runs;
-     never adopt them.
+     runs from other sessions can appear in the scan). Note the recorded `repo_root`
+     is normally a LINKED WORKTREE of the project (Phase 0 moves runs there): if it
+     doesn't match your toplevel, check `git worktree list` first — a path listed
+     there is still yours; re-enter that worktree and resume from inside it. Report
+     truly non-matching runs; never adopt them.
    - **Liveness & integrity:** load `PR_NUMBER` from the run (`run_state.sh get "<run_dir>" pr_number`;
      non-zero exit = unset — skip this check). Require it purely numeric — anything else
      means a tampered/corrupt state file: mark the run `aborted` and do NOT resume.
@@ -99,8 +104,41 @@ session, STOP and tell the user to run
 2. Capture repo coordinates: `OWNER/REPO` from `gh repo view --json owner,name -q '.owner.login+"/"+.name'`.
 3. Confirm there are changes to ship: `git status --porcelain`. If empty AND no branch-vs-main
    diff exists, stop — there is nothing to /lfg.
-4. Note `SKILL_DIR` = the absolute path of this skill's directory (for calling its scripts).
-5. Create a gitignored run dir OUTSIDE the repo for findings/payloads:
+4. **Worktree guard — never ship from the main checkout.** Detect where you are:
+   ```bash
+   [ "$(git rev-parse --path-format=absolute --git-dir)" = "$(git rev-parse --path-format=absolute --git-common-dir)" ] \
+     && echo main-checkout || echo linked-worktree
+   ```
+   `linked-worktree` → already isolated, continue to step 5. `main-checkout` → move the
+   work into a fresh worktree first, so the main folder ends up clean on the default
+   branch and stays free for new work:
+   1. Capture `TOPLEVEL="$(git rev-parse --show-toplevel)"` and
+      `DEFAULT_BRANCH="$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name)"`.
+   2. If `git status --porcelain` is non-empty, park the changes:
+      `git stash push -u -m lfg-migrate`. (Stashes live in the shared git dir, so the
+      new worktree can pop them.) If ANY later sub-step fails, `git stash pop` back in
+      the main checkout and abort — never leave the work stranded in the stash.
+   3. Create the worktree OUTSIDE the repo tree, at
+      `WT="${TOPLEVEL}-worktrees/lfg-<slug>"` (short kebab slug for the work;
+      `mkdir -p "${TOPLEVEL}-worktrees"` first):
+      - On `$DEFAULT_BRANCH` → mint the PR branch here (Phase 1's /commit-push-pr then
+        sees a non-default branch and skips branching): `git worktree add "$WT" -b <slug>`.
+        If the default branch also carried UNPUSHED local commits, they ride along on
+        the new branch (it was created at HEAD); after confirming that with
+        `git -C "$WT" log --oneline -5`, drop them from the main checkout with
+        `git reset --hard "origin/$DEFAULT_BRANCH"` (safe: the tree is clean post-stash
+        and the commits now live on the worktree branch).
+      - On a non-default branch `X` → move that branch into the worktree: a branch can
+        only be checked out in one worktree, so first `git switch "$DEFAULT_BRANCH"`
+        (tree is clean post-stash), then `git worktree add "$WT" X`.
+   4. Enter the worktree — prefer the `EnterWorktree` tool with `path: "$WT"` (it
+      re-points the session's file tools there); otherwise `cd "$WT"` in Bash.
+   5. If sub-step 2 stashed: `git stash pop` (now inside the worktree) and confirm
+      `git status --porcelain` shows the work again.
+   6. Re-run the detection command — it MUST now print `linked-worktree`. Everything
+      from here on (run dir, PR, review, adjudication commits) runs from the worktree.
+5. Note `SKILL_DIR` = the absolute path of this skill's directory (for calling its scripts).
+6. Create a gitignored run dir OUTSIDE the repo for findings/payloads:
    `RUN_DIR="${CLAUDE_JOB_DIR:-$TMPDIR}/lfg-$(git rev-parse --short HEAD 2>/dev/null || echo run)"`
    then `mkdir -p "$RUN_DIR"`, then seed the run state:
    `bash "$SKILL_DIR/scripts/run_state.sh" init "$RUN_DIR"`. If `init` refuses
@@ -116,12 +154,17 @@ session, STOP and tell the user to run
    `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase aborted` so the wake
    guard never resurrects a dead run.
 
-## Phase 1 — Ship (/commit-push-pr)
+## Phase 1 — Ship (/commit-push-pr, as a DRAFT)
 
-Invoke the `/commit-push-pr` skill. It branches off `main` if needed, makes one commit,
-pushes, and opens the PR. After it completes, capture for later phases:
+Invoke the `/commit-push-pr` skill, telling it the PR must be opened as a **draft**
+(`gh pr create --draft`). It branches off `main` if needed (usually not — Phase 0's
+worktree guard already minted the branch), makes one commit, pushes, and opens the PR.
+The PR stays in draft for the whole pipeline; the user promotes or merges it at the end.
+After it completes, capture for later phases:
 
 - `PR_NUMBER`: `gh pr view --json number -q .number`
+- Draft check: `gh pr view --json isDraft -q .isDraft` — if `false` (the sub-skill
+  ignored the instruction), convert it back: `gh pr ready "$PR_NUMBER" --undo`.
 - `BASE_REF` / `HEAD_REF`: `gh pr view --json baseRefName,headRefName -q '.baseRefName+" "+.headRefName'`
 - `HEAD_SHA`: `git rev-parse HEAD`
 - changed files vs base: `git diff --name-only "$BASE_REF"...HEAD` (this is the review scope)
@@ -212,15 +255,19 @@ You orchestrate; you do NOT review yourself. All spawning happens here, in the m
      ~25-minute startup lag; wait well past that): salvage findings yourself — unprocessed
      reviewer messages remain queued in the consolidator's inbox file, plus any
      `$RUN_DIR/findings-*.json` — then respawn a fresh consolidator under a NEW name or
-     build + post the review directly with `scripts/post_review.sh`.
+     build + post the review directly with `scripts/post_review.sh` (same draft fallback
+     as the consolidator: if GitHub rejects the POST because the PR is a draft, run
+     `gh pr ready "$PR_NUMBER"` and retry once).
 - Confirm the review posted with the `gh pr view` check above (skip if step 1 already ran),
   then checkpoint: `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase review-posted`.
 - Keep the summary (kept/dropped counts, inline suggestions list, walkthrough-only items)
   — Phase 4 adjudicates from it + the posted review.
 
-## Phase 4 — Self-adjudicate + approve
+## Phase 4 — Self-adjudicate + hand off
 
-You now act as the PR author deciding what to take from the review.
+You now act as the PR author deciding what to take from the review. You do NOT
+approve the PR — GitHub permissions block self-approval anyway; readiness is the
+user's call on GitHub.
 
 1. Read the posted review and the consolidator's summary. For EACH inline suggestion and
    each walkthrough item, decide ACCEPT or REJECT on its merits (correctness + fit with the
@@ -253,11 +300,13 @@ You now act as the PR author deciding what to take from the review.
    returned) is already down — a refused/undeliverable send is fine, do not retry or
    block. Skip any name that never spawned. You do NOT need the teammates' acks to
    proceed.
-6. Approve, leaving the PR open + merge-ready for a human:
-   ```bash
-   gh pr review "$PR_NUMBER" --approve --body "lfg pipeline complete: shipped, simplified, reviewed (N kept / M dropped), suggestions adjudicated. Ready for human merge."
-   ```
+6. Confirm the final PR state — no approval, no ready-for-review flip:
+   `gh pr view "$PR_NUMBER" --json state,isDraft` must show OPEN, and normally still
+   a draft. (If Phase 3 had to drop draft to post the review, leave it non-draft —
+   do not re-draft it.)
    Then checkpoint: `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase complete`.
-7. Report to the user: the PR URL (the deliverable), the commits made (feature /
-   simplify / apply review suggestions), kept-vs-dropped finding counts, what you
-   accepted vs rejected and why, and that the PR is approved and awaiting human merge.
+7. Report to the user: the PR URL (the deliverable), the worktree path the work now
+   lives in, the commits made (feature / simplify / apply review suggestions),
+   kept-vs-dropped finding counts, what you accepted vs rejected and why, whether the
+   PR is still a draft, and the single remaining human action on GitHub: press
+   "Ready for review" (team project) or merge it (solo project).

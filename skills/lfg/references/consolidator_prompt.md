@@ -62,6 +62,13 @@ Write `{{RUN_DIR}}/review-payload.json` shaped as:
 ## 5. Post
 - Validate: `bash {{SKILL_DIR}}/scripts/post_review.sh --check {{RUN_DIR}}/review-payload.json`
 - Post: `bash {{SKILL_DIR}}/scripts/post_review.sh {{OWNER}} {{REPO}} {{PR_NUMBER}} {{RUN_DIR}}/review-payload.json`
+- The PR is normally a DRAFT. GitHub accepts COMMENT reviews with inline suggestions
+  on drafts, so this should just work — do NOT mark the PR ready preemptively. Only
+  if the POST is rejected *specifically because of the draft state*: run
+  `gh pr ready {{PR_NUMBER}}` and retry the post ONCE, then flag in your Step 6
+  report that draft had to be dropped. Never use APPROVE as the review event —
+  the payload's event stays COMMENT; adjudication and readiness are the
+  orchestrator's and the human's jobs.
 
 ## 6. Report back to the orchestrator — via SendMessage (REQUIRED)
 Do not rely on your plain return value alone — you MUST `SendMessage` your summary.
