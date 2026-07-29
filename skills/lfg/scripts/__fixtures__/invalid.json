@@ -1,7 +1,0 @@
-{
-  "reviewer": "security",
-  "agent_type": "general-purpose",
-  "findings": [
-    { "id": "SEC-1", "dimension": "security", "severity": "catastrophic", "file": "src/a.ts", "detail": "no title here", "confidence": 85 }
-  ]
-}

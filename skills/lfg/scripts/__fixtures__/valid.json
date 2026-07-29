@@ -1,7 +1,0 @@
-{
-  "reviewer": "security",
-  "agent_type": "general-purpose",
-  "findings": [
-    { "id": "SEC-1", "dimension": "security", "severity": "high", "file": "src/a.ts", "line": 42, "title": "Unvalidated input", "detail": "X flows to Y unchecked.", "suggestion": "const v = sanitize(input);", "confidence": 85 }
-  ]
-}

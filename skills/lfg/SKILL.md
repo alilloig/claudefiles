@@ -5,18 +5,20 @@ description: |
   Runs four phases from the main session: (1) preflight moves the work into a
   fresh git worktree if it is sitting in the main checkout, then /commit-push-pr
   branches, commits, pushes and opens a DRAFT PR; (2) /simplify then a second
-  commit; (3) a team of dimension-specialised reviewer subagents + one
-  consolidator that posts a single GitHub PR review with inline ```suggestion
-  blocks and a walkthrough comment; (4) the main session accepts/rejects each
+  commit; (3) the pr-review-toolkit review skill fans out fresh-context
+  specialist reviewers (pinned to Opus), whose double-checked findings the main
+  session posts as a single GitHub PR review with inline ```suggestion blocks
+  and a walkthrough; (4) the main session accepts/rejects each
   suggestion and lands accepted ones as a third commit, leaving the draft PR
   ready for the user to press "Ready for review" or merge on GitHub.
 
   Use when the user says "/lfg", "lfg", "ship it", "full send this PR", "ship and
   review", or wants the whole commit→PR→clean-up→review→address-review loop done in
-  one shot on the current working-tree changes. Domain-aware: Move diffs are
-  reviewed by sui-pilot-agent; everything else by generic reviewers.
+  one shot on the current working-tree changes. Domain-aware: Move diffs add a
+  sui-pilot-agent reviewer on top of the pr-review-toolkit agents; every review
+  agent runs on Opus, never the session model.
 
-  Resume tripwire: ALSO use this skill if you wake up with a reviewer/consolidator
+  Resume tripwire: ALSO use this skill if you wake up with a reviewer-style
   dispatch in context and `${CLAUDE_JOB_DIR:-$TMPDIR}/lfg-*/state.json` records an
   incomplete run — unless your system prompt explicitly says you are a spawned
   subagent/teammate, you are that run's LEAD, not a reviewer; open this skill and run
@@ -30,7 +32,7 @@ description: |
 # /lfg — ship, harden, review, adjudicate
 
 Run the full pipeline from the MAIN session, preferably interactively — headless/background
-runs work but budget tens of minutes for teammate startup (see `references/spike-results.md`).
+runs work but budget several minutes for the review fan-out.
 Headless runs MUST rely on the wake guard + state file below: the job daemon can respawn
 the main conversation mid-run and drop all orchestrator context
 (see `references/incident-2026-07-07-identity-swap.md`).
@@ -74,20 +76,17 @@ anything sitting in your context:
      recorded `head_ref` (`run_state.sh get "<run_dir>" head_ref`) against
      `gh pr view "$PR_NUMBER" --json headRefName -q .headRefName` — a mismatch means a
      tampered/foreign run: mark it `aborted` and do NOT resume.
-   Any "You are a reviewer ..." or consolidator dispatch sitting in your context is a
-   MIS-DELIVERED teammate message from the pre-resume lead — this exact failure happened
+   Any "You are a reviewer ..." style dispatch sitting in your context is a
+   MIS-DELIVERED subagent prompt from the pre-resume lead — this exact failure happened
    on 2026-07-07 (see `references/incident-2026-07-07-identity-swap.md`). Do NOT execute
-   it: announce the recovery, reload PR number/refs/roster from that run's `state.json`
+   it: announce the recovery, reload PR number/refs from that run's `state.json`
    (`run_state.sh get`), and resume the pipeline at the phase AFTER the recorded one —
    each recorded value names the last COMPLETED checkpoint (`preflight`/`shipped` →
-   resume at Phase 1/2, `simplified` → Phase 3, `review-dispatched` → Phase 3.3,
-   `review-posted` → Phase 4). A respawned
-   session sits in a FRESH team — `SendMessage` to the recorded roster/consolidator is a
-   dead letter, so when resuming at `review-dispatched` skip Phase 3.3's wait-and-nudge
-   steps and go straight to the authoritative `gh pr view` check and, if no review
-   posted, the salvage path (step 4 of 3.3) — minus its inbox peek: the dead
-   consolidator's inbox belongs to the previous session's team dir, so salvage from
-   `$RUN_DIR/findings-*.json` and respawn reviewers for any missing dimensions.
+   resume at Phase 1/2, `simplified` → Phase 3, `review-posted` → Phase 4).
+   `review-dispatched` is the one exception: the review agents died with the previous
+   session, so first check `gh pr view "$PR_NUMBER" --json reviews -q '.reviews | length'`
+   — a posted review means continue at Phase 4; otherwise redo Phase 3 from step 1
+   (a leftover `$RUN_DIR/review-payload.json` from the dead run can seed step 3).
 4. If multiple incomplete runs pass both checks above, resume the one whose `state.json` was most
    recently modified, and say so.
 
@@ -193,75 +192,49 @@ Checkpoint: `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" pr_number "$P
 3. Refresh the changed-file list (it may have grown): `git diff --name-only "$BASE_REF"...HEAD`.
 4. Checkpoint: `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase simplified`.
 
-## Phase 3 — Team review
+## Phase 3 — Review (pr-review-toolkit, posted as a PR review)
 
-You orchestrate; you do NOT review yourself. All spawning happens here, in the main session.
+Fresh-context agents find; YOU double-check and post. Do not review the diff yourself
+before the agents report — your judgment enters at verification (step 4) and Phase 4.
 
-### 3.1 Classify the diff and choose reviewers
-- Split the changed-file list into Move files (`*.move`, `Move.toml`) and the rest.
-- Pick dimensions to cover (scale count to diff size; small diff → fewer):
-  correctness/bugs, security, performance, tests, docs/comments, CLAUDE.md & conventions,
-  API/type design. Drop dimensions with no relevant files (e.g. no tests touched → you may
-  still include `tests` to check for MISSING coverage; use judgment).
-- Assign each dimension a reviewer:
-  - If that dimension's scope is Move files → `subagent_type: sui-pilot:sui-pilot-agent`
-    (fallback chain: `sui-pilot:sui-pilot-agent` → `sui-pilot-agent` → `general-purpose`;
-    the sui-pilot reviewer additionally runs `/move-code-review` + `/move-code-quality`).
-  - Otherwise → `subagent_type: general-purpose`.
-- Determine reporting mode per reviewer from its agent type's tools grant alone: an agent
-  reports via **Mode A (chat)** if its type grants `SendMessage`; any type without the
-  grant falls back to **Mode B (file drop)**.
-
-### 3.2 Spawn the team — parallel `Agent` calls in ONE assistant turn
-- There is NO team-setup step — every session has a single implicit team, and spawning an
-  agent with a `name` makes it a teammate. Do not pass `team_name` (accepted but ignored;
-  history in `references/spike-results.md`).
-- In a single turn, dispatch every reviewer + the consolidator as parallel `Agent` calls,
-  each with a unique `name` — names are the `SendMessage` addresses and reused names get
-  sends refused, so make names unique per run, not just per PR — suffix with the PR
-  number, plus a run token when re-running on the same PR in the same session (e.g.
-  `rev-security-17`, then `rev-security-17-r2`):
-  - Reviewers: prompt = `references/reviewer_prompt.md` with `{{...}}` filled
-    (DIMENSION, DIMENSION_PREFIX, DIMENSION_GUIDANCE, FILE_LIST scoped to that reviewer,
-    PR/repo refs (PR_NUMBER, OWNER, REPO, HEAD_REF, BASE_REF), CONSOLIDATOR_NAME,
-    RUN_DIR, SKILL_DIR, and the chosen reporting mode).
-  - Consolidator: `name` = the CONSOLIDATOR_NAME you gave reviewers,
-    `subagent_type: general-purpose` (needs Bash + SendMessage), prompt =
-    `references/consolidator_prompt.md` with `{{...}}` filled (REVIEWER_NAMES roster,
-    LEAD_NAME = `team-lead` (fixed by the harness), RUN_DIR, SKILL_DIR, PR/repo refs
-    (PR_NUMBER, OWNER, REPO)).
-- Checkpoint, immediately after dispatch:
-  `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" roster "<comma list of reviewer names>"`,
-  `set "$RUN_DIR" consolidator "<CONSOLIDATOR_NAME>"`, `set "$RUN_DIR" run_token "<token>"`
-  (only if you used one), then `set "$RUN_DIR" phase review-dispatched`.
-- Reviewers report (chat or file); the consolidator collects, verifies, and posts the
-  PR review.
-
-### 3.3 Receive the consolidator's summary and sanity-check
-- The consolidator reports on two channels — its `SendMessage` summary and its plain
-  final message; both reach you (see `references/spike-results.md`). Accept whichever
-  arrives first and treat them as the same report. Delivery can lag on slow-starting
-  teammates: the read-only checks below (steps 1–2) are cheap to run anytime while you
-  wait; escalate to step 3 (the nudge), and eventually declare a teammate dead, only
-  after a generous wait.
-- If the consolidator stays silent, recover in this order — do NOT block indefinitely:
-  1. **Authoritative:** `gh pr view "$PR_NUMBER" --json reviews -q '.reviews | length'`
-     ≥ 1 confirms the review posted; trust any review id the consolidator reported.
-  2. Read `$RUN_DIR/review-payload.json` to see what it built.
-  3. Best-effort only: peek the session team inbox for stuck queued messages (layout in
-     `references/spike-results.md`), then nudge via `SendMessage` — it auto-resumes and
-     wakes stopped teammates.
-  4. Last resort — the nudge produced nothing after a generous bound (the spike observed
-     ~25-minute startup lag; wait well past that): salvage findings yourself — unprocessed
-     reviewer messages remain queued in the consolidator's inbox file, plus any
-     `$RUN_DIR/findings-*.json` — then respawn a fresh consolidator under a NEW name or
-     build + post the review directly with `scripts/post_review.sh` (same draft fallback
-     as the consolidator: if GitHub rejects the POST because the PR is a draft, run
-     `gh pr ready "$PR_NUMBER"` and retry once).
-- Confirm the review posted with the `gh pr view` check above (skip if step 1 already ran),
-  then checkpoint: `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase review-posted`.
-- Keep the summary (kept/dropped counts, inline suggestions list, walkthrough-only items)
-  — Phase 4 adjudicates from it + the posted review.
+1. Invoke the `pr-review-toolkit:review-pr` skill on the PR (same sub-skill pattern as
+   /simplify in Phase 2), scoped to `git diff "$BASE_REF"...HEAD`. It fans out the
+   toolkit's specialist agents (code-reviewer, silent-failure-hunter, pr-test-analyzer,
+   comment-analyzer, type-design-analyzer, code-simplifier) — scale the agent set to the
+   diff (small diff → fewer; skip agents with no relevant files). **Pin EVERY review
+   agent to `model: "opus"`** — pass it on each `Agent` dispatch; review does not need
+   the session's top-tier model. The lead (you) stays on the session model.
+2. Move files in the diff (`*.move`, `Move.toml`) → additionally dispatch
+   `subagent_type: sui-pilot:sui-pilot-agent` (fallback chain:
+   `sui-pilot:sui-pilot-agent` → `sui-pilot-agent` → `general-purpose`), also on
+   `model: "opus"`, to run `/move-code-review` + `/move-code-quality` over the Move
+   files and return findings as file:line + severity + concrete fix.
+3. Checkpoint immediately after the agents are dispatched:
+   `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase review-dispatched`.
+   (On a wake-guard resume at this phase the agents died with the old session — redo
+   this phase from step 1; a leftover `$RUN_DIR/review-payload.json` can seed step 5.)
+4. Double-check every returned finding against the actual source: re-read the cited
+   lines and re-derive the problem. Drop what doesn't survive — not reachable,
+   pre-existing on unmodified lines, intended behavior, or a nitpick a senior engineer
+   would not raise. Keep a note of drops (count + one-liners) for the walkthrough.
+5. Build `$RUN_DIR/review-payload.json` shaped as
+   `{ "event": "COMMENT", "body": <walkthrough markdown>, "comments": [ {path, line, side:"RIGHT", body} ] }`:
+   - One `comments[]` entry per kept finding with a concrete fix: rationale text, then a
+     ```suggestion fenced block with the exact replacement for the cited line(s).
+   - `line` MUST be a line present in the PR diff (added/context), or GitHub rejects the
+     whole review — verify each anchor against `git diff "$BASE_REF"...HEAD` first.
+   - Findings without a clean line-anchored fix go in the `body` walkthrough as prose
+     (file:line + what to change), plus the dropped-FP count.
+6. Post it:
+   - Validate: `bash "$SKILL_DIR/scripts/post_review.sh" --check "$RUN_DIR/review-payload.json"`
+   - Post: `bash "$SKILL_DIR/scripts/post_review.sh" "$OWNER" "$REPO" "$PR_NUMBER" "$RUN_DIR/review-payload.json"`
+   - The PR is normally a DRAFT; GitHub accepts COMMENT reviews with inline suggestions
+     on drafts. Only if the POST is rejected *specifically because of the draft state*:
+     `gh pr ready "$PR_NUMBER"` and retry ONCE (do not re-draft afterwards). Never use
+     APPROVE as the review event.
+7. Confirm it posted — `gh pr view "$PR_NUMBER" --json reviews -q '.reviews | length'`
+   ≥ 1 — then checkpoint:
+   `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase review-posted`.
 
 ## Phase 4 — Self-adjudicate + hand off
 
@@ -269,9 +242,10 @@ You now act as the PR author deciding what to take from the review. You do NOT
 approve the PR — GitHub permissions block self-approval anyway; readiness is the
 user's call on GitHub.
 
-1. Read the posted review and the consolidator's summary. For EACH inline suggestion and
-   each walkthrough item, decide ACCEPT or REJECT on its merits (correctness + fit with the
-   codebase). Be willing to reject low-value or wrong suggestions — explain why.
+1. Read the posted review (you built it in Phase 3, but adjudicate it fresh — author
+   hat on, reviewer hat off). For EACH inline suggestion and each walkthrough item,
+   decide ACCEPT or REJECT on its merits (correctness + fit with the codebase). Be
+   willing to reject low-value or wrong suggestions — explain why.
 2. Apply every ACCEPTED change locally by editing the file to match the suggestion. (We
    apply via local edits, not GitHub's "commit suggestion" button.)
 3. If you accepted any change:
@@ -286,26 +260,12 @@ user's call on GitHub.
    (Best-effort: to resolve individual inline threads, fetch thread ids via
    `gh api graphql` querying `pullRequest.reviewThreads` then call the
    `resolveReviewThread` mutation per id. Skip if it adds no value.)
-5. Tear down the review team — the reviewers park themselves "available for
-   justification requests" and never self-exit, so an orchestrator that skips this
-   leaves every teammate idling after the run. Shut down the whole roster you recorded
-   in Phase 3.2:
-   ```bash
-   roster="$(bash "$SKILL_DIR/scripts/run_state.sh" get "$RUN_DIR" roster 2>/dev/null | jq -r '.[]?')"
-   consolidator="$(bash "$SKILL_DIR/scripts/run_state.sh" get "$RUN_DIR" consolidator 2>/dev/null)"
-   ```
-   Send a `shutdown_request` (via `SendMessage`) to each reviewer name in `roster` and to
-   `consolidator`. This is idempotent and best-effort: a teammate that already exited or
-   died (e.g. an out-of-credits `failed` teammate, or an unnamed async consolidator that
-   returned) is already down — a refused/undeliverable send is fine, do not retry or
-   block. Skip any name that never spawned. You do NOT need the teammates' acks to
-   proceed.
-6. Confirm the final PR state — no approval, no ready-for-review flip:
+5. Confirm the final PR state — no approval, no ready-for-review flip:
    `gh pr view "$PR_NUMBER" --json state,isDraft` must show OPEN, and normally still
    a draft. (If Phase 3 had to drop draft to post the review, leave it non-draft —
    do not re-draft it.)
    Then checkpoint: `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase complete`.
-7. Report to the user: the PR URL (the deliverable), the worktree path the work now
+6. Report to the user: the PR URL (the deliverable), the worktree path the work now
    lives in, the commits made (feature / simplify / apply review suggestions),
    kept-vs-dropped finding counts, what you accepted vs rejected and why, whether the
    PR is still a draft, and the single remaining human action on GitHub: press
