@@ -16,7 +16,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "opus",
+  "model": "fable",
   "hooks": {
     "SessionStart": [
       {
@@ -45,19 +45,17 @@
     "feature-dev@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
     "learning-output-style@claude-plugins-official": true,
-    "linear@claude-plugins-official": false,
+    "linear@claude-plugins-official": true,
     "playground@claude-plugins-official": true,
     "plugin-dev@claude-plugins-official": true,
     "pr-review-toolkit@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
     "security-guidance@claude-plugins-official": true,
-    "slack@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
     "hookify@claude-plugins-official": true,
     "mcp-server-dev@claude-plugins-official": true,
-    "notion@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
     "codex-bridge@contract-hero": true,
     "sui-pilot@contract-hero": true,
@@ -103,7 +101,10 @@
     "dimensional-analysis@trailofbits": false,
     "code-forge@contract-hero": true,
     "sui-agent-tank@contract-hero": true,
-    "scroll-world@scroll-world": true
+    "scroll-world@scroll-world": true,
+    "slack@claude-plugins-official": true,
+    "notion@claude-plugins-official": true,
+    "receipts@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "contract-hero": {
@@ -132,14 +133,19 @@
       }
     }
   },
+  "cleanupPeriodDays": 365,
+  "effortLevel": "xhigh",
   "autoUpdatesChannel": "latest",
+  "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
   "theme": "dark-ansi",
   "editorMode": "vim",
   "preferredNotifChannel": "iterm2",
   "autoCompactEnabled": false,
   "teammateMode": "tmux",
   "remoteControlAtStartup": true,
+  "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true
 }
