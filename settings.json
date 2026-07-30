@@ -1,4 +1,5 @@
 {
+  "cleanupPeriodDays": 365,
   "permissions": {
     "allow": [
       "Bash(claude team:*)",
@@ -44,7 +45,7 @@
     "commit-commands@claude-plugins-official": true,
     "feature-dev@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
-    "learning-output-style@claude-plugins-official": true,
+    "learning-output-style@claude-plugins-official": false,
     "linear@claude-plugins-official": true,
     "playground@claude-plugins-official": true,
     "plugin-dev@claude-plugins-official": true,
@@ -55,7 +56,7 @@
     "typescript-lsp@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
     "hookify@claude-plugins-official": true,
-    "mcp-server-dev@claude-plugins-official": true,
+    "mcp-server-dev@claude-plugins-official": false,
     "chrome-devtools-mcp@claude-plugins-official": true,
     "codex-bridge@contract-hero": true,
     "sui-pilot@contract-hero": true,
@@ -104,7 +105,17 @@
     "scroll-world@scroll-world": true,
     "slack@claude-plugins-official": true,
     "notion@claude-plugins-official": true,
-    "receipts@claude-plugins-official": true
+    "receipts@claude-plugins-official": true,
+    "claude-security@claude-plugins-official": true,
+    "explanatory-output-style@claude-plugins-official": true,
+    "project-artifact@claude-plugins-official": true,
+    "math-olympiad@claude-plugins-official": true,
+    "agent-sdk-dev@claude-plugins-official": false,
+    "session-report@claude-plugins-official": true,
+    "github@claude-plugins-official": false,
+    "pagerduty@claude-plugins-official": false,
+    "sentry@claude-plugins-official": false,
+    "impeccable@impeccable": true
   },
   "extraKnownMarketplaces": {
     "contract-hero": {
@@ -133,7 +144,6 @@
       }
     }
   },
-  "cleanupPeriodDays": 365,
   "effortLevel": "xhigh",
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
