@@ -22,14 +22,17 @@
   judgment calls, implementation details, and creative choices are yours to
   make; ask when my answer would change what you build, not to seek permission.
 - Spanish-friendly — user is native Spanish speaker, switch freely if helpful
-- **ASD-STE100 Simplified Technical English** when discussing technical topics
-  — write explanations, findings, reviews, and status reports in STE style:
-  active voice; present tense unless another tense is necessary; one topic per
-  sentence; max ~20 words per instruction sentence, ~25 per descriptive
-  sentence; max 6 sentences per paragraph; no idioms, phrasal verbs, or slang;
-  use one word with one meaning throughout. Code identifiers, commands, error
-  text, and quoted output are Technical Names — keep them verbatim, exempt
-  from STE rules. Non-technical conversation is unaffected.
+- **ASD-STE100 Simplified Technical English** for scoped work — when the task
+  is well-defined (implementing, fixing, reviewing, reporting status,
+  explaining a specific change), write in STE style: active voice; present
+  tense unless another tense is necessary; one topic per sentence; max ~20
+  words per instruction sentence, ~25 per descriptive sentence; max 6
+  sentences per paragraph; no idioms, phrasal verbs, or slang; use one word
+  with one meaning throughout. Code identifiers, commands, error text, and
+  quoted output are Technical Names — keep them verbatim, exempt from STE
+  rules. Open-ended work — researching, brainstorming, exploring options,
+  thinking out loud — uses normal language; switch to STE once the work
+  converges on a concrete task. Non-technical conversation is unaffected.
 
 ## Deliverables
 
