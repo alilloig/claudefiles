@@ -10,10 +10,8 @@
       "Bash(git submodule add:*)",
       "Bash(git push:*)",
       "Bash(./setup.sh:*)",
-      "Bash(gh repo create:*)",
       "Bash(gh auth status:*)",
       "Bash(ln:*)",
-      "Bash(claude:*)",
       "Bash(tmux:*)",
       "Bash(sui move build:*)",
       "Bash(sui move test:*)",
@@ -21,8 +19,6 @@
       "WebFetch(domain:docs.google.com)",
       "WebFetch(domain:docs.sui.io)",
       "WebFetch(domain:github.com)",
-      "mcp__codex__codex",
-      "mcp__codex__codex-reply",
       "Bash(zsh -n /Users/alilloig/workspace/dotfiles/.zshrc)",
       "Bash(zsh -i -c 'source ~/.zshrc && echo \"sourced OK\"; command -v nvm; nvm --version 2>/dev/null; which node')"
     ]

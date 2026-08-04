@@ -2,7 +2,6 @@
   "cleanupPeriodDays": 365,
   "permissions": {
     "allow": [
-      "Bash(claude team:*)",
       "Bash(claude:*)",
       "Bash(gh repo create:*)"
     ],
@@ -17,7 +16,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "fable",
+  "model": "opus",
   "hooks": {
     "SessionStart": [
       {
@@ -46,7 +45,6 @@
     "feature-dev@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
     "learning-output-style@claude-plugins-official": false,
-    "linear@claude-plugins-official": true,
     "playground@claude-plugins-official": true,
     "plugin-dev@claude-plugins-official": true,
     "pr-review-toolkit@claude-plugins-official": true,
@@ -58,7 +56,6 @@
     "hookify@claude-plugins-official": true,
     "mcp-server-dev@claude-plugins-official": false,
     "chrome-devtools-mcp@claude-plugins-official": true,
-    "codex-bridge@contract-hero": true,
     "sui-pilot@contract-hero": true,
     "toolkit@contract-hero": true,
     "ask-questions-if-underspecified@trailofbits": false,
@@ -115,7 +112,9 @@
     "github@claude-plugins-official": false,
     "pagerduty@claude-plugins-official": false,
     "sentry@claude-plugins-official": false,
-    "impeccable@impeccable": true
+    "impeccable@impeccable": true,
+    "linear@claude-plugins-official": true,
+    "codex@openai-codex": true
   },
   "extraKnownMarketplaces": {
     "contract-hero": {
@@ -137,14 +136,14 @@
         "repo": "oso95/scroll-world"
       }
     },
-    "higgsfield": {
+    "openai-codex": {
       "source": {
         "source": "github",
-        "repo": "higgsfield-ai/skills"
+        "repo": "openai/codex-plugin-cc"
       }
     }
   },
-  "effortLevel": "xhigh",
+  "effortLevel": "high",
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
