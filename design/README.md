@@ -47,5 +47,12 @@ computed from the token values, chart palettes validated against simulated
 protanopia and deuteranopia, and the dark ramp re-spaced at even OKLCH
 lightness intervals.
 
-Source of record: `~/workspace/awesome-design-md/design-md/sui/DESIGN.md`.
+Source of truth: **`~/workspace/sui-design`** (`alilloig/sui-design`, private).
+That repo holds `DESIGN.md`, the media kit it is derived from, and
+`scripts/verify.py`, which re-derives every measured claim in the file and
+fails on drift.
+
+Make changes there, then re-copy here. This copy is a convenience mirror and
+has no verification harness of its own.
+
 Copied 2026-08-04.
