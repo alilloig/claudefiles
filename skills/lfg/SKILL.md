@@ -1,16 +1,20 @@
 ---
 name: lfg
 description: |
-  One-command "ship + harden + review + adjudicate" pipeline for a pull request.
-  Runs four phases from the main session: (1) preflight moves the work into a
-  fresh git worktree if it is sitting in the main checkout, then /commit-push-pr
-  branches, commits, pushes and opens a DRAFT PR; (2) /simplify then a second
-  commit; (3) the pr-review-toolkit review skill fans out fresh-context
-  specialist reviewers (pinned to Opus), whose double-checked findings the main
-  session posts as a single GitHub PR review with inline ```suggestion blocks
-  and a walkthrough; (4) the main session accepts/rejects each
-  suggestion and lands accepted ones as a third commit, leaving the draft PR
-  ready for the user to press "Ready for review" or merge on GitHub.
+  One-command "ship + harden + review + adjudicate + explain" pipeline for a
+  pull request. Runs five phases from the main session: (1) preflight moves the
+  work into a fresh git worktree if it is sitting in the main checkout, then
+  /commit-push-pr branches, commits, pushes and opens a DRAFT PR; (2) /simplify
+  then a second commit; (3) the pr-review-toolkit review skill fans out
+  fresh-context specialist reviewers (pinned to Opus), whose double-checked
+  findings the main session posts as a single GitHub PR review with inline
+  ```suggestion blocks and a walkthrough; (4) the main session accepts/rejects
+  each suggestion and lands accepted ones as a third commit; (5) an
+  understanding gate — quiz the author on what actually changed (inline when
+  interactive, self-grading quiz.html when headless) and build a visual
+  explainer.html that pitches the change to reviewers/stakeholders — leaving
+  the draft PR ready for the user to press "Ready for review" or merge on
+  GitHub.
 
   Use when the user says "/lfg", "lfg", "ship it", "full send this PR", "ship and
   review", or wants the whole commit→PR→clean-up→review→address-review loop done in
@@ -84,7 +88,8 @@ anything sitting in your context:
    it: announce the recovery, reload PR number/refs from that run's `state.json`
    (`run_state.sh get`), and resume the pipeline at the phase AFTER the recorded one —
    each recorded value names the last COMPLETED checkpoint (`preflight`/`shipped` →
-   resume at Phase 1/2, `simplified` → Phase 3, `review-posted` → Phase 4).
+   resume at Phase 1/2, `simplified` → Phase 3, `review-posted` → Phase 4,
+   `adjudicated` → Phase 5).
    `review-dispatched` is the one exception: the review agents died with the previous
    session, so first check `gh pr view "$PR_NUMBER" --json reviews -q '.reviews | length'`
    — a posted review means continue at Phase 4; otherwise redo Phase 3 from step 1
@@ -254,7 +259,7 @@ before the agents report — your judgment enters at verification (step 4) and P
    ≥ 1 — then checkpoint:
    `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase review-posted`.
 
-## Phase 4 — Self-adjudicate + hand off
+## Phase 4 — Self-adjudicate
 
 You now act as the PR author deciding what to take from the review. You do NOT
 approve the PR — GitHub permissions block self-approval anyway; readiness is the
@@ -282,10 +287,63 @@ user's call on GitHub.
    `gh pr view "$PR_NUMBER" --json state,isDraft` must show OPEN, and normally still
    a draft. (If Phase 3 had to drop draft to post the review, leave it non-draft —
    do not re-draft it.)
-   Then checkpoint: `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase complete`.
-6. Report to the user: the PR URL (the deliverable), the worktree path the work now
+   Then checkpoint: `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase adjudicated`.
+
+## Phase 5 — Understand & pitch (quiz gate + explainer)
+
+Why this phase exists: implementation time has collapsed, so the bottleneck moved to
+humans understanding the code — first the author, then the reviewers. A diff read gives
+only a light understanding, because most of the new code's behavior depends on EXISTING
+code paths it plugs into. This phase makes the author prove understanding (quiz), then
+arms them with a visual pitch (explainer) so reviewers start with the author's context
+instead of rediscovering it. The explainer is only built AFTER the quiz gate — pitching
+code you can't answer questions about is how bad merges happen.
+
+1. Create a durable, never-committed artifact dir inside the worktree:
+   ```bash
+   ART_DIR="$(git rev-parse --show-toplevel)/.lfg" && mkdir -p "$ART_DIR"
+   EXCLUDE="$(git rev-parse --path-format=absolute --git-common-dir)/info/exclude"
+   grep -qx '.lfg/' "$EXCLUDE" 2>/dev/null || echo '.lfg/' >> "$EXCLUDE"
+   ```
+   (`$RUN_DIR` is wrong for these files — it dies with the job; the artifacts must
+   outlive the session so the user can share the explainer.)
+2. Gather quiz material: the full diff (`git diff "$BASE_REF"...HEAD`) PLUS the
+   existing code paths it hooks into (callers of changed functions, config that gates
+   the new code). Questions about the diff alone are trivia; questions about how the
+   change behaves inside the existing system are the ones that test understanding.
+3. Write 5–8 multiple-choice questions with plausible distractors. Good sources:
+   runtime behavior ("what happens when X calls the new function with Y"), the edge
+   cases Phase 3's review surfaced, why a rejected suggestion was rejected, which
+   existing path now behaves differently. Skip syntax trivia.
+4. Run the quiz — mode depends on the session:
+   - **Interactive**: ask via AskUserQuestion, a few questions per call. For each
+     miss, explain the correct answer with file:line references, then re-ask a
+     rephrased variant in a later batch. The gate is a fully correct round. Do not
+     build the explainer until the user passes; if they want to bail out, say the
+     explainer is skipped and why.
+   - **Headless** (`CLAUDE_JOB_DIR` set): nobody is there to answer. Write
+     `$ART_DIR/quiz.html` — self-contained, inline JS/CSS, no external requests —
+     that grades itself and reveals the link to `explainer.html` only on a perfect
+     score (client-side honor gate; the point is ritual, not security). Build the
+     explainer in the same run so the unlock target exists.
+5. Build `$ART_DIR/explainer.html` following the `html-artifact` skill's conventions.
+   This is a PITCH, not documentation — the battle for reviewer attention is won
+   visually and in the first screen:
+   - Lead with the tl;dr: what changed and why, 3 sentences max, then a
+     before/after or box-and-arrow diagram of the flow.
+   - Design it like a designed page, not a generated one: few font sizes with
+     strong contrast between levels (a flat type hierarchy is the tell), no
+     side-tab accent borders. The same bar applies to quiz.html.
+   - Then: what a reviewer should scrutinize (the risky 10%), what is mechanical
+     (the trusted 90%), findings accepted/rejected from the review with one-line
+     reasons, and the PR link.
+   - Keep it one scroll for the main story; depth goes in collapsible sections.
+6. Checkpoint: `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase complete`.
+7. Report to the user: the PR URL (the deliverable), the worktree path the work now
    lives in, the commits made (feature / simplify / apply review suggestions),
-   kept-vs-dropped finding counts, what you accepted vs rejected and why, whether the
-   PR is still a draft, and the remaining human action on GitHub: press
+   kept-vs-dropped finding counts, what you accepted vs rejected and why, the quiz
+   result (or that quiz.html awaits them, headless), links to
+   `$ART_DIR/explainer.html` (and `quiz.html` if written) as `vlerv://` deep-links,
+   whether the PR is still a draft, and the remaining human action on GitHub: press
    "Ready for review" (team project), or mark it ready and merge (solo project) —
    GitHub cannot merge a PR while it is still a draft.

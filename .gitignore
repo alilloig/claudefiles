@@ -69,3 +69,6 @@ skills-src/
 .DS_Store
 __pycache__/
 worktrees/
+
+# ── Skill eval-loop workspaces (iteration artifacts, never shipped) ──
+skills/*-workspace/

@@ -16,7 +16,7 @@
 set -euo pipefail
 
 ALLOWED_KEYS="phase pr_number base_ref head_ref roster consolidator run_token repo_root skill_dir"
-ALLOWED_PHASES="preflight shipped simplified review-dispatched review-posted complete aborted"
+ALLOWED_PHASES="preflight shipped simplified review-dispatched review-posted adjudicated complete aborted"
 
 die() { echo "run_state.sh: $*" >&2; exit 1; }
 
