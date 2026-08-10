@@ -89,7 +89,8 @@ anything sitting in your context:
    (`run_state.sh get`), and resume the pipeline at the phase AFTER the recorded one —
    each recorded value names the last COMPLETED checkpoint (`preflight`/`shipped` →
    resume at Phase 1/2, `simplified` → Phase 3, `review-posted` → Phase 4,
-   `adjudicated` → Phase 5).
+   `adjudicated` → Phase 5 from the quiz, `quiz-passed` → Phase 5 explainer step
+   only — the quiz gate is already cleared, do not re-quiz).
    `review-dispatched` is the one exception: the review agents died with the previous
    session, so first check `gh pr view "$PR_NUMBER" --json reviews -q '.reviews | length'`
    — a posted review means continue at Phase 4; otherwise redo Phase 3 from step 1
@@ -318,15 +319,33 @@ code you can't answer questions about is how bad merges happen.
 4. Run the quiz — mode depends on the session:
    - **Interactive**: ask via AskUserQuestion, a few questions per call. For each
      miss, explain the correct answer with file:line references, then re-ask a
-     rephrased variant in a later batch. The gate is a fully correct round. Do not
-     build the explainer until the user passes; if they want to bail out, say the
-     explainer is skipped and why.
+     rephrased variant in a later batch. The gate is a fully correct round. Only
+     when the user has answered every question in a round correctly, checkpoint:
+     `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase quiz-passed`.
+     If the user wants to bail out instead, do NOT record `quiz-passed`; skip to
+     step 6's checkpoint, and report that the explainer was skipped because the
+     quiz gate was not passed.
    - **Headless** (`CLAUDE_JOB_DIR` set): nobody is there to answer. Write
      `$ART_DIR/quiz.html` — self-contained, inline JS/CSS, no external requests —
      that grades itself and reveals the link to `explainer.html` only on a perfect
-     score (client-side honor gate; the point is ritual, not security). Build the
-     explainer in the same run so the unlock target exists.
-5. Build `$ART_DIR/explainer.html` following the `html-artifact` skill's conventions.
+     score (client-side honor gate; the point is ritual, not security). Once
+     quiz.html is written, checkpoint `phase quiz-passed` — headless delegates the
+     gate to the HTML, and the explainer must exist as its unlock target.
+5. **HARD GATE — the explainer is REFUSED until `quiz-passed` is recorded.** Before
+   touching explainer.html, verify:
+   ```bash
+   [ "$(bash "$SKILL_DIR/scripts/run_state.sh" get "$RUN_DIR" phase)" = "quiz-passed" ]
+   ```
+   If that check fails, you may not create the file — go back to step 4 (or, on an
+   interactive bail-out, to step 6). Do not pre-draft explainer content anywhere —
+   not in a scratch file, not "to save time", and never in the same turn that asks
+   quiz questions: an interactive AskUserQuestion round must END the turn with the
+   questions pending, with zero explainer work done. This gate exists because
+   batching quiz + explainer together defeats the phase's purpose — pitching code
+   you can't answer questions about is how bad merges happen.
+
+   Gate passed → build `$ART_DIR/explainer.html` following the `html-artifact`
+   skill's conventions.
    This is a PITCH, not documentation — the battle for reviewer attention is won
    visually and in the first screen:
    - Lead with the tl;dr: what changed and why, 3 sentences max, then a
