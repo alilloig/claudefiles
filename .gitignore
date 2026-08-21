@@ -24,6 +24,9 @@ telemetry/
 todos/
 
 # ── Plugin runtime (keep config, ignore downloaded cache/repos) ──
+# installed_plugins.json is machine-derived state (absolute installPaths,
+# lastUpdated churn); setup.sh is the declarative plugin manifest.
+plugins/installed_plugins.json
 plugins/cache/
 plugins/data/
 plugins/marketplaces/

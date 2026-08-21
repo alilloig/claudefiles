@@ -85,31 +85,45 @@ install_plugin() {
 
 # Official marketplace
 official_plugins=(
-    chrome-devtools-mcp claude-code-setup claude-md-management
-    code-review code-simplifier commit-commands feature-dev
-    frontend-design hookify
-    learning-output-style linear mcp-server-dev
-    notion playground plugin-dev pr-review-toolkit
-    pyright-lsp ralph-loop receipts rust-analyzer-lsp
-    security-guidance skill-creator slack
-    telegram typescript-lsp
+    agent-sdk-dev chrome-devtools-mcp claude-code-setup
+    claude-md-management claude-security
+    code-review code-simplifier commit-commands
+    explanatory-output-style feature-dev figma
+    frontend-design github hookify
+    learning-output-style linear math-olympiad
+    mattpocock-skills mcp-server-dev
+    notion pagerduty playground plugin-dev
+    pr-review-toolkit project-artifact
+    pyright-lsp receipts rust-analyzer-lsp
+    security-guidance sentry session-report
+    skill-creator slack typescript-lsp
 )
 for p in "${official_plugins[@]}"; do
     install_plugin "${p}@claude-plugins-official"
 done
 
-# Impeccable marketplace
-install_plugin "impeccable@impeccable"
-
 # Local plugins
-for p in forge-bench sui-wallet; do
+local_plugins=(forge-bench sui-wallet)
+for p in "${local_plugins[@]}"; do
     install_plugin "${p}@local"
 done
 
 # Contract-hero plugins (code-forge + codex-bridge migrated here from local;
 # see plugins/marketplaces/contract-hero/.claude-plugin/marketplace.json)
-for p in code-forge codex-bridge sui-pilot; do
+ch_plugins=(code-forge codex-bridge sui-agent-tank sui-pilot toolkit)
+for p in "${ch_plugins[@]}"; do
     install_plugin "${p}@contract-hero"
+done
+
+# Other marketplaces (declared in settings.json extraKnownMarketplaces)
+other_plugins=(
+    impeccable@impeccable
+    codex@openai-codex
+    scroll-world@scroll-world
+    cloudflare@cloudflare
+)
+for p in "${other_plugins[@]}"; do
+    install_plugin "$p"
 done
 
 # Trail of Bits security plugins (marketplace: trailofbits/skills, declared in
@@ -160,7 +174,43 @@ for p in "${disabled_plugins[@]}"; do
 done
 echo "  ✓ Disabled: slack, notion"
 
-# --- 6. EVM / Solidity-security stack (opt-in) ---
+# --- 6. Drift check (registry vs this script) ---
+# plugins/installed_plugins.json is gitignored (machine-derived state), so git
+# status no longer flags ad-hoc `/plugin install`s. This check replaces that
+# tripwire: it lists plugins present in the local registry that this script
+# does not declare, so the declared set stays the single source of truth.
+echo ""
+echo "--- Drift check (installed vs declared) ---"
+registry="$REPO_DIR/plugins/installed_plugins.json"
+if [ ! -f "$registry" ]; then
+    echo "  · no plugin registry yet (first run)"
+elif ! command -v python3 &>/dev/null; then
+    echo "  · python3 not found, skipping"
+else
+    declared=(
+        "${official_plugins[@]/%/@claude-plugins-official}"
+        "${local_plugins[@]/%/@local}"
+        "${ch_plugins[@]/%/@contract-hero}"
+        "${tob_plugins[@]/%/@trailofbits}"
+        "${other_plugins[@]}"
+    )
+    drift=$(python3 - "$registry" "${declared[@]}" <<'PY'
+import json, sys
+installed = set(json.load(open(sys.argv[1]))["plugins"])
+for name in sorted(installed - set(sys.argv[2:])):
+    print(f"  ! {name}")
+PY
+    )
+    if [ -n "$drift" ]; then
+        echo "  Installed on this machine but not declared in setup.sh:"
+        echo "$drift"
+        echo "  -> add them here (or uninstall) to keep bootstrap reproducible"
+    else
+        echo "  ✓ no drift"
+    fi
+fi
+
+# --- 7. EVM / Solidity-security stack (opt-in) ---
 # Heavy toolchain (Foundry, Slither, Aderyn, Halmos, Mythril, Medusa, Echidna)
 # plus analysis-only MCP servers and auditor skill repos. Off by default so
 # normal bootstraps stay fast; enable with:
