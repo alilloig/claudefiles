@@ -18,6 +18,8 @@ sessions/
 shell-snapshots/
 stats-cache.json
 statsig/
+# auto-generated Chrome native-messaging host wrapper (hardcodes local version path)
+chrome/
 tasks/
 teams/
 telemetry/
