@@ -34,6 +34,17 @@ else
     echo "✓ Created ~/.claude -> $REPO_DIR"
 fi
 
+# --- 1b. Machine-local plugin state ---
+# enabledPlugins in settings.json is machine-local by policy (see CLAUDE.md).
+# skip-worktree hides local changes to settings.json from git, so plugin
+# enables/disables never sync between machines. To commit an intentional
+# settings.json change, lift the flag with --no-skip-worktree, commit, re-set.
+# Note: Claude Code ignores enabledPlugins in a user-level settings.local.json.
+if git -C "$REPO_DIR" rev-parse --is-inside-work-tree &>/dev/null; then
+    git -C "$REPO_DIR" update-index --skip-worktree settings.json
+    echo "✓ settings.json marked skip-worktree (machine-local plugin state)"
+fi
+
 # --- 2. Plugin hook permissions ---
 # Some plugins ship hook scripts without +x, which makes SessionStart (or other
 # hook events) fail with "permission denied". Recurs after plugin updates since

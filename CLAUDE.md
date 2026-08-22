@@ -1,5 +1,19 @@
 # Global Claude Code Guidelines
 
+## dotclaude repo: machine-local plugin state
+
+This file lives in the "dotclaude" repo (`~/.claude` → `~/workspace/dotfiles/.claude`).
+Plugin enable/disable state in `settings.json` (`enabledPlugins`) is **machine-local
+by policy** — it must never sync between machines through git.
+
+- After cloning on a new machine, run:
+  `git -C ~/.claude update-index --skip-worktree settings.json`
+- Do not move plugin flags to a user-level `settings.local.json`: Claude Code
+  ignores `enabledPlugins` there (verified on v2.1.240).
+- To commit an intentional `settings.json` change: lift the flag with
+  `git -C ~/.claude update-index --no-skip-worktree settings.json`, commit,
+  then set the flag again.
+
 ## Tooling defaults
 
 - **TypeScript** over JavaScript — always `.ts`/`.tsx`
