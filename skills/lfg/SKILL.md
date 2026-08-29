@@ -98,7 +98,7 @@ anything sitting in your context:
    `review-dispatched` is the one exception: the review agents died with the previous
    session, so first check `gh pr view "$PR_NUMBER" --json reviews -q '.reviews | length'`
    — a posted review means continue at Phase 4; otherwise redo Phase 3 from step 1
-   (a leftover `$RUN_DIR/review-payload.json` from the dead run can seed step 3).
+   (a leftover `$RUN_DIR/review-payload.json` from the dead run can seed step 5).
    In codex mode (`review_mode` = `codex` in the state file) the review outputs also
    survive the dead session — apply Phase 3 step 3's resume note.
 4. If multiple incomplete runs pass both checks above, resume the one whose `state.json` was most
@@ -290,7 +290,7 @@ lead's verify-and-post job (steps 3–7) does not change.
    COMPANION="$(ls "$HOME"/.claude/plugins/cache/openai-codex/codex/*/scripts/codex-companion.mjs 2>/dev/null | sort -V | tail -1)"
    codex --version >/dev/null 2>&1 || COMPANION=""
    ```
-   If `$COMPANION` ends up empty (plugin gone, CLI missing, or auth broken), say so,
+   If `$COMPANION` ends up empty (plugin gone or CLI missing), say so,
    `run_state.sh set "$RUN_DIR" review_mode agents`, and run the default steps 1–2
    instead — never skip the review.
 2. Mirror the specialist set with one adversarial run per dimension, scaled to the
@@ -316,7 +316,10 @@ lead's verify-and-post job (steps 3–7) does not change.
    findings[{severity, title, body, file, line_start, line_end, confidence,
    recommendation}]}`; a null `.result` with a `.parseError` means that run
    failed — count it in the walkthrough as a failed dimension, never invent its
-   findings. Merge findings across dimensions, dedupe same-file/same-line
+   findings. If EVERY dimension failed (broken auth shows up here, not in the
+   resolver), `run_state.sh set "$RUN_DIR" review_mode agents` and run the
+   default steps 1–2 instead — never skip the review. Merge findings across
+   dimensions, dedupe same-file/same-line
    duplicates (keep the higher severity), and hand them to step 4: `file` +
    `line_start` anchor the re-read, `recommendation` seeds the suggestion built
    in step 5.

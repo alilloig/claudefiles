@@ -70,6 +70,12 @@ case "$cmd" in
     if [[ "$key" == "pr_number" && ! "$value" =~ ^[0-9]+$ ]]; then
       die "pr_number must be numeric (got: $value)"
     fi
+    if [[ "$key" == "review_mode" && "$value" != "agents" && "$value" != "codex" ]]; then
+      die "review_mode must be agents|codex (got: $value)"
+    fi
+    if [[ "$key" == "quiz_gate" && "$value" != "on" && "$value" != "off" ]]; then
+      die "quiz_gate must be on|off (got: $value)"
+    fi
     if [[ "$key" == "roster" ]]; then
       new="$(jq -c --arg v "$value" \
         '.roster = ($v | split(",") | map(gsub("^\\s+|\\s+$"; "")))' "$state")"
