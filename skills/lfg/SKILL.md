@@ -6,19 +6,23 @@ description: |
   work into a fresh git worktree if it is sitting in the main checkout, then
   /commit-push-pr branches, commits, pushes and opens a DRAFT PR; (2) /simplify
   then a second commit; (3) the pr-review-toolkit review skill fans out
-  fresh-context specialist reviewers (pinned to Opus), whose double-checked
-  findings the main session posts as a single GitHub PR review with inline
+  fresh-context specialist reviewers (pinned to Opus) — or, with the `--codex`
+  flag, a mirrored fan-out of Codex CLI adversarial reviews — whose
+  double-checked findings the main session posts as a single GitHub PR review with inline
   ```suggestion blocks and a walkthrough; (4) the main session accepts/rejects
-  each suggestion and lands accepted ones as a third commit; (5) an
-  understanding gate — quiz the author on what actually changed (inline when
-  interactive, self-grading quiz.html when headless) and build a visual
-  explainer.html that pitches the change to reviewers/stakeholders — leaving
+  each suggestion and lands accepted ones as a third commit; (5) build a visual
+  explainer.html that pitches the change to reviewers/stakeholders; with
+  `--quiz`, an understanding gate (inline quiz when interactive, self-grading
+  quiz.html when headless) runs first — leaving
   the draft PR ready for the user to press "Ready for review" or merge on
   GitHub.
 
   Use when the user says "/lfg", "lfg", "ship it", "full send this PR", "ship and
   review", or wants the whole commit→PR→clean-up→review→address-review loop done in
-  one shot on the current working-tree changes. Domain-aware: Move diffs add a
+  one shot on the current working-tree changes. `/lfg --codex` (or "with codex",
+  "codex review it") switches Phase 3 to the Codex reviewer fan-out. `/lfg --quiz`
+  (or asking for the quiz / understanding gate in words) turns on the opt-in
+  Phase 5 quiz gate before the explainer. Domain-aware: Move diffs add a
   sui-pilot-agent reviewer on top of the pr-review-toolkit agents; every review
   agent runs on Opus, never the session model.
 
@@ -89,12 +93,14 @@ anything sitting in your context:
    (`run_state.sh get`), and resume the pipeline at the phase AFTER the recorded one —
    each recorded value names the last COMPLETED checkpoint (`preflight`/`shipped` →
    resume at Phase 1/2, `simplified` → Phase 3, `review-posted` → Phase 4,
-   `adjudicated` → Phase 5 from the quiz, `quiz-passed` → Phase 5 explainer step
+   `adjudicated` → Phase 5 from its start, `quiz-passed` → Phase 5 explainer step
    only — the quiz gate is already cleared, do not re-quiz).
    `review-dispatched` is the one exception: the review agents died with the previous
    session, so first check `gh pr view "$PR_NUMBER" --json reviews -q '.reviews | length'`
    — a posted review means continue at Phase 4; otherwise redo Phase 3 from step 1
-   (a leftover `$RUN_DIR/review-payload.json` from the dead run can seed step 3).
+   (a leftover `$RUN_DIR/review-payload.json` from the dead run can seed step 5).
+   In codex mode (`review_mode` = `codex` in the state file) the review outputs also
+   survive the dead session — apply Phase 3 step 3's resume note.
 4. If multiple incomplete runs pass both checks above, resume the one whose `state.json` was most
    recently modified, and say so.
 
@@ -168,7 +174,12 @@ session, STOP and tell the user to run
    RUN_DIR, so on an interactive `init` refusal confirm with the user that no other
    live session owns the run before adopting it via the wake guard. Then record ownership so the wake guard can tell this run from foreign ones:
    `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" repo_root "$(git rev-parse --show-toplevel)"`
-   and `set "$RUN_DIR" skill_dir "$SKILL_DIR"`. Verify the seed took:
+   and `set "$RUN_DIR" skill_dir "$SKILL_DIR"`. Record every non-default invocation
+   flag in the run state in that same Bash call — resumes read state, never re-guess
+   the invocation, and a missing key means the default: `--codex` (or a Codex/
+   cross-model review asked in words) → `set "$RUN_DIR" review_mode codex` (default
+   `agents`); `--quiz` (or the understanding quiz asked in words) →
+   `set "$RUN_DIR" quiz_gate on` (default `off`). Verify the seed took:
    `test -f "$RUN_DIR/state.json"` — never proceed without it. Remember this path for
    Phases 3–4. From here on, every stop-and-report exit must first checkpoint
    `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase aborted` so the wake
@@ -219,7 +230,12 @@ Checkpoint: `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" pr_number "$P
 ## Phase 3 — Review (pr-review-toolkit, posted as a PR review)
 
 Fresh-context agents find; YOU double-check and post. Do not review the diff yourself
-before the agents report — your judgment enters at verification (step 4) and Phase 4.
+before the reviewers report — your judgment enters at verification (step 4) and Phase 4.
+
+Mode: use the `review_mode` you recorded in Phase 0 (read it back with
+`run_state.sh get` only on a wake-guard resume; missing = `agents`). `agents` runs
+steps 1–2 below; `codex` replaces steps 1–2 with the "Codex mode" block at the end
+of this phase. Steps 3–7 apply in both modes.
 
 1. Invoke the `pr-review-toolkit:review-pr` skill on the PR (same sub-skill pattern as
    /simplify in Phase 2), scoped to `git diff "$BASE_REF"...HEAD`. It fans out the
@@ -233,10 +249,13 @@ before the agents report — your judgment enters at verification (step 4) and P
    `sui-pilot:sui-pilot-agent` → `sui-pilot-agent` → `general-purpose`), also on
    `model: "opus"`, to run `/move-code-review` + `/move-code-quality` over the Move
    files and return findings as file:line + severity + concrete fix.
-3. Checkpoint immediately after the agents are dispatched:
+3. Checkpoint immediately after the reviewers are dispatched:
    `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase review-dispatched`.
-   (On a wake-guard resume at this phase the agents died with the old session — redo
-   this phase from step 1; a leftover `$RUN_DIR/review-payload.json` can seed step 5.)
+   (Resume note — on a wake-guard resume at this phase the reviewers died with the
+   old session. Agent mode: redo this phase from step 1; a leftover
+   `$RUN_DIR/review-payload.json` can seed step 5. Codex mode: the outputs survive
+   on disk — a `$RUN_DIR/codex-<dim>.json` that parses counts as done; redo only
+   the missing dimensions.)
 4. Double-check every returned finding against the actual source: re-read the cited
    lines and re-derive the problem. Drop what doesn't survive — not reachable,
    pre-existing on unmodified lines, intended behavior, or a nitpick a senior engineer
@@ -259,6 +278,51 @@ before the agents report — your judgment enters at verification (step 4) and P
 7. Confirm it posted — `gh pr view "$PR_NUMBER" --json reviews -q '.reviews | length'`
    ≥ 1 — then checkpoint:
    `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase review-posted`.
+
+### Codex mode (`--codex`) — replaces steps 1–2
+
+Review tokens come from the Codex subscription instead of the Claude one; the
+lead's verify-and-post job (steps 3–7) does not change.
+
+1. Resolve the companion script of the installed `openai-codex` plugin
+   (version-agnostic — newest wins) and confirm the CLI works:
+   ```bash
+   COMPANION="$(ls "$HOME"/.claude/plugins/cache/openai-codex/codex/*/scripts/codex-companion.mjs 2>/dev/null | sort -V | tail -1)"
+   codex --version >/dev/null 2>&1 || COMPANION=""
+   ```
+   If `$COMPANION` ends up empty (plugin gone or CLI missing), say so,
+   `run_state.sh set "$RUN_DIR" review_mode agents`, and run the default steps 1–2
+   instead — never skip the review.
+2. Mirror the specialist set with one adversarial run per dimension, scaled to the
+   diff exactly like step 1 (skip dimensions with no relevant files). Step 2's
+   Move-file reviewer still runs unchanged — Codex has no Sui/Move grounding.
+   Dimension → focus text:
+   - `bugs` — no focus text (the template's default adversarial correctness stance)
+   - `silent-failures` — "silent failures: swallowed errors, empty catch blocks, fallbacks that hide failure, missing error propagation"
+   - `tests` — "test coverage: new logic without tests, missing edge/failure-path cases, assertions that cannot fail"
+   - `comments` — "comment and doc accuracy: comments or docs that contradict, overstate, or drift from the code they describe"
+   - `types` — "type and API design: weak encapsulation, invariants not expressed in types, misuse-prone signatures"
+   Launch them in parallel from inside the worktree, one background Bash call per
+   dimension (`--wait` is the companion's own flag; detaching is the Bash call's
+   `run_in_background`), then checkpoint per step 3:
+   ```bash
+   node "$COMPANION" adversarial-review --wait --json --base "$BASE_REF" --scope branch "<focus>" \
+     > "$RUN_DIR/codex-<dim>.json" 2> "$RUN_DIR/codex-<dim>.err"
+   ```
+3. When all runs finish, extract each dimension in one jq pass —
+   `jq '{threadId, result}' "$RUN_DIR/codex-<dim>.json"` — appending each
+   `threadId` to `$RUN_DIR/codex-threads.txt` (`codex resume <threadId>` reopens
+   that reviewer for a manual follow-up). `.result` is `{verdict, summary,
+   findings[{severity, title, body, file, line_start, line_end, confidence,
+   recommendation}]}`; a null `.result` with a `.parseError` means that run
+   failed — count it in the walkthrough as a failed dimension, never invent its
+   findings. If EVERY dimension failed (broken auth shows up here, not in the
+   resolver), `run_state.sh set "$RUN_DIR" review_mode agents` and run the
+   default steps 1–2 instead — never skip the review. Merge findings across
+   dimensions, dedupe same-file/same-line
+   duplicates (keep the higher severity), and hand them to step 4: `file` +
+   `line_start` anchor the re-read, `recommendation` seeds the suggestion built
+   in step 5.
 
 ## Phase 4 — Self-adjudicate
 
@@ -290,15 +354,17 @@ user's call on GitHub.
    do not re-draft it.)
    Then checkpoint: `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase adjudicated`.
 
-## Phase 5 — Understand & pitch (quiz gate + explainer)
+## Phase 5 — Understand & pitch (explainer + opt-in quiz gate)
 
 Why this phase exists: implementation time has collapsed, so the bottleneck moved to
 humans understanding the code — first the author, then the reviewers. A diff read gives
 only a light understanding, because most of the new code's behavior depends on EXISTING
-code paths it plugs into. This phase makes the author prove understanding (quiz), then
-arms them with a visual pitch (explainer) so reviewers start with the author's context
-instead of rediscovering it. The explainer is only built AFTER the quiz gate — pitching
-code you can't answer questions about is how bad merges happen.
+code paths it plugs into. This phase arms the author with a visual pitch (explainer) so
+reviewers start with the author's context instead of rediscovering it. The quiz gate is
+OPT-IN: it runs only when the run recorded `quiz_gate` on (`--quiz` at invocation).
+When on, the explainer is only built AFTER the gate — pitching code you can't answer
+questions about is how bad merges happen. When off, skip steps 2–4 entirely and go
+straight from step 1 to step 5.
 
 1. Create a durable, never-committed artifact dir inside the worktree:
    ```bash
@@ -331,10 +397,10 @@ code you can't answer questions about is how bad merges happen.
      score (client-side honor gate; the point is ritual, not security). Once
      quiz.html is written, checkpoint `phase quiz-passed` — headless delegates the
      gate to the HTML, and the explainer must exist as its unlock target.
-5. **HARD GATE — the explainer is REFUSED until `quiz-passed` is recorded.** Before
-   touching explainer.html, verify:
+5. **HARD GATE (quiz-on runs only) — the explainer is REFUSED until `quiz-passed`
+   is recorded.** Before touching explainer.html, verify in one call:
    ```bash
-   [ "$(bash "$SKILL_DIR/scripts/run_state.sh" get "$RUN_DIR" phase)" = "quiz-passed" ]
+   jq -e '(.quiz_gate // "off") != "on" or .phase == "quiz-passed"' "$RUN_DIR/state.json"
    ```
    If that check fails, you may not create the file — go back to step 4 (or, on an
    interactive bail-out, to step 6). Do not pre-draft explainer content anywhere —
@@ -344,24 +410,28 @@ code you can't answer questions about is how bad merges happen.
    batching quiz + explainer together defeats the phase's purpose — pitching code
    you can't answer questions about is how bad merges happen.
 
-   Gate passed → build `$ART_DIR/explainer.html` following the `html-artifact`
-   skill's conventions.
-   This is a PITCH, not documentation — the battle for reviewer attention is won
-   visually and in the first screen:
+   Gate passed → build `$ART_DIR/explainer.html` by invoking the `eli5` skill
+   (fallback when the eli5 plugin is not installed: the `html-artifact` skill's
+   conventions), with the CHANGE as the topic — the diff plus the existing code
+   paths it hooks into, not the diff alone. Never auto-publish it.
+   This is a PITCH, not documentation — eli5's big-pictures-few-words style IS
+   the pitch language for the first screen:
    - Lead with the tl;dr: what changed and why, 3 sentences max, then a
      before/after or box-and-arrow diagram of the flow.
    - Design it like a designed page, not a generated one: few font sizes with
      strong contrast between levels (a flat type hierarchy is the tell), no
      side-tab accent borders. The same bar applies to quiz.html.
-   - Then: what a reviewer should scrutinize (the risky 10%), what is mechanical
-     (the trusted 90%), findings accepted/rejected from the review with one-line
+   - Past the eli5 story come the reviewer sections (normal technical language,
+     not eli5): what to scrutinize (the risky 10%), what is mechanical (the
+     trusted 90%), findings accepted/rejected from the review with one-line
      reasons, and the PR link.
    - Keep it one scroll for the main story; depth goes in collapsible sections.
 6. Checkpoint: `bash "$SKILL_DIR/scripts/run_state.sh" set "$RUN_DIR" phase complete`.
 7. Report to the user: the PR URL (the deliverable), the worktree path the work now
    lives in, the commits made (feature / simplify / apply review suggestions),
    kept-vs-dropped finding counts, what you accepted vs rejected and why, the quiz
-   result (or that quiz.html awaits them, headless), links to
+   outcome — the score, the quiz.html link (headless), or "skipped; opt in with
+   `--quiz`" (gate off), links to
    `$ART_DIR/explainer.html` (and `quiz.html` if written) as `vlerv://` deep-links,
    whether the PR is still a draft, and the remaining human action on GitHub: press
    "Ready for review" (team project), or mark it ready and merge (solo project) —

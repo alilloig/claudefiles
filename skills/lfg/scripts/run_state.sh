@@ -8,14 +8,14 @@
 #                                              #   complete/aborted) unless --force
 #   run_state.sh set  <RUN_DIR> <key> <value>  # update one key (atomic: write tmp file, then mv)
 #   run_state.sh get  <RUN_DIR> [key]          # print whole JSON, or one key's raw value
-# Keys:   phase pr_number base_ref head_ref roster consolidator run_token repo_root skill_dir
+# Keys:   phase pr_number base_ref head_ref roster consolidator run_token repo_root skill_dir review_mode quiz_gate
 #         ("roster" takes a comma-separated list, stored as a JSON array)
 # Phases: preflight|shipped|simplified|review-dispatched|review-posted|adjudicated|quiz-passed|complete|aborted
 # Exits non-zero on: unknown key, unknown phase value, missing state file, missing key,
 #                    init over an in-flight run without --force.
 set -euo pipefail
 
-ALLOWED_KEYS="phase pr_number base_ref head_ref roster consolidator run_token repo_root skill_dir"
+ALLOWED_KEYS="phase pr_number base_ref head_ref roster consolidator run_token repo_root skill_dir review_mode quiz_gate"
 ALLOWED_PHASES="preflight shipped simplified review-dispatched review-posted adjudicated quiz-passed complete aborted"
 
 die() { echo "run_state.sh: $*" >&2; exit 1; }
@@ -69,6 +69,12 @@ case "$cmd" in
     fi
     if [[ "$key" == "pr_number" && ! "$value" =~ ^[0-9]+$ ]]; then
       die "pr_number must be numeric (got: $value)"
+    fi
+    if [[ "$key" == "review_mode" && "$value" != "agents" && "$value" != "codex" ]]; then
+      die "review_mode must be agents|codex (got: $value)"
+    fi
+    if [[ "$key" == "quiz_gate" && "$value" != "on" && "$value" != "off" ]]; then
+      die "quiz_gate must be on|off (got: $value)"
     fi
     if [[ "$key" == "roster" ]]; then
       new="$(jq -c --arg v "$value" \
